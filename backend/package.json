@@ -1,0 +1,12 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Filmit Backend",
+  "main": "index.js",
+  "repository": "https://github.com/gabrielfvale/software-web.git",
+  "author": "Gabriel Freire, Laura Petrola, José Portela",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
