@@ -12,4 +12,4 @@ const tmdb = axios.create({
   },
 });
 
-module.exports = tmdb;
+module.exports = { tmdb };

@@ -11,4 +11,3 @@ docker-down:
 create-db:
 	docker cp ./data/tables.sql filmit:/docker-entrypoint-initdb.d/tables.sql
 	docker exec -u postgres filmit psql filmit postgres -f docker-entrypoint-initdb.d/tables.sql
-

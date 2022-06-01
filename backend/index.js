@@ -1,8 +1,8 @@
 const app = require("./src/app");
-const { pool } = require("./src/db");
+const { pool } = require("./src/services/db");
 const port = process.env.APP_PORT || 8080;
 
-const tmdb = require("./src/services/tmdb");
+const { tmdb } = require("./src/services/tmdb");
 
 app.get("/status", async (_, res) => {
   try {
