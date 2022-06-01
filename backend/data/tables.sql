@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS reviews (
     review_id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     score DEC(2, 1) NOT NULL,
-    date_review TIMESTAMP DEFAULT NOW(),
-    date_update TIMESTAMP DEFAULT NOW(),
-    comment TEXT NULL,
+    description TEXT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
     CONSTRAINT fk_user_review FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
 
@@ -23,7 +23,9 @@ CREATE TABLE IF NOT EXISTS comments (
     comment_id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     review_id BIGINT NOT NULL,
-    comment VARCHAR(280) NOT NULL,
+    description VARCHAR(280) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
     CONSTRAINT fk_user_comment FOREIGN KEY(user_id) REFERENCES users(user_id),
     CONSTRAINT fk_review_comment FOREIGN KEY(review_id) REFERENCES reviews(review_id)
 );
@@ -32,7 +34,10 @@ CREATE TABLE IF NOT EXISTS lists (
     list_id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     name VARCHAR(200) NOT NULL,
-    description TEXT NULL
+    description TEXT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT fk_user_list FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS movies (
