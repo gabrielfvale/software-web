@@ -1,5 +1,13 @@
 module.exports = {
   components: {
+    securitySchemes: {
+      bearerAuth: {
+        in: "header",
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
     schemas: {
       Error: {
         type: "object",
@@ -74,10 +82,6 @@ module.exports = {
           release_date: {
             type: "string",
             description: "Movie release date YYYY-MM-DD",
-          },
-          cast: {
-            type: "array",
-            items: { $ref: "#/components/schemas/Cast" },
           },
         },
       },
@@ -174,9 +178,6 @@ module.exports = {
       User: {
         type: "object",
         properties: {
-          user_id: {
-            type: "integer",
-          },
           username: {
             type: "string",
           },
@@ -191,9 +192,6 @@ module.exports = {
           },
           bio: {
             type: "string",
-          },
-          admin: {
-            type: "boolean",
           },
         },
       },

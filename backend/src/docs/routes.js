@@ -1,4 +1,7 @@
 const errors = {
+  unauthorized: {
+    description: "User is not authenticated",
+  },
   not_found: {
     description: "Resource not found error",
     content: {
@@ -16,6 +19,27 @@ const errors = {
         schema: {
           $ref: "#/components/schemas/Error",
         },
+      },
+    },
+  },
+};
+
+const security = [
+  {
+    bearerAuth: [],
+  },
+];
+
+const root = {
+  "/health": {
+    get: {
+      tags: ["Root"],
+      summary: "API health status",
+      responses: {
+        200: {
+          description: "Database and TMDB OK",
+        },
+        500: errors.server,
       },
     },
   },
@@ -41,7 +65,18 @@ const movie = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/Movie",
+                allOf: [
+                  { $ref: "#/components/schemas/Movie" },
+                  {
+                    type: "object",
+                    properties: {
+                      cast: {
+                        type: "array",
+                        items: { $ref: "#/components/schemas/Cast" },
+                      },
+                    },
+                  },
+                ],
               },
             },
           },
@@ -361,6 +396,7 @@ const list = {
   },
   "/list": {
     post: {
+      security,
       tags: ["List"],
       summary: "Create a list",
       requestBody: {
@@ -375,10 +411,12 @@ const list = {
         201: {
           description: "List created",
         },
+        401: errors.unauthorized,
         500: errors.server,
       },
     },
     put: {
+      security,
       tags: ["List"],
       summary: "Update a list",
       requestBody: {
@@ -393,10 +431,12 @@ const list = {
         201: {
           description: "List updated",
         },
+        401: errors.unauthorized,
         500: errors.server,
       },
     },
     delete: {
+      security,
       tags: ["List"],
       summary: "Delete a list",
       requestBody: {
@@ -418,6 +458,7 @@ const list = {
         200: {
           description: "List deleted",
         },
+        401: errors.unauthorized,
         404: errors.not_found,
         500: errors.server,
       },
@@ -563,6 +604,7 @@ const review = {
   },
   "/review": {
     post: {
+      security,
       tags: ["Review"],
       summary: "Create a review",
       requestBody: {
@@ -581,6 +623,7 @@ const review = {
       },
     },
     put: {
+      security,
       tags: ["Review"],
       summary: "Update a review",
       requestBody: {
@@ -599,6 +642,7 @@ const review = {
       },
     },
     delete: {
+      security,
       tags: ["Review"],
       summary: "Delete a review",
       requestBody: {
@@ -627,6 +671,7 @@ const review = {
   },
   "/review/comment": {
     post: {
+      security,
       tags: ["Review"],
       summary: "Create a comment in a review",
       requestBody: {
@@ -646,6 +691,7 @@ const review = {
       },
     },
     put: {
+      security,
       tags: ["Review"],
       summary: "Update a Comment",
       requestBody: {
@@ -665,6 +711,7 @@ const review = {
       },
     },
     delete: {
+      security,
       tags: ["Review"],
       summary: "Delete a comment",
       requestBody: {
@@ -693,6 +740,7 @@ const review = {
   },
   "/review/like": {
     post: {
+      security,
       tags: ["Review"],
       summary: "Like or unlike a review",
       requestBody: {
@@ -721,4 +769,218 @@ const review = {
   },
 };
 
-module.exports = { paths: { ...movie, ...list, ...review } };
+const user = {
+  "/profile/{username}": {
+    get: {
+      security,
+      tags: ["User"],
+      summary: "Profile by username",
+      parameters: [
+        {
+          in: "path",
+          name: "username",
+          type: "string",
+        },
+      ],
+      responses: {
+        200: {
+          description: "User profile returned",
+          content: {
+            "application/json": {
+              schema: {
+                allOf: [
+                  { $ref: "#/components/schemas/User" },
+                  {
+                    type: "object",
+                    properties: {
+                      admin: {
+                        type: "boolean",
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        404: errors.not_found,
+        500: errors.server,
+      },
+    },
+  },
+
+  "/profile/{username}/stats": {
+    get: {
+      tags: ["User"],
+      summary: "Profile statistics by username",
+      parameters: [
+        {
+          in: "path",
+          name: "username",
+          type: "string",
+        },
+      ],
+      responses: {
+        200: {
+          description: "User statistics returned",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  movies_reviewd: {
+                    type: "integer",
+                  },
+                  lists_created: {
+                    type: "integer",
+                  },
+                  likes_received: {
+                    type: "integer",
+                  },
+                },
+              },
+            },
+          },
+        },
+        404: errors.not_found,
+        500: errors.server,
+      },
+    },
+  },
+
+  "/profile": {
+    put: {
+      security,
+      tags: ["User"],
+      summary: "Update profile",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/User" },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "User profile updated",
+        },
+        404: errors.not_found,
+        500: errors.server,
+      },
+    },
+  },
+
+  "/auth/sign-up": {
+    post: {
+      tags: ["User"],
+      summary: "Sign up to an account",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              allOf: [
+                { $ref: "#/components/schemas/User" },
+                {
+                  type: "object",
+                  properties: {
+                    password: {
+                      type: "string",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Sign up successful",
+        },
+        400: {
+          description: "Invalid fields",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Error",
+              },
+            },
+          },
+        },
+        409: {
+          description: "User already exists",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Error",
+              },
+            },
+          },
+        },
+        500: errors.server,
+      },
+    },
+  },
+  "/auth/sign-in": {
+    post: {
+      tags: ["User"],
+      summary: "Sign in to existing account",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                username: {
+                  type: "string",
+                },
+                password: {
+                  type: "string",
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Sign in successful",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  token: {
+                    type: "string",
+                  },
+                  expires_at: {
+                    type: "string",
+                  },
+                  expires_in: {
+                    type: "string",
+                  },
+                },
+              },
+            },
+          },
+        },
+        400: {
+          description: "Username or password invalid",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Error",
+              },
+            },
+          },
+        },
+        500: errors.server,
+      },
+    },
+  },
+};
+
+module.exports = { paths: { ...root, ...movie, ...list, ...review, ...user } };

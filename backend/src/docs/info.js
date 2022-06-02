@@ -9,13 +9,16 @@ module.exports = {
       name: "Root",
     },
     {
-      name: "List",
-    },
-    {
       name: "Movie",
     },
     {
+      name: "List",
+    },
+    {
       name: "Review",
+    },
+    {
+      name: "User",
     },
   ],
 };
