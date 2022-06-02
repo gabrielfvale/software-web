@@ -1,7 +1,9 @@
 const { pool } = require("../services/db");
 
 // TODO: Curated lists
+// TODO: User lists
 // TODO: Add movie to list
+// TODO: Add movie data to list responses
 
 async function details(req, res, next) {
   try {
@@ -85,6 +87,8 @@ async function create(req, res, next) {
   try {
     const { body } = req;
     const { user_id, name, description, list_type, movies } = body;
+
+    // TODO: Check admin permissions when list_type='admin'
 
     // Inserts list
     const { rows, rowCount } = await pool.query(
