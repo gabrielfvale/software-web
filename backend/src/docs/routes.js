@@ -1,22 +1,378 @@
-const list = {
-  paths: {
-    "/list": {
-      post: { tags: ["List"] },
-      put: { tags: ["List"] },
-      delete: { tags: ["List"] },
+const errors = {
+  not_found: {
+    description: "Resource not found error",
+    content: {
+      "application/json": {
+        schema: {
+          $ref: "#/components/schemas/Error",
+        },
+      },
     },
-    "/list/{id}": {
-      get: {
-        tags: ["List"],
-        description: "Get todos",
-        parameters: [],
-        responses: {
-          200: {
-            description: "Todos were obtained", // response desc.
-            content: {
-              "application/json": {
-                schema: {
-                  $ref: "#/components/schemas/Todo", // Todo model
+  },
+  server: {
+    description: "Server error",
+    content: {
+      "application/json": {
+        schema: {
+          $ref: "#/components/schemas/Error",
+        },
+      },
+    },
+  },
+};
+
+const movie = {
+  "/movie/{id}": {
+    get: {
+      tags: ["Movie"],
+      summary: "Movie details by id",
+      parameters: [
+        {
+          in: "path",
+          name: "id",
+          type: "string",
+          required: true,
+          description: "Movie ID",
+        },
+      ],
+      responses: {
+        200: {
+          description: "Movie details returned",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Movie",
+              },
+            },
+          },
+        },
+        404: errors.not_found,
+        500: errors.server,
+      },
+    },
+  },
+  "/movie/discover": {
+    get: {
+      tags: ["Movie"],
+      summary: "Discover movies with filters",
+      parameters: [
+        {
+          in: "query",
+          name: "page",
+          type: "integer",
+          description: "Desired page",
+        },
+        {
+          in: "query",
+          name: "sort_by",
+          description: "Sort movies",
+          schema: {
+            type: "string",
+            enum: [
+              "popularity.asc",
+              "popularity.desc",
+              "release_date.asc",
+              "release_date.desc",
+              "revenue.asc",
+              "revenue.desc",
+              "primary_release_date.asc",
+              "primary_release_date.desc",
+              "original_title.asc",
+              "original_title.desc",
+              "vote_average.asc",
+              "vote_average.desc",
+              "vote_count.asc",
+              "vote_count.desc",
+            ],
+          },
+        },
+        {
+          in: "query",
+          name: "release_date.gte",
+          type: "string",
+          description:
+            "Filter movies with release date greater or equal than parameter",
+        },
+        {
+          in: "query",
+          name: "release_date.lte",
+          type: "string",
+          description:
+            "Filter movies with release date less or equal than parameter",
+        },
+        {
+          in: "query",
+          name: "year",
+          type: "string",
+          description: "Filter movies from specified year",
+        },
+        {
+          in: "query",
+          name: "with_genres",
+          type: "string",
+          description: "Comma separated genre list to include",
+        },
+        {
+          in: "query",
+          name: "without_genres",
+          type: "string",
+          description: "Comma separated genre list to exclude",
+        },
+      ],
+      responses: {
+        200: {
+          description: "Discover search returned",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  page: {
+                    type: "integer",
+                  },
+                  total_pages: {
+                    type: "integer",
+                  },
+                  total_results: {
+                    type: "integer",
+                  },
+                  results: {
+                    type: "array",
+                    items: { $ref: "#/components/schemas/Movie" },
+                  },
+                },
+              },
+            },
+          },
+        },
+        400: {
+          description: "Invalid search parameters",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Error",
+              },
+            },
+          },
+        },
+        500: errors.server,
+      },
+    },
+  },
+  "/movie/popular": {
+    get: {
+      tags: ["Movie"],
+      summary: "Paginated list of popular movies",
+      parameters: [
+        {
+          in: "query",
+          name: "page",
+          type: "integer",
+          description: "Desired page",
+        },
+      ],
+      responses: {
+        200: {
+          description: "Discover search returned",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  page: {
+                    type: "integer",
+                  },
+                  total_pages: {
+                    type: "integer",
+                  },
+                  total_results: {
+                    type: "integer",
+                  },
+                  results: {
+                    type: "array",
+                    items: { $ref: "#/components/schemas/Movie" },
+                  },
+                },
+              },
+            },
+          },
+        },
+        400: {
+          description: "Invalid page parameter",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Error",
+              },
+            },
+          },
+        },
+        500: errors.server,
+      },
+    },
+  },
+  "/movie/{id}/recommendations": {
+    get: {
+      tags: ["Movie"],
+      summary: "Paginated list of recommended movies",
+      parameters: [
+        {
+          in: "path",
+          name: "id",
+          type: "integer",
+          description: "Movie ID to search similar",
+        },
+        {
+          in: "query",
+          name: "page",
+          type: "integer",
+          description: "Desired page",
+        },
+      ],
+      responses: {
+        200: {
+          description: "Discover search returned",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  page: {
+                    type: "integer",
+                  },
+                  total_pages: {
+                    type: "integer",
+                  },
+                  total_results: {
+                    type: "integer",
+                  },
+                  results: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "integer",
+                        },
+                        title: {
+                          type: "string",
+                        },
+                        genre_ids: {
+                          type: "array",
+                          items: { type: "integer" },
+                        },
+                        release_date: {
+                          type: "string",
+                        },
+                        poster_path: {
+                          type: "string",
+                        },
+                        backdrop_path: {
+                          type: "string",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        400: {
+          description: "Invalid page parameter",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/Error",
+              },
+            },
+          },
+        },
+        500: errors.server,
+      },
+    },
+  },
+};
+
+const list = {
+  "/list": {
+    post: {
+      tags: ["List"],
+      summary: "Create a list",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/List" },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: "List created",
+        },
+        500: errors.server,
+      },
+    },
+    put: { tags: ["List"], summary: "Update a list" },
+    delete: { tags: ["List"], summary: "Delete a list" },
+  },
+  "/list/{id}": {
+    get: {
+      tags: ["List"],
+      summary: "List by id",
+      parameters: [
+        {
+          in: "path",
+          name: "id",
+          type: "integer",
+          description: "List ID",
+        },
+      ],
+      responses: {
+        200: {
+          description: "List returned",
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/List" },
+            },
+          },
+        },
+      },
+    },
+  },
+  "/list/popular": {
+    get: {
+      tags: ["List"],
+      summary: "Popular lists",
+      parameters: [
+        {
+          in: "query",
+          name: "page",
+          type: "integer",
+        },
+      ],
+      responses: {
+        200: {
+          description: "List returned",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  page: {
+                    type: "integer",
+                  },
+                  total_pages: {
+                    type: "integer",
+                  },
+                  total_results: {
+                    type: "integer",
+                  },
+                  results: {
+                    type: "array",
+                    items: { $ref: "#/components/schemas/List" },
+                  },
                 },
               },
             },
@@ -27,4 +383,6 @@ const list = {
   },
 };
 
-module.exports = { ...list };
+const review = {};
+
+module.exports = { paths: { ...movie, ...list, ...review } };

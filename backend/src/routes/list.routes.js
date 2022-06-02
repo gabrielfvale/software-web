@@ -3,8 +3,8 @@ const router = express.Router();
 const listController = require("../controllers/list.controller");
 
 router.get("/user/:username", listController.user);
-router.get("/:id", listController.details);
 router.get("/popular", listController.popular);
+router.get("/:id", listController.details);
 router.post("/", listController.create);
 router.put("/", listController.update);
 router.delete("/", listController.deleteList);

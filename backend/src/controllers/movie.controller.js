@@ -74,46 +74,6 @@ async function recommendations(req, res, next) {
 }
 
 async function discover(req, res, next) {
-  /* 
-  Possible values for query params
-  https://developers.themoviedb.org/3/discover/movie-discover
-
-  page
-    integer
-
-  sort_by
-    popularity.asc,
-    popularity.desc,
-    release_date.asc,
-    release_date.desc,
-    revenue.asc,
-    revenue.desc,
-    primary_release_date.asc,
-    primary_release_date.desc,
-    original_title.asc,
-    original_title.desc,
-    vote_average.asc,
-    vote_average.desc,
-    vote_count.asc,
-    vote_count.desc
-  
-  release_date.gte
-    string
-
-  release_date.lte
-    string
-
-  year
-    integer
-  
-  with_cast
-    string
-  
-  with_genres
-    string
-  without_genres
-    string
-  */
   const query_params = new URLSearchParams({ ...req.query }).toString();
   try {
     const { data } = await tmdb.get(

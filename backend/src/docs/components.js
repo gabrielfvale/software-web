@@ -81,6 +81,42 @@ module.exports = {
           },
         },
       },
+      List: {
+        type: "object",
+        properties: {
+          list_id: {
+            type: "integer",
+          },
+          user_id: {
+            type: "integer",
+          },
+          name: {
+            type: "string",
+          },
+          description: {
+            type: "string",
+          },
+          created_at: {
+            type: "string",
+            format: "date-time",
+          },
+          updated_at: {
+            type: "string",
+            format: "date-time",
+          },
+          list_type: {
+            type: "string",
+            enum: ["private", "public", "admin"],
+          },
+          likes: {
+            type: "integer",
+          },
+          movies: {
+            type: "array",
+            items: { type: "integer" },
+          },
+        },
+      },
     },
   },
 };
