@@ -117,6 +117,86 @@ module.exports = {
           },
         },
       },
+      Review: {
+        type: "object",
+        properties: {
+          review_id: {
+            type: "integer",
+          },
+          user_id: {
+            type: "integer",
+          },
+          score: {
+            type: "number",
+            multipleOf: 0.1,
+          },
+          description: {
+            type: "string",
+          },
+          like: {
+            type: "integer",
+          },
+          created_at: {
+            type: "string",
+            format: "date-time",
+          },
+          updated_at: {
+            type: "string",
+            format: "date-time",
+          },
+        },
+      },
+      Comment: {
+        type: "object",
+        properties: {
+          comment_id: {
+            type: "integer",
+          },
+          user_id: {
+            type: "integer",
+          },
+          review_id: {
+            type: "integer",
+          },
+          description: {
+            type: "string",
+          },
+          created_at: {
+            type: "string",
+            format: "date-time",
+          },
+          updated_at: {
+            type: "string",
+            format: "date-time",
+          },
+        },
+      },
+      User: {
+        type: "object",
+        properties: {
+          user_id: {
+            type: "integer",
+          },
+          username: {
+            type: "string",
+          },
+          first_name: {
+            type: "string",
+          },
+          last_name: {
+            type: "string",
+          },
+          country: {
+            type: "string",
+          },
+          bio: {
+            type: "string",
+          },
+          admin: {
+            type: "boolean",
+          },
+        },
+      },
     },
   },
 };
