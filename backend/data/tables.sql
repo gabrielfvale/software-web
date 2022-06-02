@@ -2,12 +2,12 @@ CREATE TYPE LIST_TYPE AS ENUM ('private', 'public', 'admin');
 
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
+    username VARCHAR(30) NOT NULL,
+    password VARCHAR(64) NOT NULL,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     country CHAR(2) NULL,
     bio VARCHAR(280) NULL,
-    username VARCHAR(30) NOT NULL,
-    password VARCHAR(64) NOT NULL,
     admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
