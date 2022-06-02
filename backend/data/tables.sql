@@ -1,3 +1,5 @@
+CREATE TYPE LIST_TYPE AS ENUM ('private', 'public', 'admin');
+
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
@@ -35,15 +37,16 @@ CREATE TABLE IF NOT EXISTS lists (
     user_id BIGINT NOT NULL,
     name VARCHAR(200) NOT NULL,
     description TEXT NULL,
+    list_type LIST_TYPE NOT NULL DEFAULT 'private',
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     CONSTRAINT fk_user_list FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS movies (
-    movie_id SERIAL PRIMARY KEY,
-    api_id BIGINT NOT NULL
-);
+-- CREATE TABLE IF NOT EXISTS movies (
+--     movie_id SERIAL PRIMARY KEY,
+--     api_id BIGINT NOT NULL
+-- );
 
 CREATE TABLE IF NOT EXISTS like_list(
     user_id BIGINT NOT NULL,
@@ -62,9 +65,8 @@ CREATE TABLE IF NOT EXISTS like_review(
 );
 
 CREATE TABLE IF NOT EXISTS movies_list(
-    movie_id BIGINT NOT NULL,
     list_id BIGINT NOT NULL,
-    CONSTRAINT pk_movie_list PRIMARY KEY(movie_id, list_id),
-    CONSTRAINT fk_movie_list FOREIGN KEY(movie_id) REFERENCES movies(movie_id),
-    CONSTRAINT fk_list_movie FOREIGN KEY(list_id) REFERENCES lists(list_id)
+    movie_api_id BIGINT NOT NULL,
+    CONSTRAINT pk_list_movie PRIMARY KEY(list_id, movie_api_id),
+    CONSTRAINT fk_list_movie FOREIGN KEY(list_id) REFERENCES lists(list_id) ON DELETE CASCADE
 )
