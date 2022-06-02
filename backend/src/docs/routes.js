@@ -255,6 +255,7 @@ const movie = {
           in: "path",
           name: "id",
           type: "integer",
+          required: true,
           description: "Movie ID to search similar",
         },
         {
