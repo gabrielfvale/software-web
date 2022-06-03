@@ -465,6 +465,35 @@ const list = {
       },
     },
   },
+  "/list/like": {
+    post: {
+      security,
+      tags: ["List"],
+      summary: "Like/unlike a list",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                list_id: {
+                  type: "integer",
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        201: {
+          description: "List liked/unliked successfully",
+        },
+        401: errors.unauthorized,
+        500: errors.server,
+      },
+    },
+  },
 };
 
 const review = {

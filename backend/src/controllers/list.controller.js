@@ -4,6 +4,7 @@ const { pool } = require("../services/db");
 // TODO: User lists
 // TODO: Add movie to list
 // TODO: Add movie data to list responses
+// TODO: On routes with optional token, list private lists
 
 async function details(req, res, next) {
   try {
