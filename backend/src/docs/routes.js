@@ -809,7 +809,6 @@ const user = {
       },
     },
   },
-
   "/profile/{username}/stats": {
     get: {
       tags: ["User"],
@@ -848,7 +847,6 @@ const user = {
       },
     },
   },
-
   "/profile": {
     put: {
       security,
@@ -871,7 +869,6 @@ const user = {
       },
     },
   },
-
   "/auth/sign-up": {
     post: {
       tags: ["User"],
