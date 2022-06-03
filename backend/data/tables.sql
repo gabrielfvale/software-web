@@ -14,11 +14,13 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS reviews (
     review_id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
+    movie_api_id BIGINT NOT NULL,
     score DEC(2, 1) NOT NULL,
     description TEXT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     CONSTRAINT fk_user_review FOREIGN KEY(user_id) REFERENCES users(user_id)
+    CONSTRAINT unq_user_movie UNIQUE (user_id, movie_api_id);
 );
 
 CREATE TABLE IF NOT EXISTS comments (
