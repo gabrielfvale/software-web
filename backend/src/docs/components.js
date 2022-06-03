@@ -129,6 +129,9 @@ module.exports = {
           user_id: {
             type: "integer",
           },
+          movie_api_id: {
+            type: "integer",
+          },
           score: {
             type: "number",
             multipleOf: 0.1,

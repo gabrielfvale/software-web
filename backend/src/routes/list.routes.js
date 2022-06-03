@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const { authenticateToken, optionalToken } = require("../middlewares/auth");
 const listController = require("../controllers/list.controller");
 
-router.get("/user/:username", listController.user);
+router.get("/user/:username", optionalToken, listController.user);
 router.get("/popular", listController.popular);
-router.get("/:id", listController.details);
-router.post("/", listController.create);
-router.put("/", listController.update);
-router.delete("/", listController.deleteList);
+router.get("/:id", optionalToken, listController.details);
+router.post("/", authenticateToken, listController.create);
+router.put("/", authenticateToken, listController.update);
+router.delete("/", authenticateToken, listController.deleteList);
 
 module.exports = router;

@@ -828,7 +828,7 @@ const user = {
               schema: {
                 type: "object",
                 properties: {
-                  movies_reviewd: {
+                  movies_reviewed: {
                     type: "integer",
                   },
                   lists_created: {

@@ -7,7 +7,7 @@ async function create(req, res, next) {
     const {
       username,
       password,
-      confirmPassword,
+      confirm_password,
       first_name,
       last_name,
       country,
@@ -18,7 +18,7 @@ async function create(req, res, next) {
       return res.status(400).send({ error: "Missing fields" });
     }
 
-    if (password !== confirmPassword) {
+    if (password !== confirm_password) {
       return res.status(400).send({ error: "Passwords do not match" });
     }
 

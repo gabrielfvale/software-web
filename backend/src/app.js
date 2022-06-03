@@ -10,6 +10,7 @@ const movieRouter = require("./routes/movie.routes");
 const listRouter = require("./routes/list.routes");
 const reviewRouter = require("./routes/review.routes");
 const authRouter = require("./routes/auth.routes");
+const profileRouter = require("./routes/profile.routes");
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use("/movie", movieRouter);
 app.use("/list", listRouter);
 app.use("/review", reviewRouter);
 app.use("/auth", authRouter);
+app.use("/profile", profileRouter);
 
 // Swagger docs
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
