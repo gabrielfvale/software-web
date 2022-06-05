@@ -26,6 +26,7 @@ async function get(req, res, next) {
         `
     SELECT reviews.*,
     (SELECT username FROM users WHERE users.user_id = reviews.user_id) AS username,
+    (SELECT COUNT(*) FROM comments WHERE comments.review_id = reviews.review_id) AS comments,
     (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes
     FROM reviews WHERE movie_api_id=$1
     ORDER BY reviews.created_at DESC
