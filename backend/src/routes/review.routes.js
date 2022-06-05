@@ -8,7 +8,7 @@ router.get("/popular", reviewController.popular);
 router.get("/:id/comments", commentController.list);
 router.get("/:movie_id", reviewController.get);
 
-router.post("/like", authenticateToken, reviewController.get);
+router.post("/like", authenticateToken, reviewController.like);
 
 // Comments CRUD
 router.post("/comment", authenticateToken, commentController.create);
