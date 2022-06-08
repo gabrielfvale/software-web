@@ -1,7 +1,6 @@
 const { pool } = require("../services/db");
 const { getPages, paginateQuery } = require("../util/paginate");
 
-// TODO: Curated lists
 // TODO: User lists
 // TODO: Add movie to list
 // TODO: Add movie data to list responses
@@ -83,6 +82,35 @@ async function popular(req, res, next) {
     res.status(500).send(e);
     next(e);
   }
+}
+
+async function curated(req, res, next) {
+  try {
+    let { page, per_page } = req.query;
+    page = page || 1;
+    per_page = per_page || 10;
+
+    const { total_results, total_pages } = await getPages(
+      "lists",
+      "list_type",
+      "admin",
+      per_page
+    );
+
+    if (page > total_pages) {
+      return res.status(400).send({ error: "Page exceeds limit" });
+    }
+
+    const { rows } = await pool.query(
+      paginateQuery(
+        `SELECT * FROM lists 
+        WHERE list_type = 'admin'`,
+        page,
+        per_page
+      )
+    );
+    res.status(200).send({ page, total_pages, total_results, results: rows });
+  } catch (e) {}
 }
 
 async function create(req, res, next) {
@@ -211,4 +239,12 @@ async function deleteList(req, res, next) {
   }
 }
 
-module.exports = { details, user, popular, create, update, deleteList };
+module.exports = {
+  details,
+  user,
+  popular,
+  curated,
+  create,
+  update,
+  deleteList,
+};
