@@ -1,4 +1,5 @@
 const { pool } = require("../services/db");
+const { getPages, paginateQuery } = require("../util/paginate");
 
 // TODO: Curated lists
 // TODO: User lists
@@ -39,7 +40,7 @@ async function details(req, res, next) {
 }
 
 async function user(req, res, next) {
-  // TODO
+  // TODO lists by user
   res.status(200).send({});
 }
 
@@ -86,10 +87,26 @@ async function popular(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const { body } = req;
-    const { user_id, name, description, list_type, movies } = body;
+    const { name, description, list_type, movies } = req.body;
+    const { user_id } = req.user;
 
-    // TODO: Check admin permissions when list_type='admin'
+    const { rows: userRows } = await pool.query(
+      `SELECT admin FROM users
+      WHERE user_id = $1`,
+      [user_id]
+    );
+
+    // Gets returned user admin privileges
+    const { admin } = userRows[0];
+
+    if (!admin && list_type === "admin") {
+      return res
+        .status(400)
+        .send({ error: "User does not have admin privileges" });
+    }
+    if (admin) {
+      list_type = "admin";
+    }
 
     // Inserts list
     const { rows, rowCount } = await pool.query(
@@ -116,7 +133,7 @@ async function create(req, res, next) {
       res.status(500).send({});
     }
   } catch (e) {
-    res.status(400).send(e);
+    res.status(500).send(e);
     next(e);
   }
 }
