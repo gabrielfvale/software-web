@@ -2,7 +2,7 @@ CREATE TYPE LIST_TYPE AS ENUM ('private', 'public', 'admin');
 
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
-    username VARCHAR(30) NOT NULL,
+    username VARCHAR(30) UNIQUE NOT NULL,
     password VARCHAR(64) NOT NULL,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS reviews (
     description TEXT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
-    CONSTRAINT fk_user_review FOREIGN KEY(user_id) REFERENCES users(user_id)
-    CONSTRAINT unq_user_movie UNIQUE (user_id, movie_api_id);
+    CONSTRAINT fk_user_review FOREIGN KEY(user_id) REFERENCES users(user_id),
+    CONSTRAINT unq_user_movie UNIQUE (user_id, movie_api_id)
 );
 
 CREATE TABLE IF NOT EXISTS comments (
@@ -46,8 +46,11 @@ CREATE TABLE IF NOT EXISTS lists (
 );
 
 -- CREATE TABLE IF NOT EXISTS movies (
+
 --     movie_id SERIAL PRIMARY KEY,
+
 --     api_id BIGINT NOT NULL
+
 -- );
 
 CREATE TABLE IF NOT EXISTS like_list(

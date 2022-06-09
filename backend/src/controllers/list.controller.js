@@ -1,7 +1,6 @@
 const { pool } = require("../services/db");
 const { getPages, paginateQuery } = require("../util/paginate");
 
-// TODO: User lists
 // TODO: Add movie to list
 // TODO: Add movie data to list responses
 // TODO: On routes with optional token, list private lists
@@ -36,11 +35,6 @@ async function details(req, res, next) {
     res.status(500).send(e);
     next(e);
   }
-}
-
-async function user(req, res, next) {
-  // TODO lists by user
-  res.status(200).send({});
 }
 
 async function popular(req, res, next) {
@@ -110,7 +104,55 @@ async function curated(req, res, next) {
       )
     );
     res.status(200).send({ page, total_pages, total_results, results: rows });
-  } catch (e) {}
+  } catch (e) {
+    res.status(500).send(e);
+    next(e);
+  }
+}
+
+async function user(req, res, next) {
+  try {
+    const { username } = req.params;
+    const user_id = req?.user?.user_id || -1;
+    let { page, per_page } = req.query;
+    page = page || 1;
+    per_page = per_page || 10;
+
+    const { rows } = await pool.query(
+      `SELECT user_id FROM users
+      WHERE username = $1`,
+      [username]
+    );
+
+    if (rows.length !== 1) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    const { total_results, total_pages } = await getPages(
+      "lists",
+      "user_id",
+      rows[0].user_id,
+      per_page
+    );
+
+    const { rows: userList } = await pool.query(
+      paginateQuery(
+        `SELECT * FROM lists WHERE user_id = $1 ${
+          rows[0].user_id === user_id ? `` : `AND list_type = 'public'`
+        }`,
+        page,
+        per_page
+      ),
+      [rows[0].user_id]
+    );
+
+    res
+      .status(200)
+      .send({ page, total_pages, total_results, results: userList });
+  } catch (e) {
+    res.status(500).send(e);
+    next(e);
+  }
 }
 
 async function create(req, res, next) {
