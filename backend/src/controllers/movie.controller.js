@@ -1,8 +1,6 @@
 const { pool } = require("../services/db");
 const { tmdb } = require("../services/tmdb");
 
-// TODO: Staff picks
-
 async function details(req, res, next) {
   try {
     const { params } = req;
