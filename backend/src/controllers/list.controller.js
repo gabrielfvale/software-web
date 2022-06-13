@@ -1,10 +1,7 @@
 const { pool } = require("../services/db");
 const { getPages, paginateQuery } = require("../util/paginate");
 
-// TODO: Add movie to list
-// TODO: Add movie data to list responses
-// TODO: On routes with optional token, list private lists
-
+// TODO: Treat conflicting primary key errors
 async function details(req, res, next) {
   try {
     const { params } = req;
@@ -135,6 +132,7 @@ async function user(req, res, next) {
       per_page
     );
 
+    // If the user is logged in, display all lists. If not, display only public lists.
     const { rows: userList } = await pool.query(
       paginateQuery(
         `SELECT * FROM lists WHERE user_id = $1 ${
@@ -208,6 +206,37 @@ async function create(req, res, next) {
   }
 }
 
+// Add movie to list
+async function addMovie(req, res, next) {
+  try {
+    const { body } = req;
+    const { list_id, movie_api_id } = body;
+
+    const { rows: exists } = await pool.query(
+      `
+       SELECT * FROM movies_list WHERE list_id = $1
+       `,
+      [list_id]
+    );
+
+    if (exists.length === 0) {
+      return res.status(404).send({ error: "List not found" });
+    }
+
+    await pool.query(
+      `INSERT INTO movies_list (list_id, movie_api_id) 
+      VALUES ($1,$2)
+      `,
+      [list_id, movie_api_id]
+    );
+
+    return res.status(200).send({});
+  } catch (e) {
+    res.status(500).send(e);
+    next(e);
+  }
+}
+
 async function update(req, res, next) {
   try {
     const { body } = req;
@@ -221,8 +250,7 @@ async function update(req, res, next) {
 
     // List not found
     if (rows.length !== 1) {
-      res.status(404).send({ error: "List not found" });
-      return;
+      return res.status(404).send({ error: "List not found" });
     }
 
     // Updates list
@@ -254,7 +282,7 @@ async function update(req, res, next) {
       res.status(500).send({});
     }
   } catch (e) {
-    res.status(400).send(e);
+    res.status(500).send(e);
     next(e);
   }
 }
@@ -288,5 +316,6 @@ module.exports = {
   curated,
   create,
   update,
+  addMovie,
   deleteList,
 };
