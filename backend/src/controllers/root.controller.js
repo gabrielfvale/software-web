@@ -8,7 +8,6 @@ async function status(_, res, next) {
     res.status(200).send({ status: true });
   } catch (e) {
     res.status(500).send({ status: false });
-    next(e);
   }
 }
 

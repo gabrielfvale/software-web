@@ -1,5 +1,6 @@
-const { pool } = require("../services/db");
 const { tmdb } = require("../services/tmdb");
+
+// TODO: Details for multiple movie IDs
 
 async function details(req, res, next) {
   try {

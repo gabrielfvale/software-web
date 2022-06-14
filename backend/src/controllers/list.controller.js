@@ -30,7 +30,6 @@ async function details(req, res, next) {
     res.status(200).send(list);
   } catch (e) {
     res.status(500).send(e);
-    next(e);
   }
 }
 
@@ -71,7 +70,6 @@ async function popular(req, res, next) {
     });
   } catch (e) {
     res.status(500).send(e);
-    next(e);
   }
 }
 
@@ -103,7 +101,6 @@ async function curated(req, res, next) {
     res.status(200).send({ page, total_pages, total_results, results: rows });
   } catch (e) {
     res.status(500).send(e);
-    next(e);
   }
 }
 
@@ -149,7 +146,6 @@ async function user(req, res, next) {
       .send({ page, total_pages, total_results, results: userList });
   } catch (e) {
     res.status(500).send(e);
-    next(e);
   }
 }
 
@@ -202,15 +198,13 @@ async function create(req, res, next) {
     }
   } catch (e) {
     res.status(500).send(e);
-    next(e);
   }
 }
 
 // Add movie to list
 async function addMovie(req, res, next) {
   try {
-    const { body } = req;
-    const { list_id, movie_api_id } = body;
+    const { list_id, movie_api_id } = req.body;
 
     const { rows: exists } = await pool.query(
       `
@@ -239,8 +233,7 @@ async function addMovie(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const { body } = req;
-    const { list_id, name, description, movies } = body;
+    const { list_id, name, description, movies } = req.body;
 
     const { rows } = await pool.query(
       `SELECT list_id FROM lists
@@ -283,14 +276,12 @@ async function update(req, res, next) {
     }
   } catch (e) {
     res.status(500).send(e);
-    next(e);
   }
 }
 
 async function deleteList(req, res, next) {
   try {
-    const { body } = req;
-    const { list_id } = body;
+    const { list_id } = req.body;
 
     const { rowCount } = await pool.query(
       `DELETE FROM lists
@@ -304,8 +295,7 @@ async function deleteList(req, res, next) {
       res.status(404).send({ error: "List does not exist" });
     }
   } catch (e) {
-    res.status(400).send(e);
-    next(e);
+    res.status(500).send(e);
   }
 }
 
