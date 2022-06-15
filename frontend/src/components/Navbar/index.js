@@ -1,24 +1,39 @@
-import { Flex, Text, HStack } from '@chakra-ui/react';
-import theme from '../../styles/theme.js';
+import { Flex, Image, Text, HStack } from '@chakra-ui/react';
+import Logo from '../../assets/Logo.svg';
+
+const routes = [
+  {
+    title: 'Films',
+    route: '/films',
+  },
+  {
+    title: 'Lists',
+    route: '/lists',
+  },
+  {
+    title: 'My profile',
+    route: '/profile',
+  },
+];
 
 const Navbar = () => {
   return (
     <Flex
       color="white"
       bg="m180.navyBlue.500"
-      width="100vw"
-      height="5vw"
+      width="100%"
+      height="6rem"
       justifyContent="space-between"
       alignItems="center"
-      padding="3rem"
+      paddingRight="3rem"
+      paddingLeft="3rem"
     >
-      <Text>Ola</Text>
+      <Image src={Logo} h="4.5rem" objectFit="contain" />
 
       <HStack spacing="24px">
-        <Text>Ola</Text>
-        <Text>Ola</Text>
-        <Text>Ola</Text>
-        <Text>Ola</Text>
+        {routes.map(route => (
+          <Text key={route.route}>{route.title}</Text>
+        ))}
       </HStack>
     </Flex>
   );
