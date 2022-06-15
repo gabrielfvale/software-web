@@ -7,10 +7,14 @@ import {
   VStack,
   Code,
   Grid,
-  theme,
+  Button,
+  Stack,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { Logo } from './Logo';
+import theme from './styles/theme';
+import Hero from './components/Hero';
+import Navbar from './components/Navbar/index.js';
 
 function App() {
   return (
@@ -24,7 +28,7 @@ function App() {
               Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
             </Text>
             <Link
-              color="teal.500"
+              color="m180.pink"
               href="https://chakra-ui.com"
               fontSize="2xl"
               target="_blank"
@@ -32,6 +36,22 @@ function App() {
             >
               Learn Chakra
             </Link>
+
+            <Navbar></Navbar>
+            <Stack direction="row" spacing={4} align="center">
+              <Button colorScheme="m180.navyBlue" variant="solid">
+                Button
+              </Button>
+              <Button colorScheme="m180.navyBlue" variant="outline">
+                Button
+              </Button>
+              <Button colorScheme="m180.navyBlue" variant="ghost">
+                Button
+              </Button>
+              <Button colorScheme="m180.navyBlue" variant="link">
+                Button
+              </Button>
+            </Stack>
           </VStack>
         </Grid>
       </Box>
