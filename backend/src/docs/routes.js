@@ -194,10 +194,10 @@ const movie = {
       },
     },
   },
-  "/movie/popular": {
+  "/movie/trending": {
     get: {
       tags: ["Movie"],
-      summary: "Paginated list of popular movies",
+      summary: "Paginated list of trending movies",
       parameters: [
         {
           in: "query",
@@ -208,7 +208,7 @@ const movie = {
       ],
       responses: {
         200: {
-          description: "Discover search returned",
+          description: "Trending movies returned",
           content: {
             "application/json": {
               schema: {
