@@ -10,30 +10,15 @@ import {
 import { SearchIcon } from '@chakra-ui/icons';
 import Logo from '../../assets/Logo.svg';
 
-const routes = [
-  {
-    title: 'Films',
-    route: '/films',
-  },
-  {
-    title: 'Lists',
-    route: '/lists',
-  },
-  {
-    title: 'My profile',
-    route: '/profile',
-  },
-];
-
-// homepage -> navbar gradiente
-// todos os outros lugares -> navbar com background
-
-const Navbar = ({ transparent = false }) => {
-  const background = transparent
+const Navbar = ({ onHomepage = false, routes = [] }) => {
+  const background = onHomepage
     ? 'linear(to-b,rgba(0,0,0,0.3),transparent)'
     : 'linear(to-r,m180.navyBlue.500,m180.navyBlue.400)';
+
+  const position = onHomepage ? 'absolute' : 'static';
   return (
     <Flex
+      position={position}
       color="white"
       bgGradient={background}
       width="100%"
@@ -43,11 +28,13 @@ const Navbar = ({ transparent = false }) => {
       paddingRight="3rem"
       paddingLeft="3rem"
     >
-      <Image src={Logo} h="4.5rem" objectFit="contain" />
+      <Link href="/">
+        <Image src={Logo} h="4.5rem" objectFit="contain" />
+      </Link>
 
       <HStack spacing="24px">
         {routes.map(route => (
-          <Link minWidth="7rem" key={route.route} href={route.route}>
+          <Link minWidth="7rem" key={route.path} href={route.path}>
             {route.title}
           </Link>
         ))}
@@ -56,7 +43,12 @@ const Navbar = ({ transparent = false }) => {
             pointerEvents="none"
             children={<SearchIcon color="m180.purple" />}
           />
-          <Input variant="filled" type="search" placeholder="Search" />
+          <Input
+            variant="filled"
+            type="search"
+            placeholder="Search"
+            focusBorderColor="white"
+          />
         </InputGroup>
       </HStack>
     </Flex>
