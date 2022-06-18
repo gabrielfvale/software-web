@@ -1,7 +1,9 @@
 import Hero from '../../components/Hero';
-import HomeGrid from '../../components/Movies/HomeGrid/HomeGrid';
-import BasicGrid from '../../components/Grid/BasicGrid';
-import { Button, Heading, Box } from '@chakra-ui/react';
+import HomeGrid from '../../components/Movies/HomeGrid';
+import BasicGrid from '../../components/Grid';
+import { Box } from '@chakra-ui/react';
+import ReviewGrid from '../../components/Review';
+import { useEffect, useState } from 'react';
 
 const Home = () => {
   return (
@@ -12,6 +14,7 @@ const Home = () => {
       <Box paddingLeft="15rem" paddingRight="15rem">
         <HomeGrid></HomeGrid>
         <BasicGrid></BasicGrid>
+        <ReviewGrid></ReviewGrid>
       </Box>
     </Box>
   );
