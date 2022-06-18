@@ -10,7 +10,7 @@ function App() {
   console.log(location);
   return (
     <ChakraProvider theme={theme}>
-      <Box paddingLeft="5rem" paddingRight="5rem">
+      <Box backgroundColor="m180.darkBeige">
         <Navbar routes={publicRoutes} onHomepage={location.pathname === '/'} />
         <Router />
       </Box>
