@@ -1,12 +1,11 @@
 const { pool } = require("../services/db");
 const { tmdb } = require("../services/tmdb");
+const { setCache } = require("../services/cache");
 const {
   getPages,
   getPagesFromCount,
   paginateQuery,
 } = require("../util/paginate");
-
-// TODO: Add request caching
 
 async function get(req, res, next) {
   try {
@@ -29,13 +28,13 @@ async function get(req, res, next) {
     const { rows: results } = await pool.query(
       paginateQuery(
         `
-    SELECT reviews.*,
-    (SELECT username FROM users WHERE users.user_id = reviews.user_id) AS username,
-    (SELECT COUNT(*) FROM comments WHERE comments.review_id = reviews.review_id) AS comments,
-    (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes
-    FROM reviews WHERE movie_api_id=$1
-    ORDER BY reviews.created_at DESC
-    `,
+        SELECT reviews.*,
+        (SELECT username FROM users WHERE users.user_id = reviews.user_id) AS username,
+        (SELECT COUNT(*) FROM comments WHERE comments.review_id = reviews.review_id) AS comments,
+        (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes
+        FROM reviews WHERE movie_api_id=$1
+        ORDER BY reviews.created_at DESC
+        `,
         page,
         per_page
       ),
@@ -98,6 +97,12 @@ async function popular(req, res, next) {
         poster_path: data.poster_path,
       });
     }
+
+    // Set redis cache
+    setCache(
+      req.originalUrl,
+      JSON.stringify({ total_results, total_pages, results })
+    );
 
     return res.send({ total_results, total_pages, results });
   } catch (e) {

@@ -9,7 +9,7 @@ async function getPages(table, column, value, per_page) {
   );
 
   const total_results = Number(review_count[0].count);
-  const total_pages = Math.ceil(total_results / per_page);
+  const total_pages = Math.ceil(total_results / per_page) || 1;
 
   return { total_results, total_pages };
 }
