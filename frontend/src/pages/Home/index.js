@@ -1,6 +1,6 @@
 import Hero from '../../components/Hero';
 import PopularMoviesRow from '../../components/PopularMoviesRow';
-import BasicGrid from '../../components/Grid';
+import HomeCards from '../../components/HomeCards';
 import { Box } from '@chakra-ui/react';
 import ReviewGrid from '../../components/Review';
 
@@ -70,7 +70,7 @@ const Home = () => {
       </Box>
       <Box paddingLeft="15rem" paddingRight="15rem">
         <PopularMoviesRow data={mockPopularMoviesRow} />
-        <BasicGrid />
+        <HomeCards />
         <ReviewGrid />
       </Box>
     </Box>
