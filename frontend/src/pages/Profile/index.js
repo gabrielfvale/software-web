@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
-import MyLists from './components/MyLists';
+import ListingSection from '../../components/ListingSection';
+import ListCard from '../../components/ListCard';
 
 const TEMP_USER = {
   name: 'Laura Petrola',
@@ -36,10 +37,20 @@ const TEMP_USER = {
 
 const Profile = () => {
   return (
-    <Box paddingX="15rem" paddingY="1.5rem" flex={1}>
+    <Box paddingX="15rem" paddingY="1.5rem" flex={1} backgroundColor="white">
       <ProfileHeader user={TEMP_USER} />
       <Box marginBottom="1.5rem" />
-      <MyLists lists={TEMP_USER.lists} />
+      <ListingSection title="My lists" redirectTo={'/'}>
+        <Box display="flex" justifyContent={'space-between'}>
+          {TEMP_USER.lists.map(item => (
+            <ListCard
+              imageUrl={item.image_url}
+              likesAmount={item.likes_amount}
+              title={item.title}
+            />
+          ))}
+        </Box>
+      </ListingSection>
     </Box>
   );
 };
