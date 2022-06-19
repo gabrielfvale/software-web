@@ -1,12 +1,11 @@
 const { pool } = require("../services/db");
 const { tmdb } = require("../services/tmdb");
+const { setCache } = require("../services/cache");
 const {
   getPages,
   getPagesFromCount,
   paginateQuery,
 } = require("../util/paginate");
-
-// TODO: Add request caching
 
 async function get(req, res, next) {
   try {
@@ -98,6 +97,12 @@ async function popular(req, res, next) {
         poster_path: data.poster_path,
       });
     }
+
+    // Set redis cache
+    setCache(
+      req.originalUrl,
+      JSON.stringify({ total_results, total_pages, results })
+    );
 
     return res.send({ total_results, total_pages, results });
   } catch (e) {
