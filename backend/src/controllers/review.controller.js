@@ -65,7 +65,8 @@ async function popular(req, res, next) {
       `
       SELECT COUNT(*) FROM (SELECT reviews.*, COUNT(like_review.review_id) AS likes
       FROM reviews LEFT JOIN like_review ON reviews.review_id = like_review.review_id
-      GROUP BY reviews.review_id) AS count
+      GROUP BY reviews.review_id
+      HAVING COUNT(like_review.review_id) > 0) AS count
       `
     );
     const total_results = Number(count[0].count);
@@ -78,6 +79,7 @@ async function popular(req, res, next) {
         SELECT reviews.*, COUNT(like_review.review_id) AS likes
         FROM reviews LEFT JOIN like_review ON reviews.review_id = like_review.review_id
         GROUP BY reviews.review_id
+        HAVING COUNT(like_review.review_id) > 0
         ORDER BY likes DESC
         `,
         page,
