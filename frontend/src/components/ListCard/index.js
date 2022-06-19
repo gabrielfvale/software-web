@@ -1,6 +1,6 @@
 import { Box, Image, Text } from '@chakra-ui/react';
 
-const MyListCard = ({ imageUrl, title, likesAmount }) => {
+const ListCard = ({ imageUrl, title, likesAmount }) => {
   return (
     <Box
       flex={1}
@@ -17,9 +17,11 @@ const MyListCard = ({ imageUrl, title, likesAmount }) => {
         objectFit={'cover'}
       />
       <Text fontWeight={'medium'}>{title}</Text>
-      <Text fontSize={'xs'}>❤️ {likesAmount} likes</Text>
+      <Text fontSize={'xs'} fontWeight={'medium'}>
+        ❤️ {likesAmount} likes
+      </Text>
     </Box>
   );
 };
 
-export default MyListCard;
+export default ListCard;

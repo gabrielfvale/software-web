@@ -1,5 +1,5 @@
 import { Box, Text, useTheme } from '@chakra-ui/react';
-import MyListCard from '../MyListCard';
+import ListCard from '../../../../components/ListCard';
 
 const MyLists = ({ lists }) => {
   const theme = useTheme();
@@ -22,7 +22,7 @@ const MyLists = ({ lists }) => {
       </Box>
       <Box display="flex" justifyContent={'space-between'}>
         {lists.map(item => (
-          <MyListCard
+          <ListCard
             imageUrl={item.image_url}
             likesAmount={item.likes_amount}
             title={item.title}
