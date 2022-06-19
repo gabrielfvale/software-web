@@ -4,7 +4,7 @@ const { TMDB_API_URL, TMDB_BEARER_TOKEN } = process.env;
 
 const tmdb = axios.create({
   baseURL: TMDB_API_URL,
-  timeout: 1000,
+  timeout: 10000,
   headers: {
     Accept: "*/*",
     "Content-Type": "application/json",

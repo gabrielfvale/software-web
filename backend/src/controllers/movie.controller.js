@@ -24,6 +24,30 @@ async function details(req, res, next) {
   }
 }
 
+async function many(req, res, next) {
+  try {
+    const { movies } = req.params;
+    const moviesArr = movies.split(",");
+
+    const results = [];
+
+    for (let i = 0; i < moviesArr.length; i++) {
+      const { data } = await tmdb.get(`/movie/${moviesArr[i]}`);
+      results.push({
+        id: data.id,
+        poster_path: data.poster_path,
+        title: data.title,
+        release_date: data.release_date,
+      });
+    }
+
+    return res.status(200).json(results);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({});
+  }
+}
+
 async function trending(req, res, next) {
   try {
     const { query } = req;
@@ -96,4 +120,4 @@ async function discover(req, res, next) {
   }
 }
 
-module.exports = { details, trending, recommendations, discover };
+module.exports = { details, many, trending, recommendations, discover };
