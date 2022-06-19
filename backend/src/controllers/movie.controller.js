@@ -1,6 +1,5 @@
 const { tmdb } = require("../services/tmdb");
-
-// TODO: Add request caching
+const { setCache } = require("../services/cache");
 
 async function details(req, res, next) {
   try {
@@ -40,6 +39,8 @@ async function many(req, res, next) {
         poster_path: data.poster_path,
       });
     }
+
+    setCache(req.originalUrl, JSON.stringify(results));
 
     return res.status(200).json(results);
   } catch (e) {
