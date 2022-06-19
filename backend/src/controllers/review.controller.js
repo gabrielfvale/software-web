@@ -75,11 +75,13 @@ async function popular(req, res, next) {
     const { rows } = await pool.query(
       paginateQuery(
         `
-        SELECT reviews.*, COUNT(like_review.review_id) AS likes
-        FROM reviews LEFT JOIN like_review ON reviews.review_id = like_review.review_id
-        GROUP BY reviews.review_id
-        HAVING COUNT(like_review.review_id) > 0
-        ORDER BY likes DESC
+        SELECT popular_reviews.*, users.username FROM (
+          SELECT reviews.*, COUNT(like_review.review_id) AS likes
+                FROM reviews LEFT JOIN like_review ON reviews.review_id = like_review.review_id
+                GROUP BY reviews.review_id
+                HAVING COUNT(like_review.review_id) > 0
+                ORDER BY likes DESC) as popular_reviews
+          INNER JOIN users ON users.user_id = popular_reviews.user_id
         `,
         page,
         per_page
