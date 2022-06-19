@@ -10,5 +10,5 @@ docker-down:
 	docker rm filmit-postgres filmit-redis
 
 create-db:
-	docker cp ./data/tables.sql filmit:/docker-entrypoint-initdb.d/tables.sql
-	docker exec -u postgres filmit psql filmit postgres -f docker-entrypoint-initdb.d/tables.sql
+	docker cp ./data/tables.sql filmit-postgres:/docker-entrypoint-initdb.d/tables.sql
+	docker exec -u postgres filmit-postgres psql filmit postgres -f docker-entrypoint-initdb.d/tables.sql
