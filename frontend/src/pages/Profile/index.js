@@ -37,7 +37,7 @@ const TEMP_USER = {
 
 const Profile = () => {
   return (
-    <Box paddingX="15rem" paddingY="1.5rem" flex={1} backgroundColor="white">
+    <Box paddingX="15rem" paddingY="1.5rem" flex={1}>
       <ProfileHeader user={TEMP_USER} />
       <Box marginBottom="1.5rem" />
       <ListingSection title="My lists" redirectTo={'/'}>

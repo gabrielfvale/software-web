@@ -1,6 +1,7 @@
 import { Box, Image, Text } from '@chakra-ui/react';
+import { AiFillHeart } from 'react-icons/ai';
 
-const ListCard = ({ imageUrl, title, likesAmount }) => {
+const ListCard = ({ imageUrl, title, likes }) => {
   return (
     <Box
       flex={1}
@@ -18,7 +19,7 @@ const ListCard = ({ imageUrl, title, likesAmount }) => {
       />
       <Text fontWeight={'medium'}>{title}</Text>
       <Text fontSize={'xs'} fontWeight={'medium'}>
-        ❤️ {likesAmount} likes
+        <AiFillHeart /> {likes} likes
       </Text>
     </Box>
   );

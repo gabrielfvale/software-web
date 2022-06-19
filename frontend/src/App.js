@@ -13,9 +13,7 @@ function App() {
     <ChakraProvider theme={theme}>
       <Box backgroundColor="m180.beige">
         <Navbar routes={publicRoutes} onHomepage={location.pathname === '/'} />
-        <Box minHeight={'100vh'} bg="white">
-          <Router />
-        </Box>
+        <Router />
         <Footer />
       </Box>
     </ChakraProvider>
