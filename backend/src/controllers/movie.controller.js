@@ -1,6 +1,6 @@
 const { tmdb } = require("../services/tmdb");
 
-// TODO: Details for multiple movie IDs
+// TODO: Add request caching
 
 async function details(req, res, next) {
   try {
@@ -24,11 +24,35 @@ async function details(req, res, next) {
   }
 }
 
-async function popular(req, res, next) {
+async function many(req, res, next) {
+  try {
+    const { movies } = req.params;
+    const moviesArr = movies.split(",");
+
+    const results = [];
+
+    for (let i = 0; i < moviesArr.length; i++) {
+      const { data } = await tmdb.get(`/movie/${moviesArr[i]}`);
+      results.push({
+        id: data.id,
+        title: data.title,
+        release_date: data.release_date,
+        poster_path: data.poster_path,
+      });
+    }
+
+    return res.status(200).json(results);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({});
+  }
+}
+
+async function trending(req, res, next) {
   try {
     const { query } = req;
     const page = query.page || 1;
-    const { data } = await tmdb.get(`/movie/popular?page=${page}`);
+    const { data } = await tmdb.get(`/trending/movies/week?page=${page}`);
     res.json({
       page: data.page,
       total_pages: data.total_pages,
@@ -96,4 +120,4 @@ async function discover(req, res, next) {
   }
 }
 
-module.exports = { details, popular, recommendations, discover };
+module.exports = { details, many, trending, recommendations, discover };
