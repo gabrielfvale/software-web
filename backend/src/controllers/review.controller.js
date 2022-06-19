@@ -1,7 +1,12 @@
 const { pool } = require("../services/db");
-const { getPages, paginateQuery } = require("../util/paginate");
+const { tmdb } = require("../services/tmdb");
+const {
+  getPages,
+  getPagesFromCount,
+  paginateQuery,
+} = require("../util/paginate");
 
-// TODO: Popular reviews
+// TODO: Add request caching
 
 async function get(req, res, next) {
   try {
@@ -51,6 +56,48 @@ async function get(req, res, next) {
 
 async function popular(req, res, next) {
   try {
+    let { page, per_page } = req.query;
+    page = page || 1;
+    per_page = per_page || 10;
+
+    // Count reviews for pagination
+    const { rows: count } = await pool.query(
+      `
+      SELECT COUNT(*) FROM (SELECT reviews.*, COUNT(like_review.review_id) AS likes
+      FROM reviews LEFT JOIN like_review ON reviews.review_id = like_review.review_id
+      GROUP BY reviews.review_id) AS count
+      `
+    );
+    const total_results = Number(count[0].count);
+    const total_pages = getPagesFromCount(total_results, per_page);
+
+    // Get reviews
+    const { rows } = await pool.query(
+      paginateQuery(
+        `
+        SELECT reviews.*, COUNT(like_review.review_id) AS likes
+        FROM reviews LEFT JOIN like_review ON reviews.review_id = like_review.review_id
+        GROUP BY reviews.review_id
+        ORDER BY likes DESC
+        `,
+        page,
+        per_page
+      )
+    );
+
+    // Get movie details for each review
+    const results = [];
+    for (let i = 0; i < rows.length; i++) {
+      const { data } = await tmdb.get(`/movie/${rows[i].movie_api_id}`);
+      results.push({
+        ...rows[i],
+        title: data.title,
+        release_date: data.release_date,
+        poster_path: data.poster_path,
+      });
+    }
+
+    return res.send({ total_results, total_pages, results });
   } catch (e) {
     res.status(500).send({});
   }

@@ -1,6 +1,6 @@
 const { tmdb } = require("../services/tmdb");
 
-// TODO: Details for multiple movie IDs
+// TODO: Add request caching
 
 async function details(req, res, next) {
   try {
@@ -35,9 +35,9 @@ async function many(req, res, next) {
       const { data } = await tmdb.get(`/movie/${moviesArr[i]}`);
       results.push({
         id: data.id,
-        poster_path: data.poster_path,
         title: data.title,
         release_date: data.release_date,
+        poster_path: data.poster_path,
       });
     }
 
