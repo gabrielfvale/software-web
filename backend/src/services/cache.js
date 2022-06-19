@@ -15,7 +15,8 @@ async function getCache(key) {
   return await cache.get(key);
 }
 
-async function setCache(key, value, expiration = 60) {
+async function setCache(key, value, expiration = 1800) {
+  // Defaults expiration to 30 minutes
   return await cache.set(key, value, "EX", expiration);
 }
 
