@@ -27,10 +27,29 @@ const theme = extendTheme({
       purple: '#710965',
     },
   },
+  dimensions: {
+    navbar: '6rem',
+    footer: '8rem',
+  },
   fonts: {
     body: 'Poppins, sans-serif',
     heading: 'Poppins, sans-serif',
     mono: 'Menlo, monospace',
+  },
+  styles: {
+    global: {
+      body: {
+        bg: 'm180.beige',
+      },
+    },
+  },
+  components: {
+    Button: {
+      defaultProps: {
+        size: 'lg',
+        colorScheme: 'm180.pink',
+      },
+    },
   },
 });
 

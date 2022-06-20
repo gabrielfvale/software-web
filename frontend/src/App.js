@@ -8,10 +8,9 @@ import { useLocation } from 'react-router-dom';
 
 function App() {
   const location = useLocation();
-  console.log(location);
   return (
     <ChakraProvider theme={theme}>
-      <Box backgroundColor="m180.beige">
+      <Box position="relative" minH="100vh" paddingBottom="8rem">
         <Navbar routes={publicRoutes} onHomepage={location.pathname === '/'} />
         <Router />
         <Footer />
