@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
   Box,
   StackDivider,
@@ -9,8 +10,8 @@ import {
   Text,
   useTheme,
 } from '@chakra-ui/react';
-import { AiFillHeart, AiOutlineComment, AiFillStar } from 'react-icons/ai';
-import moment from 'moment';
+import { AiFillHeart, AiFillStar } from 'react-icons/ai';
+import { FaComment } from 'react-icons/fa';
 const DetailedReview = ({ data = [] }) => {
   const theme = useTheme();
   const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
@@ -78,9 +79,7 @@ const DetailedReview = ({ data = [] }) => {
                       {review.likes} likes
                     </Text>
                     <Link>
-                      <AiOutlineComment
-                        color={theme.colors.m180.darkPink}
-                      ></AiOutlineComment>
+                      <FaComment color={theme.colors.m180.darkPink}></FaComment>
                     </Link>
                     <Text marginLeft="0.2rem" marginRight="2rem" fontSize="xs">
                       {review.comments} comments
