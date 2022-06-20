@@ -10,26 +10,22 @@ import {
   useTheme,
 } from '@chakra-ui/react';
 import { AiFillHeart, AiOutlineComment, AiFillStar } from 'react-icons/ai';
-
+import moment from 'moment';
 const DetailedReview = ({ data = [] }) => {
   const theme = useTheme();
   const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
   return (
     <Flex
-      divider={<StackDivider borderColor="gray.200" />}
-      spacing={4}
-      align="stretch"
+      divider={<StackDivider borderColor={theme.colors.darkBeige} />}
       paddingTop="5rem"
       paddingBottom="5rem"
-      display="flex"
-      alignItems="center"
     >
       <VStack
-        divider={<StackDivider borderColor="gray.200" />}
+        divider={<StackDivider borderColor={theme.colors.darkBeige} />}
         spacing={4}
-        align="stretch"
       >
         {data.map(review => {
+          review.release_date = moment(review.release_date).format('YYYY');
           return (
             <Box
               key={review.review_id}
@@ -86,9 +82,8 @@ const DetailedReview = ({ data = [] }) => {
                         color={theme.colors.m180.darkPink}
                       ></AiOutlineComment>
                     </Link>
-
                     <Text marginLeft="0.2rem" marginRight="2rem" fontSize="xs">
-                      {review.likes} likes
+                      {review.comments} comments
                     </Text>
                   </Box>
                 </Box>

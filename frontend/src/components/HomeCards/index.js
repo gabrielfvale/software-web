@@ -38,7 +38,9 @@ const HomeCards = () => {
   ];
   return (
     <Box paddingBottom="2rem">
-      <Heading size="md">Filmit allows you to...</Heading>
+      <Heading marginBottom="1rem" size="md">
+        Filmit allows you to...
+      </Heading>
 
       <Box>
         <Grid
