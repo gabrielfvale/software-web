@@ -2,10 +2,12 @@ import { Box, Text, Button } from '@chakra-ui/react';
 
 const ProfileHeader = ({ user }) => {
   return (
-    <Box display={'flex'} justifyContent="space-between">
+    <Box display="flex" justifyContent="space-between">
       <Box width="50%">
         <Box marginBottom="1" display="flex" alignItems="center">
-          <Text fontWeight="medium">{user.name}</Text>
+          <Text fontWeight="medium">
+            {user.first_name} {user.last_name}
+          </Text>
           <Box marginLeft={2}>
             <Button
               h="1.75rem"
@@ -19,10 +21,10 @@ const ProfileHeader = ({ user }) => {
         </Box>
         <Box marginBottom="1">
           <Text fontSize="xs" fontWeight="medium">
-            {user.location}
+            {user.country}
           </Text>
         </Box>
-        <Text fontSize="xs">{user.description}</Text>
+        <Text fontSize="xs">{user.bio}</Text>
       </Box>
       <Box display={'flex'}>
         <Box
@@ -31,7 +33,7 @@ const ProfileHeader = ({ user }) => {
           alignItems={'center'}
           paddingX="1rem"
         >
-          <Text fontWeight="medium">{user.film_data.lists}</Text>
+          <Text fontWeight="medium">{user.stats.lists_created}</Text>
           <Text fontWeight="medium">LISTS</Text>
         </Box>
         <Box
@@ -40,8 +42,8 @@ const ProfileHeader = ({ user }) => {
           alignItems={'center'}
           paddingX="1rem"
         >
-          <Text fontWeight="medium">{user.film_data.films_this_year}</Text>
-          <Text fontWeight="medium">THIS YEAR</Text>
+          <Text fontWeight="medium">{user.stats.movies_reviewed}</Text>
+          <Text fontWeight="medium">REVIEWED</Text>
         </Box>
         <Box
           display="flex"
@@ -49,8 +51,8 @@ const ProfileHeader = ({ user }) => {
           alignItems={'center'}
           paddingX="1rem"
         >
-          <Text fontWeight="medium">{user.film_data.films_total}</Text>
-          <Text fontWeight="medium">FILMS</Text>
+          <Text fontWeight="medium">{user.stats.likes_received}</Text>
+          <Text fontWeight="medium">LIKES</Text>
         </Box>
       </Box>
     </Box>
