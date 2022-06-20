@@ -1,56 +1,96 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
-import ListingSection from '../../components/ListingSection';
+import ListingSection from '../../components/ListingSection'; // TODO: delete
 import ListCard from '../../components/ListCard';
 
-const TEMP_USER = {
-  name: 'Laura Petrola',
-  location: 'Brazil',
-  description:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim.',
-  film_data: {
-    lists: 10,
-    films_this_year: 10,
-    films_total: 10,
-  },
-  lists: [
+const mockLists = {
+  results: [
     {
-      title: 'Random name',
-      image_url:
-        'https://is5-ssl.mzstatic.com/image/thumb/Video113/v4/78/39/16/78391672-b014-2f71-6b48-24798bf47038/BatmanBegins_H_DD_KAalt_4320x3240_300dpi_EN.png/1200x675mf.jpg',
-      likes_amount: '1,234',
+      title: 'Upcoming Movies',
+      movies: [
+        {
+          poster_path: '/vpILbP9eOQEtdQgl4vgjZUNY07r.jpg',
+        },
+        {
+          poster_path: '/kAVRgw7GgK1CfYEJq8ME6EvRIgU.jpg',
+        },
+        {
+          poster_path: '/QaNLpq3Wuu2yp5ESsXYcQCOpUk.jpg',
+        },
+      ],
+      likes: 1234,
     },
     {
-      title: 'Another list name',
-      image_url:
-        'https://is5-ssl.mzstatic.com/image/thumb/Video113/v4/78/39/16/78391672-b014-2f71-6b48-24798bf47038/BatmanBegins_H_DD_KAalt_4320x3240_300dpi_EN.png/1200x675mf.jpg',
-      likes_amount: '47,849',
+      title: 'Animations',
+      movies: [
+        {
+          poster_path: '/dyhaB19AICF7TO7CK2aD6KfymnQ.jpg',
+        },
+        {
+          poster_path: '/sgheSKxZkttIe8ONsf2sWXPgip3.jpg',
+        },
+        {
+          poster_path: '/2LqaLgk4Z226KkgPJuiOQ58wvrm.jpg',
+        },
+        {
+          poster_path: '/fnKCh67l2DDG9NxxIlk9IpsXQ99.jpg',
+        },
+      ],
+      likes: 1234,
     },
     {
-      title: 'A third list',
-      image_url:
-        'https://is5-ssl.mzstatic.com/image/thumb/Video113/v4/78/39/16/78391672-b014-2f71-6b48-24798bf47038/BatmanBegins_H_DD_KAalt_4320x3240_300dpi_EN.png/1200x675mf.jpg',
-      likes_amount: '778',
+      title: 'Favorites',
+      movies: [
+        {
+          poster_path: '/vpILbP9eOQEtdQgl4vgjZUNY07r.jpg',
+        },
+        {
+          poster_path: '/stTEycfG9928HYGEISBFaG1ngjM.jpg',
+        },
+        {
+          poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
+        },
+        {
+          poster_path: '/qJRB789ceLryrLvOKrZqLKr2CGf.jpg',
+        },
+      ],
+      likes: 1234,
     },
   ],
 };
 
+const mockStats = {
+  movies_reviewed: 0,
+  lists_created: 0,
+  likes_received: 0,
+};
+
+const mockUser = {
+  user_id: 1,
+  first_name: 'Usuario',
+  last_name: 'Teste',
+  bio: 'Usuario de teste',
+  country: 'BR',
+  admin: false,
+  stats: mockStats,
+};
+
 const Profile = () => {
+  const lists = mockLists.results;
   return (
-    <Box paddingX="15rem" paddingY="1.5rem" flex={1}>
-      <ProfileHeader user={TEMP_USER} />
+    <Box marginX="15rem" paddingY="1.5rem">
+      <ProfileHeader user={mockUser} />
       <Box marginBottom="1.5rem" />
-      <ListingSection title="My lists" redirectTo={'/'}>
-        <Box display="flex" justifyContent={'space-between'}>
-          {TEMP_USER.lists.map(item => (
-            <ListCard
-              imageUrl={item.image_url}
-              likesAmount={item.likes_amount}
-              title={item.title}
-            />
-          ))}
-        </Box>
-      </ListingSection>
+      <Flex gap="5">
+        {lists.map((item, index) => (
+          <ListCard
+            key={item.title + index}
+            title={item.title}
+            movies={item.movies}
+            likes={item.likes}
+          />
+        ))}
+      </Flex>
     </Box>
   );
 };

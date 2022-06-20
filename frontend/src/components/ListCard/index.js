@@ -11,6 +11,7 @@ const ListCard = ({ title = '', movies = [], likes = 0 }) => {
       padding="0.5rem"
       borderRadius="0.4rem"
       width="20rem"
+      minWidth="15rem"
     >
       <StackedPosters posters={moviePosters} />
       <Text fontWeight="medium">{title}</Text>
