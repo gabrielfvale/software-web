@@ -3,7 +3,7 @@ import { Image, Box, useDimensions } from '@chakra-ui/react';
 
 const StackedPosters = ({ posters = [] }) => {
   const elementRef = useRef();
-  const dimensions = useDimensions(elementRef);
+  const dimensions = useDimensions(elementRef, true);
 
   const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
   const w = 'w300';
