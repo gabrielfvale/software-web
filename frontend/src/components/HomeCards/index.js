@@ -1,4 +1,4 @@
-import { Grid, GridItem, Box, Text, Heading, useTheme } from '@chakra-ui/react';
+import { Grid, GridItem, Box, Text, Heading, Icon } from '@chakra-ui/react';
 import {
   AiOutlineEye,
   AiOutlineHeart,
@@ -9,7 +9,6 @@ import {
 } from 'react-icons/ai';
 
 const HomeCards = () => {
-  const theme = useTheme();
   const cards = [
     {
       text: 'Keep track of every film you’ve ever watched (or just start from the day you join)',
@@ -58,7 +57,12 @@ const HomeCards = () => {
               alignItems="center"
               gap="1rem"
             >
-              <card.icon size="2.5rem" color={theme.colors.m180.navyBlue} />
+              <Icon
+                as={card.icon}
+                w="2.5rem"
+                h="2.5rem"
+                color="m180.navyBlue"
+              />
 
               <Text color="m180.navyBlue" fontSize="sm" flex="1">
                 {card.text}

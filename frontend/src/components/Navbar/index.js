@@ -33,7 +33,7 @@ const Navbar = ({ onHomepage = false, routes = [] }) => {
         <Image src={Logo} h="4.5rem" objectFit="contain" />
       </Link>
 
-      <HStack spacing="24px">
+      <HStack>
         {routes.map(route => (
           <Link minWidth="7rem" key={route.path} href={route.path}>
             {route.title}

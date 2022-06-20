@@ -1,29 +1,51 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text, Link, HStack, Icon } from '@chakra-ui/react';
+import { AiFillHeart } from 'react-icons/ai';
 
 const Footer = () => {
+  const links = [
+    {
+      text: 'About',
+      href: '/about',
+    },
+    {
+      text: 'Help',
+      href: '/',
+    },
+    {
+      text: 'Terms',
+      href: '/',
+    },
+    {
+      text: 'Contact',
+      href: '/',
+    },
+  ];
+
   return (
     <Box
+      bg="m180.darkBeige"
       width="100%"
-      height={'8rem'}
+      height="8rem"
       paddingX="15rem"
       paddingY="1rem"
-      bg="m180.darkBeige"
+      position="absolute"
+      bottom="0"
     >
-      <Box display="flex">
-        <Text fontSize={'xs'} color={'m180.darkPink'} marginRight="1rem">
-          About
-        </Text>
-        <Text fontSize={'xs'} color={'m180.darkPink'} marginRight="1rem">
-          Help
-        </Text>
-        <Text fontSize={'xs'} color={'m180.darkPink'} marginRight="1rem">
-          Terms
-        </Text>
-        <Text fontSize={'xs'} color={'m180.darkPink'} marginRight="1rem">
-          Contact
-        </Text>
-      </Box>
-      <Text fontSize={'xx-small'}>Contact</Text>
+      <HStack>
+        {links.map(link => (
+          <Link
+            key={link.text}
+            href={link.href}
+            color="m180.darkPink"
+            fontSize="sm"
+          >
+            {link.text}
+          </Link>
+        ))}
+      </HStack>
+      <Text fontSize="xs">
+        Filmit Limited. Made with <Icon as={AiFillHeart} /> by fans.
+      </Text>
     </Box>
   );
 };

@@ -23,14 +23,17 @@ import {
 
 import React from 'react';
 
-const Hero = ({ src }) => {
+const Hero = ({ backdrop }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
 
+  const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
+  const w = 'w1280';
+
   return (
     <Box position="relative">
-      <Image width="100%" src={src} />
+      <Image width="100%" src={`${mediaUrl}${w}${backdrop}`} />
       <Flex
         position="absolute"
         top="0"
@@ -63,10 +66,7 @@ const Hero = ({ src }) => {
 
         <Button
           display="block"
-          marginLeft="auto"
-          marginRight="auto"
-          colorScheme="m180.pink"
-          size="lg"
+          marginX="auto"
           width="20rem"
           borderRadius="2rem"
           onClick={onOpen}
