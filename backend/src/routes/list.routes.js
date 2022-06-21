@@ -7,6 +7,9 @@ router.get("/user/:username", optionalToken, listController.user);
 router.get("/popular", listController.popular);
 router.get("/curated", listController.curated);
 router.get("/:id", optionalToken, listController.details);
+
+router.post("/like", authenticateToken, listController.like);
+
 router.post("/add-movie", authenticateToken, listController.addMovie);
 router.post("/", authenticateToken, listController.create);
 router.put("/", authenticateToken, listController.update);

@@ -358,6 +358,55 @@ async function deleteList(req, res) {
   }
 }
 
+async function like(req, res) {
+  try {
+    const { user_id } = req.user;
+    const { list_id } = req.body;
+
+    // Find list
+    const { rows } = await pool.query(`SELECT * FROM lists WHERE list_id=$1`, [
+      list_id,
+    ]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "List not found" });
+    }
+
+    const list = rows[0];
+
+    // If list belongs to user trying to like, return error
+    if (list.user_id === String(user_id)) {
+      return res
+        .status(400)
+        .json({ error: "Not possible to like your own list" });
+    }
+
+    const { rows: like_rows } = await pool.query(
+      `SELECT * FROM like_list WHERE user_id=$1 AND list_id=$2`,
+      [user_id, list.list_id]
+    );
+
+    // Like or unlike list
+    if (like_rows.length === 0) {
+      // User is going to like list
+      await pool.query(
+        `INSERT INTO like_list (user_id, list_id) VALUES ($1, $2)`,
+        [user_id, list.list_id]
+      );
+    } else {
+      // User is going to unlike list
+      await pool.query(
+        `DELETE FROM like_list WHERE user_id=$1 AND list_id=$2`,
+        [user_id, list.list_id]
+      );
+    }
+    res.status(200).end();
+  } catch (e) {
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
+  }
+}
+
 module.exports = {
   details,
   user,
@@ -367,4 +416,5 @@ module.exports = {
   update,
   addMovie,
   deleteList,
+  like,
 };
