@@ -1,5 +1,9 @@
 const { pool } = require("../services/db");
-const { getPages, paginateQuery } = require("../util/paginate");
+const {
+  getPages,
+  getPagesFromCount,
+  paginateQuery,
+} = require("../util/paginate");
 const { errorHandler } = require("../util/error");
 
 async function details(req, res) {
@@ -44,39 +48,61 @@ async function details(req, res) {
 }
 
 async function popular(req, res) {
-  // TODO: pagination
   try {
+    let { page, per_page } = req.query;
+    page = page || 1;
+    per_page = per_page || 10;
+
+    const { rows: count } = await pool.query(
+      `
+      SELECT COUNT(*) FROM (SELECT lists.*, COUNT(like_list.list_id) AS likes
+      FROM lists LEFT JOIN like_list ON lists.list_id = like_list.list_id
+      WHERE list_type='public'
+      GROUP BY lists.list_id
+      HAVING COUNT(like_list.list_id) > 0) AS count
+      `
+    );
+    const total_results = Number(count[0].count);
+    const total_pages = getPagesFromCount(total_results, per_page);
+
+    // Get lists
     const { rows } = await pool.query(
-      `SELECT lk.list_id, l.name, l.description, l.created_at, l.updated_at, likes
-      FROM lists as l
-      INNER JOIN (
-        SELECT like_list.list_id, COUNT(*) as likes
-        FROM like_list
-        GROUP BY like_list.list_id
-      ORDER BY COUNT(*) DESC) as lk on l.list_id = lk.list_id
-      WHERE l.list_type = 'public'`
+      paginateQuery(
+        `
+        SELECT lists.*, COUNT(like_list.list_id) AS likes
+        FROM lists LEFT JOIN like_list ON lists.list_id = like_list.list_id
+        WHERE list_type='public'
+        GROUP BY lists.list_id
+        HAVING COUNT(like_list.list_id) > 0
+        `,
+        page,
+        per_page
+      )
     );
 
-    const lists = [];
-    for (listIndex in rows) {
+    // Get movies for each list
+    const results = [];
+    for (list of rows) {
       const { rows: movies } = await pool.query(
-        `SELECT movie_api_id
-      FROM movies_list
-      WHERE list_id=$1`,
-        [rows[listIndex].list_id]
+        `
+        SELECT movie_api_id
+        FROM movies_list
+        WHERE list_id=$1
+        `,
+        [list.list_id]
       );
 
-      lists.push({
-        ...rows[listIndex],
+      results.push({
+        ...list,
         movies: movies.map((movie) => Number(movie.movie_api_id)),
       });
     }
 
     res.status(200).json({
-      page: 1,
-      total_pages: 1,
-      total_results: 1,
-      results: lists,
+      page,
+      total_pages,
+      total_results,
+      results,
     });
   } catch (e) {
     const { status, body } = errorHandler(e);

@@ -84,8 +84,6 @@ async function popular(req, res) {
                 HAVING COUNT(like_review.review_id) > 0
                 ORDER BY likes,comments  DESC) as popular_reviews
           INNER JOIN users ON users.user_id = popular_reviews.user_id
-
-
         `,
         page,
         per_page
