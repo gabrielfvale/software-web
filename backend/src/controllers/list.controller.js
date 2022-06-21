@@ -2,7 +2,6 @@ const { pool } = require("../services/db");
 const { getPages, paginateQuery } = require("../util/paginate");
 const { errorHandler } = require("../util/error");
 
-// TODO: Treat conflicting primary key errors
 async function details(req, res) {
   try {
     const { params } = req;
@@ -133,7 +132,8 @@ async function user(req, res) {
       per_page
     );
 
-    // If the user is logged in, display all lists. If not, display only public lists.
+    // If the user is logged in, display all lists.
+    // If not, display only public lists.
     const { rows: userList } = await pool.query(
       paginateQuery(
         `SELECT * FROM lists WHERE user_id = $1 ${
@@ -207,7 +207,6 @@ async function create(req, res) {
   }
 }
 
-// Add movie to list
 async function addMovie(req, res) {
   try {
     const { list_id, movie_api_id } = req.body;
