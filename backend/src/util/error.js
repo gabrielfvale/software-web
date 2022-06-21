@@ -2,8 +2,6 @@ function errorHandler(err) {
   let status = 500;
   let error = "A server error has ocurred";
 
-  console.log(err);
-
   if (err?.code === "ECONNABORTED") {
     error = "Unable to reach TMDB API";
   }

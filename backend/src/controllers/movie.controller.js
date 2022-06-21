@@ -51,11 +51,11 @@ async function many(req, res) {
   }
 }
 
-async function trending(req, res) {
+async function popular(req, res) {
   try {
     const { query } = req;
     const page = query.page || 1;
-    const { data } = await tmdb.get(`/trending/movies/week?page=${page}`);
+    const { data } = await tmdb.get(`/movie/popular?page=${page}`);
     res.status(200).json({
       page: data.page,
       total_pages: data.total_pages,
@@ -126,4 +126,4 @@ async function discover(req, res) {
   }
 }
 
-module.exports = { details, many, trending, recommendations, discover };
+module.exports = { details, many, popular, recommendations, discover };

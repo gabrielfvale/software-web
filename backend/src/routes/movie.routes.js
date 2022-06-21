@@ -3,7 +3,7 @@ const router = express.Router();
 const { cacheMiddleware } = require("../middlewares/cache");
 const movieController = require("../controllers/movie.controller");
 
-router.get("/trending", movieController.trending);
+router.get("/popular", movieController.popular);
 router.get("/many/:movies", cacheMiddleware, movieController.many);
 router.get("/discover", movieController.discover);
 router.get("/:id/recommendations", movieController.recommendations);
