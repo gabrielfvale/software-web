@@ -35,4 +35,13 @@ async function health(_, res) {
   res.json(status);
 }
 
-module.exports = { health };
+async function config(_, res) {
+  try {
+    const { data } = await tmdb.get("/configuration");
+    res.status(200).json(data);
+  } catch (e) {
+    res.status(500).end();
+  }
+}
+
+module.exports = { health, config };
