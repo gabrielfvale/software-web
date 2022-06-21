@@ -5,6 +5,7 @@ const { errorHandler } = require("../util/error");
 async function details(req, res) {
   try {
     const { params } = req;
+    const user_id = req?.user?.user_id || -1;
 
     const { rows } = await pool.query(
       `SELECT * FROM lists
@@ -19,6 +20,14 @@ async function details(req, res) {
     }
 
     const list = rows[0];
+
+    // If a list is private, check if it belongs to user
+    if (
+      list.list_type === "private" &&
+      String(list.user_id) !== String(user_id)
+    ) {
+      return res.status(403).end();
+    }
 
     const { rows: movies } = await pool.query(
       `SELECT movie_api_id FROM movies_list
@@ -111,6 +120,7 @@ async function user(req, res) {
   try {
     const { username } = req.params;
     const user_id = req?.user?.user_id || -1;
+
     let { page, per_page } = req.query;
     page = page || 1;
     per_page = per_page || 10;
@@ -303,11 +313,12 @@ async function update(req, res) {
 async function deleteList(req, res) {
   try {
     const { list_id } = req.body;
+    const { user_id } = req.user;
 
     const { rowCount } = await pool.query(
       `DELETE FROM lists
-      WHERE list_id=$1`,
-      [list_id]
+      WHERE list_id=$1 AND user_id=$2`,
+      [list_id, user_id]
     );
 
     if (rowCount == 1) {
