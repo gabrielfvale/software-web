@@ -145,9 +145,24 @@ async function user(req, res) {
       [rows[0].user_id]
     );
 
+    // Fetch movies for each list
+    const updatedList = [];
+    for (list of userList) {
+      const { rows: movies } = await pool.query(
+        `SELECT movie_api_id FROM movies_list
+        WHERE list_id=$1`,
+        [list.list_id]
+      );
+      delete list.user_id;
+      updatedList.push({
+        ...list,
+        movies: movies.map((movie) => Number(movie.movie_api_id)),
+      });
+    }
+
     res
       .status(200)
-      .json({ page, total_pages, total_results, results: userList });
+      .json({ page, total_pages, total_results, results: updatedList });
   } catch (e) {
     const { status, body } = errorHandler(e);
     res.status(status).json(body);
