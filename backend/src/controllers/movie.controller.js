@@ -1,13 +1,14 @@
 const { tmdb } = require("../services/tmdb");
 const { setCache } = require("../services/cache");
+const { errorHandler } = require("../util/error");
 
-async function details(req, res, next) {
+async function details(req, res) {
   try {
     const { params } = req;
     const { data } = await tmdb.get(
       `/movie/${params.id}?append_to_response=credits`
     );
-    res.json({
+    res.status(200).json({
       id: data.id,
       backdrop_path: data.backdrop_path,
       poster_path: data.poster_path,
@@ -19,11 +20,12 @@ async function details(req, res, next) {
       cast: data.credits.cast.slice(0, 4),
     });
   } catch (e) {
-    next(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function many(req, res, next) {
+async function many(req, res) {
   try {
     const { movies } = req.params;
     const moviesArr = movies.split(",");
@@ -44,17 +46,17 @@ async function many(req, res, next) {
 
     return res.status(200).json(results);
   } catch (e) {
-    console.log(e);
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function trending(req, res, next) {
+async function trending(req, res) {
   try {
     const { query } = req;
     const page = query.page || 1;
     const { data } = await tmdb.get(`/trending/movies/week?page=${page}`);
-    res.json({
+    res.status(200).json({
       page: data.page,
       total_pages: data.total_pages,
       total_results: data.total_results,
@@ -68,18 +70,19 @@ async function trending(req, res, next) {
       })),
     });
   } catch (e) {
-    next(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function recommendations(req, res, next) {
+async function recommendations(req, res) {
   try {
     const { params, query } = req;
     const page = query.page || 1;
     const { data } = await tmdb.get(
       `/movie/${params.id}/recommendations?page=${page}`
     );
-    res.json({
+    res.status(200).json({
       page: data.page,
       total_pages: data.total_pages,
       total_results: data.total_results,
@@ -93,17 +96,18 @@ async function recommendations(req, res, next) {
       })),
     });
   } catch (e) {
-    next(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function discover(req, res, next) {
+async function discover(req, res) {
   const query_params = new URLSearchParams({ ...req.query }).toString();
   try {
     const { data } = await tmdb.get(
       `/discover/movie?include_adult=false&${query_params}`
     );
-    res.json({
+    res.status(200).json({
       page: data.page,
       total_pages: data.total_pages,
       total_results: data.total_results,
@@ -117,7 +121,8 @@ async function discover(req, res, next) {
       })),
     });
   } catch (e) {
-    next(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 

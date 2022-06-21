@@ -1,8 +1,9 @@
 const { pool } = require("../services/db");
 const { encryptPassword, comparePassword } = require("../util/encrypt");
 const { generateAccessToken } = require("../util/auth");
+const { errorHandler } = require("../util/error");
 
-async function create(req, res, next) {
+async function create(req, res) {
   try {
     const {
       username,
@@ -15,11 +16,11 @@ async function create(req, res, next) {
     } = req.body;
 
     if (!(username && password && first_name && last_name)) {
-      return res.status(400).send({ error: "Missing fields" });
+      return res.status(400).json({ error: "Missing fields" });
     }
 
     if (password !== confirm_password) {
-      return res.status(400).send({ error: "Passwords do not match" });
+      return res.status(400).json({ error: "Passwords do not match" });
     }
 
     // Find if user already exists
@@ -29,7 +30,7 @@ async function create(req, res, next) {
     );
 
     if (rowCount > 0) {
-      return res.status(409).send({ error: "User already exists" });
+      return res.status(409).json({ error: "User already exists" });
     }
 
     // Encrypt password
@@ -47,12 +48,12 @@ async function create(req, res, next) {
     const token = generateAccessToken({ username, user_id });
     res.status(201).json({ token });
   } catch (e) {
-    console.log(e);
-    res.status(400).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function login(req, res, next) {
+async function login(req, res) {
   try {
     const { username, password } = req.body;
 
@@ -65,7 +66,7 @@ async function login(req, res, next) {
     );
 
     if (rows.length !== 1) {
-      return res.status(404).send({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
     const { user_id, password: userPassword } = rows[0];
@@ -77,10 +78,10 @@ async function login(req, res, next) {
       const token = generateAccessToken({ username, user_id });
       return res.json({ token });
     }
-    res.status(400).send({ error: "Username or password does not match" });
+    res.status(400).json({ error: "Username or password does not match" });
   } catch (e) {
-    next(e);
-    res.status(400).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 

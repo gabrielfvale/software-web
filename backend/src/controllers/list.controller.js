@@ -1,8 +1,9 @@
 const { pool } = require("../services/db");
 const { getPages, paginateQuery } = require("../util/paginate");
+const { errorHandler } = require("../util/error");
 
 // TODO: Treat conflicting primary key errors
-async function details(req, res, next) {
+async function details(req, res) {
   try {
     const { params } = req;
 
@@ -14,7 +15,7 @@ async function details(req, res, next) {
 
     // List not found
     if (rows.length !== 1) {
-      res.status(404).send({ error: "List not found" });
+      res.status(404).json({ error: "List not found" });
       return;
     }
 
@@ -27,13 +28,14 @@ async function details(req, res, next) {
     );
     list.movies = movies.map((movie) => Number(movie.movie_api_id));
 
-    res.status(200).send(list);
+    res.status(200).json(list);
   } catch (e) {
-    res.status(500).send(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function popular(req, res, next) {
+async function popular(req, res) {
   // TODO: pagination
   try {
     const { rows } = await pool.query(
@@ -62,18 +64,19 @@ async function popular(req, res, next) {
       });
     }
 
-    res.status(200).send({
+    res.status(200).json({
       page: 1,
       total_pages: 1,
       total_results: 1,
       results: lists,
     });
   } catch (e) {
-    res.status(500).send(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function curated(req, res, next) {
+async function curated(req, res) {
   try {
     let { page, per_page } = req.query;
     page = page || 1;
@@ -87,7 +90,7 @@ async function curated(req, res, next) {
     );
 
     if (page > total_pages) {
-      return res.status(400).send({ error: "Page exceeds limit" });
+      return res.status(400).json({ error: "Page exceeds limit" });
     }
 
     const { rows } = await pool.query(
@@ -98,13 +101,14 @@ async function curated(req, res, next) {
         per_page
       )
     );
-    res.status(200).send({ page, total_pages, total_results, results: rows });
+    res.status(200).json({ page, total_pages, total_results, results: rows });
   } catch (e) {
-    res.status(500).send(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function user(req, res, next) {
+async function user(req, res) {
   try {
     const { username } = req.params;
     const user_id = req?.user?.user_id || -1;
@@ -119,7 +123,7 @@ async function user(req, res, next) {
     );
 
     if (rows.length !== 1) {
-      return res.status(404).send({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
     const { total_results, total_pages } = await getPages(
@@ -143,13 +147,14 @@ async function user(req, res, next) {
 
     res
       .status(200)
-      .send({ page, total_pages, total_results, results: userList });
+      .json({ page, total_pages, total_results, results: userList });
   } catch (e) {
-    res.status(500).send(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function create(req, res, next) {
+async function create(req, res) {
   try {
     const { name, description, list_type, movies } = req.body;
     const { user_id } = req.user;
@@ -166,7 +171,7 @@ async function create(req, res, next) {
     if (!admin && list_type === "admin") {
       return res
         .status(400)
-        .send({ error: "User does not have admin privileges" });
+        .json({ error: "User does not have admin privileges" });
     }
     if (admin) {
       list_type = "admin";
@@ -192,17 +197,18 @@ async function create(req, res, next) {
     );
 
     if (rowCount == 1 && insertedMovieList.length == movies.length) {
-      res.status(201).send({ list_id });
+      res.status(201).json({ list_id });
     } else {
-      res.status(500).send({});
+      throw Error("Unexpected");
     }
   } catch (e) {
-    res.status(500).send(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
 // Add movie to list
-async function addMovie(req, res, next) {
+async function addMovie(req, res) {
   try {
     const { list_id, movie_api_id } = req.body;
 
@@ -214,7 +220,7 @@ async function addMovie(req, res, next) {
     );
 
     if (exists.length === 0) {
-      return res.status(404).send({ error: "List not found" });
+      return res.status(404).json({ error: "List not found" });
     }
 
     await pool.query(
@@ -224,14 +230,14 @@ async function addMovie(req, res, next) {
       [list_id, movie_api_id]
     );
 
-    return res.status(200).send({});
+    return res.status(200).end();
   } catch (e) {
-    res.status(500).send(e);
-    next(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function update(req, res, next) {
+async function update(req, res) {
   try {
     const { list_id, name, description, movies } = req.body;
 
@@ -243,7 +249,7 @@ async function update(req, res, next) {
 
     // List not found
     if (rows.length !== 1) {
-      return res.status(404).send({ error: "List not found" });
+      return res.status(404).json({ error: "List not found" });
     }
 
     // Updates list
@@ -270,16 +276,17 @@ async function update(req, res, next) {
     );
 
     if (insertedMovieList.length == movies.length) {
-      res.status(200).send({});
+      res.status(200).end();
     } else {
-      res.status(500).send({});
+      throw Error("Unexpected");
     }
   } catch (e) {
-    res.status(500).send(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function deleteList(req, res, next) {
+async function deleteList(req, res) {
   try {
     const { list_id } = req.body;
 
@@ -290,12 +297,13 @@ async function deleteList(req, res, next) {
     );
 
     if (rowCount == 1) {
-      res.status(200).send({});
+      res.status(200).end();
     } else {
-      res.status(404).send({ error: "List does not exist" });
+      res.status(404).json({ error: "List does not exist" });
     }
   } catch (e) {
-    res.status(500).send(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 

@@ -1,14 +1,38 @@
 const { pool } = require("../services/db");
 const { tmdb } = require("../services/tmdb");
+const { cache } = require("../services/cache");
 
-async function status(_, res, next) {
-  try {
-    await tmdb.get("/movie/526896");
-    await pool.connect();
-    res.status(200).send({ status: true });
-  } catch (e) {
-    res.status(500).send({ status: false });
+async function health(_, res) {
+  const services = [
+    {
+      name: "TMDB",
+      test: async () =>
+        await tmdb.get("/movie/526896/external_ids", {
+          timeout: 1000,
+        }),
+    },
+    {
+      name: "POSTGRES",
+      test: async () => await pool.connect(),
+    },
+    {
+      name: "REDIS",
+      test: async () => await cache.info(),
+    },
+  ];
+
+  const status = {};
+
+  for (service of services) {
+    try {
+      await service.test();
+      status[service.name] = true;
+    } catch (e) {
+      status[service.name] = false;
+    }
   }
+
+  res.json(status);
 }
 
-module.exports = { status };
+module.exports = { health };

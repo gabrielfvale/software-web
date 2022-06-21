@@ -6,8 +6,9 @@ const {
   getPagesFromCount,
   paginateQuery,
 } = require("../util/paginate");
+const { errorHandler } = require("../util/error");
 
-async function get(req, res, next) {
+async function get(req, res) {
   try {
     const { movie_id } = req.params;
     let { page, per_page } = req.query;
@@ -22,7 +23,7 @@ async function get(req, res, next) {
     );
 
     if (page > total_pages) {
-      return res.status(400).send({ error: "Page exceeds limit" });
+      return res.status(400).json({ error: "Page exceeds limit" });
     }
 
     const { rows: results } = await pool.query(
@@ -41,19 +42,19 @@ async function get(req, res, next) {
       [movie_id]
     );
 
-    res.send({
+    res.status(200).json({
       page,
       total_pages,
       total_results,
       results,
     });
   } catch (e) {
-    console.log(e);
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function popular(req, res, next) {
+async function popular(req, res) {
   try {
     let { page, per_page } = req.query;
     page = page || 1;
@@ -109,13 +110,14 @@ async function popular(req, res, next) {
       JSON.stringify({ total_results, total_pages, results })
     );
 
-    return res.send({ total_results, total_pages, results });
+    return res.status(200).json({ total_results, total_pages, results });
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function create(req, res, next) {
+async function create(req, res) {
   try {
     const { user_id } = req.user;
     const { movie_api_id, score, description } = req.body;
@@ -127,7 +129,7 @@ async function create(req, res, next) {
     );
 
     if (reviewed.length !== 0) {
-      return res.status(400).send({ error: "Movie already reviewed by user" });
+      return res.status(400).json({ error: "Movie already reviewed by user" });
     }
 
     const { rows } = await pool.query(
@@ -141,18 +143,17 @@ async function create(req, res, next) {
     );
 
     if (rows.length !== 1) {
-      return res
-        .status(500)
-        .send({ error: "There was an error sending review" });
+      throw Error("Error sending review");
     }
 
-    res.status(201).send({});
+    res.status(201).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function update(req, res, next) {
+async function update(req, res) {
   try {
     const { user_id } = req.user;
     const { movie_api_id, score, description } = req.body;
@@ -164,7 +165,7 @@ async function update(req, res, next) {
     );
 
     if (reviewed.length === 0) {
-      return res.status(404).send({ error: "Review not found" });
+      return res.status(404).json({ error: "Review not found" });
     }
 
     await pool.query(
@@ -174,13 +175,14 @@ async function update(req, res, next) {
       [score, description, new Date(), user_id, movie_api_id]
     );
 
-    res.status(200).send({});
+    res.status(200).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function deleteReview(req, res, next) {
+async function deleteReview(req, res) {
   try {
     const { user_id } = req.user;
     const { movie_api_id } = req.body;
@@ -192,7 +194,7 @@ async function deleteReview(req, res, next) {
     );
 
     if (reviewed.length === 0) {
-      return res.status(404).send({ error: "Review not found" });
+      return res.status(404).json({ error: "Review not found" });
     }
 
     await pool.query(
@@ -200,13 +202,14 @@ async function deleteReview(req, res, next) {
       [user_id, movie_api_id]
     );
 
-    res.status(200).send({});
+    res.status(200).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function like(req, res, next) {
+async function like(req, res) {
   try {
     const { user_id } = req.user;
     const { review_id } = req.body;
@@ -218,7 +221,7 @@ async function like(req, res, next) {
     );
 
     if (rows.length === 0) {
-      return res.status(404).send({ error: "Review not found" });
+      return res.status(404).json({ error: "Review not found" });
     }
 
     const review = rows[0];
@@ -227,7 +230,7 @@ async function like(req, res, next) {
     if (review.user_id === String(user_id)) {
       return res
         .status(400)
-        .send({ error: "Not possible to like your own review" });
+        .json({ error: "Not possible to like your own review" });
     }
 
     const { rows: like_rows } = await pool.query(
@@ -249,9 +252,10 @@ async function like(req, res, next) {
         [user_id, review.review_id]
       );
     }
-    res.status(200).send({});
+    res.status(200).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 

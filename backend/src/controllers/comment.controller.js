@@ -1,7 +1,8 @@
 const { pool } = require("../services/db");
 const { getPages, paginateQuery } = require("../util/paginate");
+const { errorHandler } = require("../util/error");
 
-async function list(req, res, next) {
+async function list(req, res) {
   try {
     const { id } = req.params;
     let { page, per_page } = req.query;
@@ -16,7 +17,7 @@ async function list(req, res, next) {
     );
 
     if (page > total_pages) {
-      return res.status(400).send({ error: "Page exceeds limit" });
+      return res.status(400).json({ error: "Page exceeds limit" });
     }
 
     const { rows: results } = await pool.query(
@@ -32,18 +33,19 @@ async function list(req, res, next) {
       [id]
     );
 
-    res.status(200).send({
+    res.status(200).json({
       page,
       total_pages,
       total_results,
       results,
     });
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function create(req, res, next) {
+async function create(req, res) {
   try {
     const { user_id } = req.user;
     const { review_id, description } = req.body;
@@ -55,13 +57,14 @@ async function create(req, res, next) {
       `,
       [user_id, review_id, description]
     );
-    res.status(201).send({});
+    res.status(201).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function update(req, res, next) {
+async function update(req, res) {
   try {
     const { user_id } = req.user;
     const { comment_id, description } = req.body;
@@ -74,9 +77,9 @@ async function update(req, res, next) {
     );
 
     if (rows.length === 0) {
-      return res.status(404).send({ error: "Comment not found" });
+      return res.status(404).json({ error: "Comment not found" });
     } else if (String(rows[0].user_id) !== String(user_id)) {
-      return res.status(403).send({ error: "Review not written by user" });
+      return res.status(403).json({ error: "Review not written by user" });
     }
 
     await pool.query(
@@ -86,13 +89,14 @@ async function update(req, res, next) {
       [description, new Date(), comment_id]
     );
 
-    res.status(200).send({});
+    res.status(200).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function deleteComment(req, res, next) {
+async function deleteComment(req, res) {
   try {
     const { user_id } = req.user;
     const { comment_id } = req.body;
@@ -104,7 +108,7 @@ async function deleteComment(req, res, next) {
     );
 
     if (commented.length === 0) {
-      return res.status(404).send({ error: "Review not found" });
+      return res.status(404).json({ error: "Review not found" });
     }
 
     await pool.query(
@@ -112,9 +116,10 @@ async function deleteComment(req, res, next) {
       [user_id, comment_id]
     );
 
-    res.status(200).send({});
+    res.status(200).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
