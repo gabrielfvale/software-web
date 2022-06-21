@@ -8,35 +8,31 @@ import {
   VStack,
   Flex,
   Text,
-  useTheme,
+  Icon,
 } from '@chakra-ui/react';
 import { AiFillHeart, AiFillStar } from 'react-icons/ai';
 import { FaComment } from 'react-icons/fa';
+
 const DetailedReview = ({ data = [] }) => {
-  const theme = useTheme();
   const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
   return (
     <Flex
-      divider={<StackDivider borderColor={theme.colors.darkBeige} />}
+      divider={<StackDivider borderColor="darkBeige" />}
       paddingTop="5rem"
       paddingBottom="5rem"
     >
-      <VStack
-        divider={<StackDivider borderColor={theme.colors.darkBeige} />}
-        spacing={4}
-      >
+      <VStack divider={<StackDivider borderColor="darkBeige" />} spacing={4}>
         {data.map(review => {
           review.release_date = moment(review.release_date).format('YYYY');
           return (
-            <Box
+            <Flex
               key={review.review_id}
               padding="1rem"
-              display="flex"
               justifyContent="space-between"
               gap="1rem"
             >
               <Box>
-                <Link href={`/review/${review.id}`}>
+                <Link href={`/movie/${review.movie_api_id}`}>
                   <Image
                     width="95px"
                     height="141px"
@@ -46,48 +42,49 @@ const DetailedReview = ({ data = [] }) => {
                 </Link>
               </Box>
               <Box>
-                <Box display="flex" flexDirection="row">
-                  <Heading size="md" marginRight="0.5rem">
-                    {review.title}
-                  </Heading>
-                  <Heading size="sm" marginTop="0.2rem">
+                <Flex flexDirection="row" alignItems="center">
+                  <Link href={`/movie/${review.movie_api_id}`}>
+                    <Heading size="md" marginRight="0.5rem">
+                      {review.title}
+                    </Heading>
+                  </Link>
+                  <Heading size="xs" marginTop="0.2rem">
                     {review.release_date}
                   </Heading>
-                </Box>
-                <Box display="flex" flexDirection="row">
+                </Flex>
+                <Flex flexDirection="row">
                   <Text fontSize="xs" marginRight="0.5rem">
                     by {review.username}
                   </Text>
-                  <AiFillStar
-                    color={theme.colors.m180.darkPink}
-                    padding="0.5rem"
-                  ></AiFillStar>
-                </Box>
+                  <Icon as={AiFillStar} color="m180.darkPink" />
+                </Flex>
 
                 <Text fontSize="sm" marginTop="1.5rem">
                   {review.description}
                 </Text>
-                <Box display="flex" flexDirection="row">
-                  <Box marginTop="2.4rem" display="flex" flexDirection="row">
+                <Flex flexDirection="row">
+                  <Flex marginTop="2.4rem" flexDirection="row">
                     <Link>
-                      <AiFillHeart
-                        color={theme.colors.m180.darkPink}
-                      ></AiFillHeart>
+                      <Icon as={AiFillHeart} color="m180.darkPink" />
                     </Link>
-
                     <Text marginLeft="0.2rem" marginRight="2rem" fontSize="xs">
                       {review.likes} likes
                     </Text>
-                    <Link>
-                      <FaComment color={theme.colors.m180.darkPink}></FaComment>
+
+                    <Link display="flex">
+                      <Icon as={FaComment} color="m180.darkPink" />
+                      <Text
+                        marginLeft="0.2rem"
+                        marginRight="2rem"
+                        fontSize="xs"
+                      >
+                        {review.comments} comments
+                      </Text>
                     </Link>
-                    <Text marginLeft="0.2rem" marginRight="2rem" fontSize="xs">
-                      {review.comments} comments
-                    </Text>
-                  </Box>
-                </Box>
+                  </Flex>
+                </Flex>
               </Box>
-            </Box>
+            </Flex>
           );
         })}
       </VStack>

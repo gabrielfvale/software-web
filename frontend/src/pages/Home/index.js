@@ -103,11 +103,8 @@ const Home = () => {
   return (
     <Box>
       <Box>
-        <Hero
-          src="https://www.themoviedb.org/t/p/original/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg"
-          action={onOpen}
-        />
-        <ModalAccount isOpen={isOpen} onClose={onClose}></ModalAccount>
+        <Hero backdrop="/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg" action={onOpen} />
+        <ModalAccount isOpen={isOpen} onClose={onClose} />
       </Box>
       <Box paddingLeft="15rem" paddingRight="15rem">
         <PopularMoviesRow data={mockPopularMoviesRow} />

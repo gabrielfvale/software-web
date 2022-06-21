@@ -11,11 +11,11 @@ import {
 const HomeCards = () => {
   const cards = [
     {
-      text: 'Keep track of every film you’ve ever watched (or just start from the day you join)',
+      text: "Keep track of every film you've ever watched (or just start from the day you join)",
       icon: AiOutlineEye,
     },
     {
-      text: 'Show some love for your favorite films, lists and reviews with a “like”.',
+      text: 'Show some love for your favorite films, lists and reviews with a "like".',
       icon: AiOutlineHeart,
     },
     {
