@@ -20,4 +20,4 @@ async function setCache(key, value, expiration = 1800) {
   return await cache.set(key, value, "EX", expiration);
 }
 
-module.exports = { getCache, setCache };
+module.exports = { cache, getCache, setCache };
