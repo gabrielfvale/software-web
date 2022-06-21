@@ -51,6 +51,34 @@ async function many(req, res) {
   }
 }
 
+async function media(req, res) {
+  try {
+    const { movies, media_type } = req.query;
+
+    if (media_type && media_type !== "posters" && media_type !== "backdrops") {
+      return res.status(400).json({ error: "Invalid media_type" });
+    }
+
+    const results = [];
+    for (movie of movies.split(",")) {
+      const { data } = await tmdb.get(`/movie/${movie}/images`);
+      const media = media_type || "posters";
+
+      results.push({
+        movie_id: Number(movie),
+        media: data[media][0].file_path,
+      });
+    }
+
+    setCache(req.originalUrl, JSON.stringify(results));
+
+    return res.status(200).json(results);
+  } catch (e) {
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
+  }
+}
+
 async function popular(req, res) {
   try {
     const { query } = req;
@@ -126,4 +154,4 @@ async function discover(req, res) {
   }
 }
 
-module.exports = { details, many, popular, recommendations, discover };
+module.exports = { details, many, media, popular, recommendations, discover };
