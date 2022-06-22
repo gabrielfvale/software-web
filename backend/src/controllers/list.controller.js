@@ -5,6 +5,7 @@ const {
   paginateQuery,
 } = require("../util/paginate");
 const { errorHandler } = require("../util/error");
+const { add } = require("nodemon/lib/rules");
 
 async function details(req, res) {
   try {
@@ -170,10 +171,12 @@ async function user(req, res) {
 
     // If the user is logged in, display all lists.
     // If not, display only public lists.
-    const { rows: userList } = await pool.query(
+    const { rows: userLists } = await pool.query(
       paginateQuery(
-        `SELECT * FROM lists WHERE user_id = $1 ${
-          rows[0].user_id === user_id ? `` : `AND list_type = 'public'`
+        `SELECT * FROM lists WHERE user_id = $1 AND list_type ${
+          rows[0].user_id === user_id
+            ? `NOT IN ('watch', 'favorites')`
+            : `= 'public'`
         }`,
         page,
         per_page
@@ -181,24 +184,39 @@ async function user(req, res) {
       [rows[0].user_id]
     );
 
-    // Fetch movies for each list
-    const updatedList = [];
-    for (list of userList) {
-      const { rows: movies } = await pool.query(
-        `SELECT movie_api_id FROM movies_list
-        WHERE list_id=$1`,
-        [list.list_id]
-      );
-      delete list.user_id;
-      updatedList.push({
-        ...list,
-        movies: movies.map((movie) => Number(movie.movie_api_id)),
-      });
+    // Get user "special" lists: favorites and watch list
+    const { rows: specialLists } = await pool.query(
+      `
+      SELECT * FROM lists WHERE user_id = $1
+      AND (list_type = 'watch' OR list_type = 'favorites')
+      `,
+      [rows[0].user_id]
+    );
+
+    // Fetch movies for each list type
+    const lists = { special: [], results: [] };
+
+    for (const listType in lists) {
+      // Choose which array to go over
+      const iterList = listType === "special" ? specialLists : userLists;
+
+      // Fetch movies
+      for (list of iterList) {
+        const { rows: movies } = await pool.query(
+          `SELECT movie_api_id FROM movies_list
+          WHERE list_id=$1`,
+          [list.list_id]
+        );
+        // Push movies to list array
+        delete list.user_id;
+        lists[listType].push({
+          ...list,
+          movies: movies.map((movie) => Number(movie.movie_api_id)),
+        });
+      }
     }
 
-    res
-      .status(200)
-      .json({ page, total_pages, total_results, results: updatedList });
+    res.status(200).json({ page, total_pages, total_results, ...lists });
   } catch (e) {
     const { status, body } = errorHandler(e);
     res.status(status).json(body);
@@ -261,12 +279,13 @@ async function create(req, res) {
 async function addMovie(req, res) {
   try {
     const { list_id, movie_api_id } = req.body;
+    const { user_id } = req.user;
 
     const { rows: exists } = await pool.query(
       `
-       SELECT * FROM movies_list WHERE list_id = $1
+       SELECT name FROM lists WHERE list_id = $1 AND user_id=$2
        `,
-      [list_id]
+      [list_id, user_id]
     );
 
     if (exists.length === 0) {
@@ -274,13 +293,58 @@ async function addMovie(req, res) {
     }
 
     await pool.query(
-      `INSERT INTO movies_list (list_id, movie_api_id) 
+      `
+      INSERT INTO movies_list (list_id, movie_api_id) 
       VALUES ($1,$2)
       `,
       [list_id, movie_api_id]
     );
 
     return res.status(200).end();
+  } catch (e) {
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
+  }
+}
+
+async function addSpecial(req, res) {
+  try {
+    const { list_type, movie_api_id } = req.body;
+    const { user_id } = req.user;
+
+    const { rows: foundList } = await pool.query(
+      `
+      SELECT list_id FROM lists WHERE list_type = $1 AND user_id=$2
+      `,
+      [list_type, user_id]
+    );
+
+    if (foundList.length === 0) {
+      return create(
+        {
+          ...req,
+          body: {
+            ...req.body,
+            name: list_type === "watch" ? "Watchlist" : "Favorites",
+            description: "",
+            list_type,
+            movies: [movie_api_id],
+          },
+        },
+        res
+      );
+    }
+
+    return addMovie(
+      {
+        ...req,
+        body: {
+          ...req.body,
+          list_id: foundList[0].list_id,
+        },
+      },
+      res
+    );
   } catch (e) {
     const { status, body } = errorHandler(e);
     res.status(status).json(body);
@@ -415,6 +479,7 @@ module.exports = {
   create,
   update,
   addMovie,
+  addSpecial,
   deleteList,
   like,
 };

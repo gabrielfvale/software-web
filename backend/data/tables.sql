@@ -1,4 +1,4 @@
-CREATE TYPE LIST_TYPE AS ENUM ('private', 'public', 'admin');
+CREATE TYPE LIST_TYPE AS ENUM ('private', 'public', 'admin', 'watch', 'favorites');
 
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
