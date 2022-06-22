@@ -6,6 +6,7 @@ import { Box } from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/react';
 import Category from '../../components/Category';
 import ReviewList from '../../components/ReviewList';
+import Comment from '../../components/Comment';
 
 const mockPopularMoviesRow = [
   {
@@ -110,9 +111,10 @@ const Home = () => {
       <Box paddingLeft="15rem" paddingRight="15rem">
         <PopularMoviesRow data={mockPopularMoviesRow} />
         <HomeCards />
-        <Category text="Popular Reviews">
+        {/* <Category text="Popular Reviews">
           <ReviewList data={mockPopularReviews} />
-        </Category>
+        </Category> */}
+        <Comment></Comment>
       </Box>
     </Box>
   );
