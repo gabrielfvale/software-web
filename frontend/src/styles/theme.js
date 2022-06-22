@@ -21,6 +21,10 @@ const theme = extendTheme({
         500: '#2f4a75',
         600: '#14213d',
       },
+      white: {
+        500: '#ffffff',
+        600: '#f2f2f2',
+      },
       beige: '#F7F3ED',
       darkBeige: '#EBE8E2',
       darkPink: '#A61D52',
