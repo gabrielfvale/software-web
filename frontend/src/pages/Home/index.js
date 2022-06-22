@@ -3,8 +3,9 @@ import PopularMoviesRow from '../../components/PopularMoviesRow';
 import HomeCards from '../../components/HomeCards';
 import ModalAccount from '../../components/Modal';
 import { Box } from '@chakra-ui/react';
-import DetailedReview from '../../DetailedReview';
 import { useDisclosure } from '@chakra-ui/react';
+import Category from '../../components/Category';
+import ReviewList from '../../components/ReviewList';
 
 const mockPopularMoviesRow = [
   {
@@ -109,7 +110,9 @@ const Home = () => {
       <Box paddingLeft="15rem" paddingRight="15rem">
         <PopularMoviesRow data={mockPopularMoviesRow} />
         <HomeCards />
-        <DetailedReview data={mockPopularReviews} />
+        <Category text="Popular Reviews">
+          <ReviewList data={mockPopularReviews} />
+        </Category>
       </Box>
     </Box>
   );
