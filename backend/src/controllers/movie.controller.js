@@ -1,15 +1,29 @@
 const { tmdb } = require("../services/tmdb");
+const { pool } = require("../services/db");
 const { setCache } = require("../services/cache");
 const { errorHandler } = require("../util/error");
 
 async function details(req, res) {
   try {
-    const { params } = req;
-    const { data } = await tmdb.get(
-      `/movie/${params.id}?append_to_response=credits`
+    const { id } = req.params;
+    const { data } = await tmdb.get(`/movie/${id}?append_to_response=credits`);
+
+    const { rows: scores } = await pool.query(
+      `
+      SELECT score FROM reviews WHERE movie_api_id=$1
+      `,
+      [id]
     );
+
+    const score =
+      scores.length === 0
+        ? 0
+        : scores.reduce((prev, cur) => prev + Number(cur.score), 0) /
+          scores.length;
+
     res.status(200).json({
       id: data.id,
+      score,
       backdrop_path: data.backdrop_path,
       poster_path: data.poster_path,
       title: data.title,
@@ -17,6 +31,7 @@ async function details(req, res) {
       overview: data.overview,
       genres: data.genres,
       release_date: data.release_date,
+      runtime: data.runtime,
       cast: data.credits.cast.slice(0, 4),
     });
   } catch (e) {
