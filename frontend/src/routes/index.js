@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import Profile from '../pages/Profile';
+import Movie from '../pages/Movie';
 
 export const publicRoutes = [
   {
@@ -20,12 +21,17 @@ export const publicRoutes = [
   },
 ];
 const routes = [
+  ...publicRoutes,
   {
     title: 'Home',
     path: '/',
     element: Home,
   },
-  ...publicRoutes,
+  {
+    title: 'Movie Details',
+    path: '/movie/:movie_id',
+    element: Movie,
+  },
 ];
 
 const Router = () => {
