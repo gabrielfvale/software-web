@@ -5,7 +5,6 @@ const {
   paginateQuery,
 } = require("../util/paginate");
 const { errorHandler } = require("../util/error");
-const { add } = require("nodemon/lib/rules");
 
 async function details(req, res) {
   try {

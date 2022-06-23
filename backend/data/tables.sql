@@ -6,8 +6,10 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(64) NOT NULL,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
     country CHAR(2) NULL,
     bio VARCHAR(280) NULL,
+    token VARCHAR(250) NULL,
     admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -44,14 +46,6 @@ CREATE TABLE IF NOT EXISTS lists (
     updated_at TIMESTAMP DEFAULT NOW(),
     CONSTRAINT fk_user_list FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
-
--- CREATE TABLE IF NOT EXISTS movies (
-
---     movie_id SERIAL PRIMARY KEY,
-
---     api_id BIGINT NOT NULL
-
--- );
 
 CREATE TABLE IF NOT EXISTS like_list(
     user_id BIGINT NOT NULL,
