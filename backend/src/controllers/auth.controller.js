@@ -11,11 +11,12 @@ async function create(req, res) {
       confirm_password,
       first_name,
       last_name,
+      email,
       country,
       bio,
     } = req.body;
 
-    if (!(username && password && first_name && last_name)) {
+    if (!(username && password && first_name && last_name && email)) {
       return res.status(400).json({ error: "Missing fields" });
     }
 
@@ -25,12 +26,14 @@ async function create(req, res) {
 
     // Find if user already exists
     const { rowCount } = await pool.query(
-      `SELECT user_id FROM users WHERE username=$1`,
-      [username]
+      `SELECT user_id FROM users WHERE username=$1 OR email=$2`,
+      [username, email]
     );
 
     if (rowCount > 0) {
-      return res.status(409).json({ error: "User already exists" });
+      return res
+        .status(409)
+        .json({ error: "User with that username or email already exists" });
     }
 
     // Encrypt password
@@ -38,10 +41,10 @@ async function create(req, res) {
 
     // Insert user
     const { rows } = await pool.query(
-      `INSERT INTO users (username, password, first_name, last_name, country, bio)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO users (username, password, first_name, last_name, email, country, bio)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING user_id`,
-      [username, encryptedPassword, first_name, last_name, country, bio]
+      [username, encryptedPassword, first_name, last_name, email, country, bio]
     );
 
     const { user_id } = rows[0];
