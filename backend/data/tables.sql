@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(64) NOT NULL,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(50) NOT NULL,
+    email VARCHAR(50) UNIQUE NOT NULL,
     country CHAR(2) NULL,
     bio VARCHAR(280) NULL,
     token VARCHAR(250) NULL,
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS comments (
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     CONSTRAINT fk_user_comment FOREIGN KEY(user_id) REFERENCES users(user_id),
-    CONSTRAINT fk_review_comment FOREIGN KEY(review_id) REFERENCES reviews(review_id)
+    CONSTRAINT fk_review_comment FOREIGN KEY(review_id) REFERENCES reviews(review_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS lists (
@@ -51,16 +51,16 @@ CREATE TABLE IF NOT EXISTS like_list(
     user_id BIGINT NOT NULL,
     list_id BIGINT NOT NULL,
     CONSTRAINT pk_like_list PRIMARY KEY(user_id, list_id),
-    CONSTRAINT fk_user_like FOREIGN KEY(user_id) REFERENCES users(user_id),
-    CONSTRAINT fk_list_like FOREIGN KEY(list_id) REFERENCES lists(list_id)
+    CONSTRAINT fk_user_like FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_list_like FOREIGN KEY(list_id) REFERENCES lists(list_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS like_review(
     user_id BIGINT NOT NULL,
     review_id BIGINT NOT NULL,
     CONSTRAINT pk_like_review PRIMARY KEY(user_id, review_id),
-    CONSTRAINT fk_user_like FOREIGN KEY(user_id) REFERENCES users(user_id),
-    CONSTRAINT fk_review_like FOREIGN KEY(review_id) REFERENCES reviews(review_id)
+    CONSTRAINT fk_user_like FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_review_like FOREIGN KEY(review_id) REFERENCES reviews(review_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS movies_list(

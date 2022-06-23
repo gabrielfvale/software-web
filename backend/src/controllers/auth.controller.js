@@ -1,6 +1,8 @@
+const crypto = require("crypto");
 const { pool } = require("../services/db");
 const { encryptPassword, comparePassword } = require("../util/encrypt");
 const { generateAccessToken } = require("../util/auth");
+const { sendEmail } = require("../util/email");
 const { errorHandler } = require("../util/error");
 
 async function create(req, res) {
@@ -88,4 +90,87 @@ async function login(req, res) {
   }
 }
 
-module.exports = { create, login };
+async function requestResetPassword(req, res) {
+  try {
+    const { email } = req.body;
+
+    // Find user
+    const { rows } = await pool.query(
+      `SELECT user_id, token
+      FROM users
+      WHERE email=$1`,
+      [email]
+    );
+
+    if (rows.length !== 1) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userInfo = rows[0];
+    if (userInfo.token !== "" && userInfo.token !== "NULL") {
+      return res
+        .status(400)
+        .json({ error: "A recover email was already sent" });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    await pool.query(
+      `
+      UPDATE users SET token=$1 WHERE email=$2
+      `,
+      [resetToken, email]
+    );
+
+    const err = await sendEmail(email, resetToken, userInfo.user_id);
+    if (err) {
+      return res
+        .status(500)
+        .json({ error: "There was an error sending the email" });
+    }
+    return res.status(200).end();
+  } catch (e) {
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
+  }
+}
+
+async function resetPassword(req, res) {
+  try {
+    const { token, user_id, password } = req.body;
+
+    // Find user
+    const { rows } = await pool.query(
+      `SELECT token
+      FROM users
+      WHERE user_id=$1`,
+      [user_id]
+    );
+
+    if (rows.length !== 1) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const { token: userToken } = rows[0];
+
+    if (token !== userToken) {
+      return res.status(400).json({ error: "Invalid password reset token" });
+    }
+
+    const encryptedPassword = await encryptPassword(password);
+
+    await pool.query(
+      `
+      UPDATE users SET password=$1, token='' WHERE user_id=$2
+      `,
+      [encryptedPassword, user_id]
+    );
+
+    res.status(200).end();
+  } catch (e) {
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
+  }
+}
+
+module.exports = { create, login, requestResetPassword, resetPassword };
