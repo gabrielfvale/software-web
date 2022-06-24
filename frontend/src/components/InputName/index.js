@@ -6,12 +6,7 @@ const InputName = ({ text = '' }) => {
       <Heading fontSize="sm" marginLeft="0.3rem" marginBottom="0.5rem">
         {text}
       </Heading>
-      <Input
-        variant="filled"
-        width="20rem"
-        fontSize="xs"
-        marginBottom="0.5rem"
-      />
+      <Input width="20rem" fontSize="xs" marginBottom="0.5rem" bg="white" />
     </Box>
   );
 };
