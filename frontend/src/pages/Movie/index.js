@@ -90,7 +90,7 @@ const mockMovie = {
 const Movie = () => {
   const { movie_id } = useParams();
   return (
-    <Box paddingX="10rem" paddingY="1rem">
+    <Box paddingX="15rem" paddingY="1rem">
       <MovieCard movie={mockMovie} />
     </Box>
   );
