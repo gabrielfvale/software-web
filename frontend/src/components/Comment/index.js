@@ -69,7 +69,7 @@ const Comment = () => {
             <Icon
               as={AiFillHeart}
               marginRight="0.2rem"
-              color="m180.purple"
+              color="m180.darkPink"
               fontSize="20px"
             />
 
@@ -80,7 +80,7 @@ const Comment = () => {
             as={FaComment}
             marginLeft="1rem"
             marginRight="0.2rem"
-            color="m180.purple"
+            color="m180.darkPink"
             fontSize="20px"
           />
 
