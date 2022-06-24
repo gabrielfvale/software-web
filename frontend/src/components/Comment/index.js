@@ -5,7 +5,12 @@ import {
   Text,
   Icon,
   Link,
-  IconButton,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  Textarea,
+  Button,
 } from '@chakra-ui/react';
 import { AiFillStar, AiFillHeart } from 'react-icons/ai';
 import { FaComment } from 'react-icons/fa';
@@ -21,9 +26,38 @@ const Comment = () => {
           <Text fontSize="sm">1.0</Text>
           <Icon
             marginLeft="0.4rem"
-            marginRight="0.4rem"
+            marginRight="0.1rem"
             as={AiFillStar}
             color="m180.darkPink"
+            fontSize="20px"
+          />
+          <Icon
+            marginLeft="0.1rem"
+            marginRight="0.1rem"
+            as={AiFillStar}
+            color="m180.darkPink"
+            fontSize="20px"
+          />
+          <Icon
+            marginLeft="0.1rem"
+            marginRight="0.1rem"
+            as={AiFillStar}
+            color="m180.darkPink"
+            fontSize="20px"
+          />
+          <Icon
+            marginLeft="0.1rem"
+            marginRight="0.1rem"
+            as={AiFillStar}
+            color="white"
+            fontSize="20px"
+          />
+          <Icon
+            marginLeft="0.2rem"
+            marginRight="0.4rem"
+            as={AiFillStar}
+            color="white"
+            fontSize="20px"
           />
           <Text fontSize="sm">22/10/2022</Text>
         </Flex>
@@ -31,24 +65,53 @@ const Comment = () => {
           <Text fontSize="sm">loved it so much</Text>
         </Flex>
         <Flex flexDirection="row" alignItems="center" marginTop="0.5rem">
+          <Link display="flex">
+            <Icon
+              as={AiFillHeart}
+              marginRight="0.2rem"
+              color="m180.purple"
+              fontSize="20px"
+            />
+
+            <Text fontSize="xs">Like</Text>
+          </Link>
+
           <Icon
-            as={AiFillHeart}
+            as={FaComment}
+            marginLeft="1rem"
             marginRight="0.2rem"
             color="m180.purple"
             fontSize="20px"
           />
 
-          <Text fontSize="xs">Like it</Text>
-          <Link>
-            <Icon
-              as={FaComment}
-              marginLeft="1rem"
-              marginRight="0.2rem"
-              color="m180.purple"
-              fontSize="20px"
-            />
-          </Link>
-          <Text fontSize="xs">Reply</Text>
+          <Accordion allowToggle display="flex" variant="unstyled">
+            <AccordionItem>
+              <Box>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left" fontSize="xs">
+                    Reply
+                  </Box>
+                </AccordionButton>
+              </Box>
+
+              <AccordionPanel pb={4}>
+                <Textarea
+                  variant="filled"
+                  fontSize="xs"
+                  placeholder="Here is a sample placeholder"
+                  width="25rem"
+                />
+                <Button
+                  marginLeft="75%"
+                  marginTop="0.5rem"
+                  size="sm"
+                  fontSize="sm"
+                >
+                  Send
+                </Button>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
         </Flex>
       </Box>
     </Flex>
