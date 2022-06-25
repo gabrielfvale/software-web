@@ -1,13 +1,13 @@
 import { HStack, Box, Heading, Divider } from '@chakra-ui/react';
 import Link from '../Link';
 
-const Category = ({ text = '', link = '', children }) => {
+const Category = ({ title = '', link = '', children }) => {
   return (
     <Box>
-      <Box width="100%">
+      <Box width="100%" marginY="1rem">
         <HStack justifyContent="space-between">
-          <Heading size="sm" textTransform="uppercase">
-            {text}
+          <Heading size="sm" fontWeight="semibold" textTransform="uppercase">
+            {title}
           </Heading>
           {link && (
             <Link href={link} fontSize="sm" color="m180.pink.500">
@@ -15,7 +15,7 @@ const Category = ({ text = '', link = '', children }) => {
             </Link>
           )}
         </HStack>
-        <Divider color="darkBeige" />
+        <Divider borderColor="m180.darkBeige" />
       </Box>
       {children}
     </Box>
