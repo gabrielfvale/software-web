@@ -1,15 +1,7 @@
 import React, { useRef } from 'react';
-import {
-  Box,
-  Text,
-  HStack,
-  Icon,
-  Flex,
-  Image,
-  Button,
-  useDimensions,
-} from '@chakra-ui/react';
+import { Box, Text, HStack, Icon, Button } from '@chakra-ui/react';
 import { AiFillHeart } from 'react-icons/ai';
+import MoviePosters from '../../components/MoviePosters';
 
 const mockUser = {
   user_id: 1,
@@ -102,27 +94,6 @@ const mockList = {
 
 const List = () => {
   const headerRef = useRef();
-  const dimensions = useDimensions(headerRef, true);
-
-  const renderMovieList = () => {
-    if (!dimensions) {
-      return null;
-    }
-
-    const posterWidth = dimensions.contentBox.width / 6 - 2;
-
-    return (
-      <Flex gap={2} flexWrap="wrap">
-        {mockList.movies.map(movie => (
-          <Image
-            width={`${posterWidth}px`}
-            src={movie.poster_path}
-            alt={movie.id}
-          ></Image>
-        ))}
-      </Flex>
-    );
-  };
 
   return (
     <Box marginX="15rem" paddingY="1.5rem">
@@ -152,7 +123,7 @@ const List = () => {
           {mockList.description}
         </Text>
       </Box>
-      {renderMovieList()}
+      <MoviePosters data={mockList.movies} />
       <Box flex={1} display="flex" justifyContent="flex-end">
         <Button
           fontSize="sm"
