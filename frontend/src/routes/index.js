@@ -3,6 +3,7 @@ import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import Movie from '../pages/Movie';
 import Lists from '../pages/Lists';
+import List from '../pages/List';
 import AccountSettings from '../pages/AccountSettings';
 
 export const publicRoutes = [
@@ -38,6 +39,11 @@ const routes = [
     title: 'Account Settings',
     path: '/accountSettings',
     element: AccountSettings,
+  },
+  {
+    title: 'List',
+    path: '/lists/:list_id',
+    element: List,
   },
 ];
 
