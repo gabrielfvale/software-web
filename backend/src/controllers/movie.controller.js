@@ -169,4 +169,42 @@ async function discover(req, res) {
   }
 }
 
-module.exports = { details, many, media, popular, recommendations, discover };
+async function search(req, res) {
+  try {
+    let { query, page } = req.query;
+    page = page || 1;
+    const encodedQuery = encodeURI(query);
+
+    const { data } = await tmdb.get(
+      `/search/movie?query=${encodedQuery}&include_adult=false&page=${page}`
+    );
+
+    res.status(200).json({
+      page: data.page,
+      total_pages: data.total_pages,
+      total_results: data.total_results,
+      results: data.results.map((movie) => ({
+        id: movie.id,
+        poster_path: movie.poster_path,
+        title: movie.title,
+        tagline: movie.tagline,
+        overview: movie.overview,
+        genres: movie.genres,
+        release_date: movie.release_date,
+      })),
+    });
+  } catch (e) {
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
+  }
+}
+
+module.exports = {
+  details,
+  many,
+  media,
+  popular,
+  recommendations,
+  discover,
+  search,
+};
