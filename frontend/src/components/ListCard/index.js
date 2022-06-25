@@ -1,36 +1,44 @@
-import { LinkBox, HStack, Text, Icon } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Box, LinkBox, HStack, Text, Icon } from '@chakra-ui/react';
+import Link from '../Link';
 import { AiFillHeart } from 'react-icons/ai';
-import StackedPosters from './StackedPosters';
+import StackedPosters from '../StackedPosters';
 
 const ListCard = ({
+  list_id = -1,
   title = '',
-  movies = [],
   likes = 0,
-  redirect = '',
+  author = '',
+  posters = [],
   ...rest
 }) => {
-  const moviePosters = movies.map(movie => movie.poster_path);
   return (
-    <LinkBox
-      as={Link}
-      to={redirect}
+    <Box
       backgroundColor="m180.darkBeige"
       padding="0.5rem"
       borderRadius="0.4rem"
-      width="20rem"
       minWidth="15rem"
       {...rest}
     >
-      <StackedPosters posters={moviePosters} />
-      <Text fontWeight="medium">{title}</Text>
+      <LinkBox as={Link} href={`/lists/${list_id}`}>
+        <StackedPosters posters={posters} />
+        <Text fontWeight="medium">{title}</Text>
+      </LinkBox>
+
       <HStack>
-        <Icon as={AiFillHeart} color="m180.pink.500" />
-        <Text fontSize="xs" fontWeight="medium">
-          {likes} likes
+        {author && (
+          <Text fontSize="xs">
+            by{' '}
+            <Link href={`/profile/${author}`} fontWeight="semibold">
+              {author}
+            </Link>
+          </Text>
+        )}
+        <Icon as={AiFillHeart} color="m180.pink.600" />
+        <Text fontSize="xs">
+          {likes} like{Number(likes) === 1 ? '' : 's'}
         </Text>
       </HStack>
-    </LinkBox>
+    </Box>
   );
 };
 

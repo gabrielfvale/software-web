@@ -9,7 +9,7 @@ const mockLists = {
     {
       list_id: 1,
       title: 'Upcoming Movies',
-      movies: [
+      posters: [
         {
           poster_path: '/vpILbP9eOQEtdQgl4vgjZUNY07r.jpg',
         },
@@ -25,7 +25,7 @@ const mockLists = {
     {
       list_id: 2,
       title: 'Animations',
-      movies: [
+      posters: [
         {
           poster_path: '/dyhaB19AICF7TO7CK2aD6KfymnQ.jpg',
         },
@@ -44,7 +44,7 @@ const mockLists = {
     {
       list_id: 3,
       title: 'Favorites',
-      movies: [
+      posters: [
         {
           poster_path: '/vpILbP9eOQEtdQgl4vgjZUNY07r.jpg',
         },
@@ -117,14 +117,15 @@ const Profile = () => {
   return (
     <Box marginX="15rem" paddingY="1.5rem">
       <ProfileHeader user={mockUser} />
-      <Flex gap="5" marginY="1.5rem">
-        {lists.map(({ list_id, title, movies, likes }, index) => (
+      <Box marginBottom="1.5rem" />
+      <Flex gap="5">
+        {lists.map(({ list_id, title, posters, likes }, index) => (
           <ListCard
             key={title + index}
+            list_id={list_id}
             title={title}
-            movies={movies}
+            posters={posters.map(p => p.poster_path)}
             likes={likes}
-            redirect={`/lists/${list_id}`}
           />
         ))}
       </Flex>
