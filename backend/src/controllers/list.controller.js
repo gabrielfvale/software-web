@@ -9,7 +9,7 @@ const { errorHandler } = require("../util/error");
 async function details(req, res) {
   try {
     const { params } = req;
-    const user_id = req?.user?.user_id || -1;
+    const user_id = req.user?.user_id || -1;
 
     const { rows } = await pool.query(
       `SELECT * FROM lists
@@ -145,7 +145,7 @@ async function curated(req, res) {
 async function user(req, res) {
   try {
     const { username } = req.params;
-    const user_id = req?.user?.user_id || -1;
+    const user_id = req.user?.user_id || -1;
 
     let { page, per_page } = req.query;
     page = page || 1;

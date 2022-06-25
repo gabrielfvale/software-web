@@ -7,6 +7,7 @@ async function details(req, res) {
   try {
     const { id } = req.params;
     const { data } = await tmdb.get(`/movie/${id}?append_to_response=credits`);
+    const user_id = req.user?.user_id;
 
     const { rows: scores } = await pool.query(
       `
@@ -21,9 +22,32 @@ async function details(req, res) {
         : scores.reduce((prev, cur) => prev + Number(cur.score), 0) /
           scores.length;
 
+    // Find if movie is in watch or favorite lists
+    let on_list = { on_watch: false, on_favorites: false };
+    if (user_id) {
+      const { rows: onLists } = await pool.query(
+        `
+        SELECT list_type
+        FROM lists LEFT JOIN movies_list ON lists.list_id = movies_list.list_id
+        WHERE lists.user_id=$1
+          AND movies_list.movie_api_id=$2
+          AND list_type in ('watch', 'favorites') 
+        GROUP BY lists.list_id
+        `,
+        [user_id, id]
+      );
+      // Iterate over results to update object
+      onLists.forEach(({ list_type }) => {
+        list_type === "watch"
+          ? (on_list.on_watch = true)
+          : (on_list.on_favorites = true);
+      });
+    }
+
     res.status(200).json({
       id: data.id,
       score,
+      ...on_list,
       backdrop_path: data.backdrop_path,
       poster_path: data.poster_path,
       title: data.title,
