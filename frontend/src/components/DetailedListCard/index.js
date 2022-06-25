@@ -21,7 +21,14 @@ const DetailedListCard = ({
       alignItems="flex-start"
       {...rest}
     >
-      <Box minW="20rem">
+      <Box
+        minW="15rem"
+        sx={{
+          '@media (min-width: 1200px)': {
+            minW: '20rem',
+          },
+        }}
+      >
         <StackedPosters posters={posters} />
       </Box>
       <VStack alignItems="flex-start" padding="0.5rem">
