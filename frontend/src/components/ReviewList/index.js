@@ -7,7 +7,7 @@ const ReviewList = ({ data = [] }) => {
     <VStack divider={<StackDivider color="darkBeige" />} spacing={4}>
       {data.map(review => {
         review.release_date = moment(review.release_date).format('YYYY');
-        return <DetailedReview review={review} />;
+        return <DetailedReview key={review.review_id} review={review} />;
       })}
     </VStack>
   );

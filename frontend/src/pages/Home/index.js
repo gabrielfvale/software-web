@@ -71,7 +71,7 @@ const mockPopularReviews = [
     review_id: '1',
     user_id: '1',
     movie_api_id: '526896',
-    score: '5.0',
+    score: '2.5',
     description: 'The most move of all time',
     created_at: '2022-06-09T03:27:33.143Z',
     updated_at: '2022-06-09T00:27:57.936Z',

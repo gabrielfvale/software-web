@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { VStack } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import MovieCard from '../../components/MovieCard';
 
@@ -90,9 +90,15 @@ const mockMovie = {
 const Movie = () => {
   const { movie_id } = useParams();
   return (
-    <Box paddingX="15rem" paddingY="1rem">
+    <VStack
+      gap={2}
+      flexDir="column"
+      alignItems="center"
+      paddingX="15rem"
+      paddingY="1rem"
+    >
       <MovieCard movie={mockMovie} />
-    </Box>
+    </VStack>
   );
 };
 
