@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { authenticateToken } = require("../middlewares/auth");
+const { authenticateToken, optionalToken } = require("../middlewares/auth");
 const { cacheMiddleware } = require("../middlewares/cache");
 const reviewController = require("../controllers/review.controller");
 const commentController = require("../controllers/comment.controller");
 
 router.get("/popular", cacheMiddleware, reviewController.popular);
 router.get("/:id/comments", commentController.list);
-router.get("/:movie_id", reviewController.get);
+router.get("/:movie_id", optionalToken, reviewController.get);
 
 router.post("/like", authenticateToken, reviewController.like);
 

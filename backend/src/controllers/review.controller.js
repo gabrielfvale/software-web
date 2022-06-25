@@ -12,6 +12,8 @@ async function get(req, res) {
   try {
     const { movie_id } = req.params;
     let { page, per_page } = req.query;
+    const user_id = req.user?.user_id || -1;
+
     page = page || 1;
     per_page = per_page || 10;
 
@@ -32,14 +34,15 @@ async function get(req, res) {
         SELECT reviews.*,
         (SELECT username FROM users WHERE users.user_id = reviews.user_id) AS username,
         (SELECT COUNT(*) FROM comments WHERE comments.review_id = reviews.review_id) AS comments,
-        (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes
-        FROM reviews WHERE movie_api_id=$1
+        (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes,
+        (SELECT EXISTS(SELECT 1 FROM like_review WHERE like_review.user_id=$1 )) AS liked_by_me
+        FROM reviews WHERE movie_api_id=$2
         ORDER BY reviews.created_at DESC
         `,
         page,
         per_page
       ),
-      [movie_id]
+      [user_id, movie_id]
     );
 
     res.status(200).json({
