@@ -1,10 +1,10 @@
 import Hero from '../../components/Hero';
 import PopularMoviesRow from '../../components/PopularMoviesRow';
 import HomeCards from '../../components/HomeCards';
-import ModalAccount from '../../components/Modal';
 import { Box } from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/react';
 import Category from '../../components/Category';
+import SignupModal from '../../components/SignupModal';
 import ReviewList from '../../components/ReviewList';
 
 const mockPopularMoviesRow = [
@@ -105,7 +105,7 @@ const Home = () => {
     <Box>
       <Box>
         <Hero backdrop="/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg" action={onOpen} />
-        <ModalAccount isOpen={isOpen} onClose={onClose} />
+        <SignupModal isOpen={isOpen} onClose={onClose} />
       </Box>
       <Box paddingLeft="15rem" paddingRight="15rem">
         <PopularMoviesRow data={mockPopularMoviesRow} />
