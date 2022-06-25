@@ -1,4 +1,5 @@
-import { Box, Text, Button } from '@chakra-ui/react';
+import { Box, Text, Button, LinkBox } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
 const ProfileHeader = ({ user }) => {
   return (
@@ -9,14 +10,16 @@ const ProfileHeader = ({ user }) => {
             {user.first_name} {user.last_name}
           </Text>
           <Box marginLeft={2}>
-            <Button
-              h="1.75rem"
-              fontSize="sm"
-              fontWeight="medium"
-              colorScheme="m180.pink"
-            >
-              EDIT PROFILE
-            </Button>
+            <LinkBox to={'/accountSettings'} as={Link}>
+              <Button
+                h="1.75rem"
+                fontSize="sm"
+                fontWeight="medium"
+                colorScheme="m180.pink"
+              >
+                EDIT PROFILE
+              </Button>
+            </LinkBox>
           </Box>
         </Box>
         <Box marginBottom="1">

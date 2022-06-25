@@ -21,11 +21,6 @@ export const publicRoutes = [
     path: '/profile',
     element: Profile,
   },
-  {
-    title: 'Account Settings',
-    path: '/accountSettings',
-    element: AccountSettings,
-  },
 ];
 const routes = [
   ...publicRoutes,
@@ -38,6 +33,11 @@ const routes = [
     title: 'Movie Details',
     path: '/movie/:movie_id',
     element: Movie,
+  },
+  {
+    title: 'Account Settings',
+    path: '/accountSettings',
+    element: AccountSettings,
   },
 ];
 
