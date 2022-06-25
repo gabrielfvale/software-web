@@ -1,17 +1,8 @@
-import React, { useRef } from 'react';
-import { Box, Text, HStack, Icon, Button } from '@chakra-ui/react';
+import React from 'react';
+import { Box, Text } from '@chakra-ui/react';
 import MoviePosters from '../../components/MoviePosters';
 import Pagination from '../../components/Pagination';
 import FilteringHeader from './components/FilteringHeader';
-
-const mockUser = {
-  user_id: 1,
-  first_name: 'Usuario',
-  last_name: 'Teste',
-  bio: 'Usuario de teste',
-  country: 'BR',
-  admin: false,
-};
 
 const mockList = {
   list_id: 1,
@@ -94,8 +85,6 @@ const mockList = {
 };
 
 const FilmsFiltering = () => {
-  const headerRef = useRef();
-
   return (
     <Box marginX="15rem" paddingY="1.5rem">
       <FilteringHeader>
