@@ -39,12 +39,12 @@ const DetailedReview = ({ review }) => {
         </Text>
         <Flex flexDirection="row">
           <Flex marginTop="2.4rem" flexDirection="row">
-            <Link>
+            <Link display="flex">
               <Icon as={AiFillHeart} color="m180.darkPink" />
+              <Text marginLeft="0.2rem" marginRight="2rem" fontSize="xs">
+                {review.likes} likes
+              </Text>
             </Link>
-            <Text marginLeft="0.2rem" marginRight="2rem" fontSize="xs">
-              {review.likes} likes
-            </Text>
 
             <Link display="flex">
               <Icon as={FaComment} color="m180.darkPink" />
