@@ -142,9 +142,9 @@ const MovieCard = ({
             </Heading>
             <VStack alignItems="flex-start">
               {cast.map(person => (
-                <HStack>
+                <HStack key={person.name}>
                   <Avatar
-                    name="Dan Abrahmov"
+                    name={person.name}
                     src={`${mediaUrl}w185${person.profile_path}`}
                   />
                   <Text>{person.name}</Text>
