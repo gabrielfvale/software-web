@@ -5,6 +5,7 @@ import Movie from '../pages/Movie';
 import Lists from '../pages/Lists';
 import List from '../pages/List';
 import AccountSettings from '../pages/AccountSettings';
+import FilmsFiltering from '../pages/FilmsFiltering';
 
 export const publicRoutes = [
   {
@@ -44,6 +45,11 @@ const routes = [
     title: 'List',
     path: '/lists/:list_id',
     element: List,
+  },
+  {
+    title: 'FilmsFiltering',
+    path: '/films/filtering',
+    element: FilmsFiltering,
   },
 ];
 

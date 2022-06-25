@@ -19,6 +19,7 @@ const MoviePosters = ({ data }) => {
             width={`${posterWidth}px`}
             src={poster.poster_path}
             alt={poster.id}
+            key={poster.id}
           />
         ))}
       </Flex>
