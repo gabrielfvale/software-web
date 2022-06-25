@@ -1,6 +1,6 @@
 import { VStack, StackDivider } from '@chakra-ui/react';
 import moment from 'moment';
-import DetailedReview from '../../DetailedReview';
+import DetailedReview from '../DetailedReview';
 
 const ReviewList = ({ data = [] }) => {
   return (
