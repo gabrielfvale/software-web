@@ -8,12 +8,12 @@ export const publicRoutes = [
   {
     title: 'Films',
     path: '/films',
-    element: Lists,
+    element: () => {},
   },
   {
     title: 'Lists',
     path: '/lists',
-    element: () => {},
+    element: Lists,
   },
   {
     title: 'My profile',
