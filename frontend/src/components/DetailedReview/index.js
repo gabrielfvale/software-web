@@ -1,8 +1,8 @@
-import { Box, Link, Image, Heading, Flex, Text, Icon } from '@chakra-ui/react';
+import { Box, Image, Heading, Flex, Text, Icon } from '@chakra-ui/react';
 import { AiFillHeart } from 'react-icons/ai';
 import { FaComment } from 'react-icons/fa';
 import Stars from '../Stars';
-
+import Link from '../Link';
 const DetailedReview = ({ review, ...rest }) => {
   const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
 
@@ -53,19 +53,19 @@ const DetailedReview = ({ review, ...rest }) => {
         </Text>
         <Flex flexDirection="row">
           <Flex marginTop="2.4rem" flexDirection="row">
-            <Link display="flex">
+            <Box display="flex">
               <Icon as={AiFillHeart} color="m180.darkPink" />
               <Text marginLeft="0.2rem" marginRight="2rem" fontSize="xs">
                 {likes} likes
               </Text>
-            </Link>
+            </Box>
 
-            <Link display="flex">
+            <Box display="flex">
               <Icon as={FaComment} color="m180.darkPink" />
               <Text marginLeft="0.2rem" marginRight="2rem" fontSize="xs">
                 {comments} comments
               </Text>
-            </Link>
+            </Box>
           </Flex>
         </Flex>
       </Box>

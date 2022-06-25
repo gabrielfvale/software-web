@@ -1,11 +1,11 @@
 import { Box, Flex } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
-import ListingSection from '../../components/ListingSection'; // TODO: delete
 import ListCard from '../../components/ListCard';
 
 const mockLists = {
   results: [
     {
+      list_id: 1,
       title: 'Upcoming Movies',
       movies: [
         {
@@ -21,6 +21,7 @@ const mockLists = {
       likes: 1234,
     },
     {
+      list_id: 2,
       title: 'Animations',
       movies: [
         {
@@ -39,6 +40,7 @@ const mockLists = {
       likes: 1234,
     },
     {
+      list_id: 3,
       title: 'Favorites',
       movies: [
         {
@@ -82,12 +84,13 @@ const Profile = () => {
       <ProfileHeader user={mockUser} />
       <Box marginBottom="1.5rem" />
       <Flex gap="5">
-        {lists.map((item, index) => (
+        {lists.map(({ list_id, title, movies, likes }, index) => (
           <ListCard
-            key={item.title + index}
-            title={item.title}
-            movies={item.movies}
-            likes={item.likes}
+            key={title + index}
+            title={title}
+            movies={movies}
+            likes={likes}
+            redirect={`/lists/${list_id}`}
           />
         ))}
       </Flex>

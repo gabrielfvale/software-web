@@ -1,4 +1,5 @@
-import { Link, Image, Box, HStack } from '@chakra-ui/react';
+import { Image, Box, HStack } from '@chakra-ui/react';
+import Link from '../Link';
 
 const PopularMoviesRow = ({ data = [] }) => {
   const modifiedData = data.slice(0, 6);

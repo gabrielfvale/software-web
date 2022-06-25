@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 const Link = ({ href, children, ...rest }) => {
   return (
-    <ChakraLink as={RouterLink} to={href} {...rest} color="m180.pink.500">
+    <ChakraLink as={RouterLink} to={href} {...rest}>
       {children}
     </ChakraLink>
   );

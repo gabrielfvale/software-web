@@ -5,9 +5,10 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Link,
+  Icon,
 } from '@chakra-ui/react';
-import { SearchIcon } from '@chakra-ui/icons';
+import { AiOutlineSearch } from 'react-icons/ai';
+import Link from '../Link';
 import Logo from '../../assets/Logo.svg';
 
 const Navbar = ({ onHomepage = false, routes = [] }) => {
@@ -35,21 +36,26 @@ const Navbar = ({ onHomepage = false, routes = [] }) => {
 
       <HStack>
         {routes.map(route => (
-          <Link minWidth="7rem" key={route.path} href={route.path}>
+          <Link
+            key={route.path}
+            minWidth="7rem"
+            color="white"
+            href={route.path}
+          >
             {route.title}
           </Link>
         ))}
         <InputGroup width="12rem">
           <InputLeftElement
             pointerEvents="none"
-            children={<SearchIcon color="m180.purple" />}
+            children={<Icon as={AiOutlineSearch} color="m180.purple" />}
           />
           <Input
             borderRadius="2rem"
             variant="filled"
             type="search"
             placeholder="Search"
-            focusBorderColor="white"
+            _focus={{ background: '#d5dbe0' }}
           />
         </InputGroup>
       </HStack>
