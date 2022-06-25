@@ -3,6 +3,7 @@ import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import Movie from '../pages/Movie';
 import Lists from '../pages/Lists';
+import AccountSettings from '../pages/AccountSettings';
 
 export const publicRoutes = [
   {
@@ -19,6 +20,11 @@ export const publicRoutes = [
     title: 'My profile',
     path: '/profile',
     element: Profile,
+  },
+  {
+    title: 'Account Settings',
+    path: '/accountSettings',
+    element: AccountSettings,
   },
 ];
 const routes = [
