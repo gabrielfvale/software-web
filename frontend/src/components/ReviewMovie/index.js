@@ -20,9 +20,9 @@ const ReviewMovie = ({ username = '' }) => {
       <Box width="100%">
         <Text as="span" fontSize="sm" fontWeight="bold">
           Reviewed by{' '}
-          <Text as="span" fontSize="sm">
-            {username}
-          </Text>
+        </Text>
+        <Text as="span" fontSize="sm">
+          {username}
         </Text>
         <HStack>
           <Text fontSize="sm">22/10/2022</Text>
