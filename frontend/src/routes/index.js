@@ -2,12 +2,13 @@ import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import Movie from '../pages/Movie';
+import Lists from '../pages/Lists';
 
 export const publicRoutes = [
   {
     title: 'Films',
     path: '/films',
-    element: () => {},
+    element: Lists,
   },
   {
     title: 'Lists',
