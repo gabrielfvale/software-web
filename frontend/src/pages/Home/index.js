@@ -1,8 +1,11 @@
+import { useDisclosure } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+
+import Content from '../../components/Content';
 import Hero from '../../components/Hero';
 import PopularMoviesRow from '../../components/PopularMoviesRow';
 import HomeCards from '../../components/HomeCards';
-import { Box } from '@chakra-ui/react';
-import { useDisclosure } from '@chakra-ui/react';
+
 import Category from '../../components/Category';
 import SignupModal from '../../components/SignupModal';
 import ReviewList from '../../components/ReviewList';
@@ -107,13 +110,13 @@ const Home = () => {
         <Hero backdrop="/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg" action={onOpen} />
         <SignupModal isOpen={isOpen} onClose={onClose} />
       </Box>
-      <Box paddingLeft="15rem" paddingRight="15rem">
+      <Content>
         <PopularMoviesRow data={mockPopularMoviesRow} />
         <HomeCards />
         <Category title="Popular Reviews" link="/popular-reviews">
           <ReviewList data={mockPopularReviews} />
         </Category>
-      </Box>
+      </Content>
     </Box>
   );
 };

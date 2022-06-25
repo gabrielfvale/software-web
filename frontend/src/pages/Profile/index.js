@@ -1,4 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
+import Content from '../../components/Content';
 import ProfileHeader from './components/ProfileHeader';
 import ListCard from '../../components/ListCard';
 
@@ -80,7 +81,7 @@ const mockUser = {
 const Profile = () => {
   const lists = mockLists.results;
   return (
-    <Box marginX="15rem" paddingY="1.5rem">
+    <Content>
       <ProfileHeader user={mockUser} />
       <Box marginBottom="1.5rem" />
       <Flex gap="5">
@@ -94,7 +95,7 @@ const Profile = () => {
           />
         ))}
       </Flex>
-    </Box>
+    </Content>
   );
 };
 

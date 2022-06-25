@@ -1,5 +1,7 @@
-import { Box, Text, Link, HStack, Icon } from '@chakra-ui/react';
+import { Text, HStack, Icon } from '@chakra-ui/react';
 import { AiFillHeart } from 'react-icons/ai';
+import Content from '../Content';
+import Link from '../Link';
 
 const Footer = () => {
   const links = [
@@ -22,12 +24,10 @@ const Footer = () => {
   ];
 
   return (
-    <Box
+    <Content
       bg="m180.darkBeige"
       width="100%"
       height="8rem"
-      paddingX="15rem"
-      paddingY="1rem"
       position="absolute"
       bottom="0"
     >
@@ -46,7 +46,7 @@ const Footer = () => {
       <Text fontSize="xs">
         Filmit Limited. Made with <Icon as={AiFillHeart} /> by fans.
       </Text>
-    </Box>
+    </Content>
   );
 };
 

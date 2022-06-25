@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
 import {
-  Box,
   Heading,
   Button,
   Grid,
@@ -9,6 +8,7 @@ import {
   HStack,
   VStack,
 } from '@chakra-ui/react';
+import Content from '../../components/Content';
 import Category from '../../components/Category';
 import ListCard from '../../components/ListCard';
 import DetailedListCard from '../../components/DetailedListCard';
@@ -87,7 +87,7 @@ const Lists = () => {
   const navigate = useNavigate();
 
   return (
-    <Box paddingY="1rem" paddingX="15rem">
+    <Content>
       <VStack>
         <Heading size="md" fontWeight="medium">
           Collect, curate, and share. Lists are the perfect way to group films.
@@ -141,7 +141,7 @@ const Lists = () => {
           <Category title="Crew picks" />
         </GridItem>
       </Grid>
-    </Box>
+    </Content>
   );
 };
 

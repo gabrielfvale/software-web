@@ -37,12 +37,13 @@ const DetailedListCard = ({
             <Heading size="md">{name}</Heading>
           </Link>
           <HStack>
-            <Text fontSize="sm">by</Text>
-            <Link href={`/profile/${username}`}>
-              <Text fontSize="sm" fontWeight="semibold">
+            <Text fontSize="sm">
+              by{' '}
+              <Link href={`/profile/${username}`} fontWeight="semibold">
                 {username}
-              </Text>
-            </Link>
+              </Link>
+            </Text>
+
             <Text fontSize="xs" color="gray.600">
               {movies.length} films
             </Text>
