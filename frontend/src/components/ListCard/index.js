@@ -1,7 +1,7 @@
 import { LinkBox, HStack, Text, Icon } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { AiFillHeart } from 'react-icons/ai';
-import StackedPosters from './StackedPosters';
+import StackedPosters from '../StackedPosters';
 
 const ListCard = ({
   title = '',

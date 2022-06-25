@@ -41,6 +41,7 @@ const StackedPosters = ({ posters = [] }) => {
           position="absolute"
           top="0"
           left={() => calcOffset(index)}
+          boxShadow="-5px 0 5px 0 rgba(0,0,0,0.5);"
         />
       ))}
     </Box>
