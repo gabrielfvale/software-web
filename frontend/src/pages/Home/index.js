@@ -110,7 +110,7 @@ const Home = () => {
       <Box paddingLeft="15rem" paddingRight="15rem">
         <PopularMoviesRow data={mockPopularMoviesRow} />
         <HomeCards />
-        <Category text="Popular Reviews" link="/popular-reviews">
+        <Category title="Popular Reviews" link="/popular-reviews">
           <ReviewList data={mockPopularReviews} />
         </Category>
       </Box>
