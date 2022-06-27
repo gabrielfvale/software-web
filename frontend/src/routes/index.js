@@ -1,16 +1,18 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { isAuthenticated } from 'services/auth';
 
-import Home from '../pages/Home';
+import NotFound from 'pages/NotFound';
 
-import Profile from '../pages/Profile';
-import Settings from '../pages/Profile/Settings';
+import Home from 'pages/Home';
 
-import Movie from '../pages/Films';
-import Discover from '../pages/Films/Discover';
+import Profile from 'pages/Profile';
+import Settings from 'pages/Profile/Settings';
 
-import Lists from '../pages/Lists';
-import ListById from '../pages/Lists/ById';
+import Movie from 'pages/Films';
+import Discover from 'pages/Films/Discover';
+
+import Lists from 'pages/Lists';
+import ListById from 'pages/Lists/ById';
 
 // Component for authenticated routes
 const PrivateRoute = ({ redirect = '/login', element = () => {}, ...rest }) => {
@@ -55,6 +57,11 @@ const routes = [
   {
     path: '/profile/settings',
     element: props => <PrivateRoute element={Settings} {...props} />,
+  },
+
+  {
+    path: '*',
+    element: NotFound,
   },
 ];
 

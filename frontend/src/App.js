@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChakraProvider, Box } from '@chakra-ui/react';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
 import theme from './styles/theme';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -10,11 +10,16 @@ function App() {
   const location = useLocation();
   return (
     <ChakraProvider theme={theme}>
-      <Box position="relative" minH="100vh" paddingBottom="8rem">
+      <Flex
+        minH="100vh"
+        flexDir="column"
+        position="relative"
+        paddingBottom="8rem"
+      >
         <Navbar routes={publicRoutes} onHomepage={location.pathname === '/'} />
         <Router />
         <Footer />
-      </Box>
+      </Flex>
     </ChakraProvider>
   );
 }
