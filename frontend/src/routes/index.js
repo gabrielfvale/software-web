@@ -1,4 +1,6 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { isAuthenticated } from 'services/auth';
+
 import Home from '../pages/Home';
 
 import Profile from '../pages/Profile';
@@ -10,49 +12,49 @@ import Discover from '../pages/Films/Discover';
 import Lists from '../pages/Lists';
 import ListById from '../pages/Lists/ById';
 
-export const publicRoutes = [
-  {
-    title: 'Films',
-    path: '/films',
-    element: () => {},
-  },
-  {
-    title: 'Lists',
-    path: '/lists',
-    element: Lists,
-  },
-  {
-    title: 'My profile',
-    path: '/profile',
-    element: Profile,
-  },
-];
+// Component for authenticated routes
+const PrivateRoute = ({ redirect = '/login', element = () => {}, ...rest }) => {
+  const auth = isAuthenticated();
+  return auth ? <element {...rest} /> : <Navigate to={redirect} />;
+};
+
+export const publicRoutes = [];
 const routes = [
-  ...publicRoutes,
   {
     title: 'Home',
     path: '/',
     element: Home,
   },
+
   {
-    title: 'Movie Details',
+    path: '/films',
+    element: () => {},
+  },
+  {
     path: '/films/:movie_id',
     element: Movie,
   },
   {
-    title: 'Profile Settings',
-    path: '/profile/settings',
-    element: Settings,
+    path: '/films/discover',
+    element: Discover,
+  },
+
+  {
+    path: '/lists',
+    element: Lists,
   },
   {
-    title: 'List',
     path: '/lists/:list_id',
     element: ListById,
   },
+
   {
-    title: 'Discover',
-    path: '/films/discover',
-    element: Discover,
+    path: '/profile',
+    element: Profile,
+  },
+  {
+    path: '/profile/settings',
+    element: props => <PrivateRoute element={Settings} {...props} />,
   },
 ];
 
@@ -60,11 +62,7 @@ const Router = () => {
   return (
     <Routes>
       {routes.map(route => (
-        <Route
-          key={route.title}
-          path={route.path}
-          element={<route.element />}
-        />
+        <Route key={route.path} path={route.path} element={<route.element />} />
       ))}
     </Routes>
   );

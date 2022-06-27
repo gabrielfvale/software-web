@@ -11,11 +11,28 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import Content from 'components/Content';
 import Link from '../Link';
 import Logo from '../../assets/Logo.svg';
+import { isAuthenticated } from 'services/auth';
 
-const Navbar = ({ onHomepage = false, routes = [] }) => {
+const Navbar = ({ onHomepage = false }) => {
   const background = onHomepage
     ? 'linear(to-b,transparent,transparent)'
     : 'linear(to-r,m180.navyBlue.500,m180.navyBlue.400)';
+
+  const userRoute = isAuthenticated()
+    ? { title: 'My profile', path: '/profile' }
+    : { title: 'Sign in', path: '/sign-in' };
+
+  const routes = [
+    {
+      title: 'Films',
+      path: '/films',
+    },
+    {
+      title: 'Lists',
+      path: '/lists',
+    },
+    userRoute,
+  ];
 
   const position = onHomepage ? 'absolute' : 'static';
   return (
