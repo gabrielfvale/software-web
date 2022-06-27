@@ -12,7 +12,7 @@ const ClickablePoster = ({
   return (
     <LinkBox
       as={Link}
-      to={`/film/${movie_id}`}
+      to={`/films/${movie_id}`}
       pos="relative"
       _hover={{
         '#title-container': {

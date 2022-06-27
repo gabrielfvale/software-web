@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Text, Divider, Button } from '@chakra-ui/react';
 import TextInput from './components/TextInput';
 
-const AccountSettings = () => {
+const Settings = () => {
   const [userName, setUserName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -52,4 +52,4 @@ const AccountSettings = () => {
   );
 };
 
-export default AccountSettings;
+export default Settings;

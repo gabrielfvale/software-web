@@ -1,11 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
+
 import Profile from '../pages/Profile';
-import Movie from '../pages/Movie';
+import Settings from '../pages/Profile/Settings';
+
+import Movie from '../pages/Films';
+import Discover from '../pages/Films/Discover';
+
 import Lists from '../pages/Lists';
-import List from '../pages/List';
-import AccountSettings from '../pages/AccountSettings';
-import FilmsFiltering from '../pages/FilmsFiltering';
+import ListById from '../pages/Lists/ById';
 
 export const publicRoutes = [
   {
@@ -33,23 +36,23 @@ const routes = [
   },
   {
     title: 'Movie Details',
-    path: '/movie/:movie_id',
+    path: '/films/:movie_id',
     element: Movie,
   },
   {
-    title: 'Account Settings',
-    path: '/accountSettings',
-    element: AccountSettings,
+    title: 'Profile Settings',
+    path: '/profile/settings',
+    element: Settings,
   },
   {
     title: 'List',
     path: '/lists/:list_id',
-    element: List,
+    element: ListById,
   },
   {
-    title: 'FilmsFiltering',
-    path: '/films/filtering',
-    element: FilmsFiltering,
+    title: 'Discover',
+    path: '/films/discover',
+    element: Discover,
   },
 ];
 

@@ -33,19 +33,19 @@ const mockUserLists = {
       posters: [
         {
           movie_id: 585,
-          media: '/sgheSKxZkttIe8ONsf2sWXPgip3.jpg',
+          poster_path: '/sgheSKxZkttIe8ONsf2sWXPgip3.jpg',
         },
         {
           movie_id: 862,
-          media: '/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg',
+          poster_path: '/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg',
         },
         {
           movie_id: 9806,
-          media: '/2LqaLgk4Z226KkgPJuiOQ58wvrm.jpg',
+          poster_path: '/2LqaLgk4Z226KkgPJuiOQ58wvrm.jpg',
         },
         {
           movie_id: 9487,
-          media: '/kEgOJBBXsY9RrPCFwaT398SSyfS.jpg',
+          poster_path: '/kEgOJBBXsY9RrPCFwaT398SSyfS.jpg',
         },
       ],
     },
@@ -64,19 +64,19 @@ const mockUserLists = {
       posters: [
         {
           movie_id: 263115,
-          media: '/r9utEhMKiaXUj0Bi6iAa3Yr5hrL.jpg',
+          poster_path: '/r9utEhMKiaXUj0Bi6iAa3Yr5hrL.jpg',
         },
         {
           movie_id: 31011,
-          media: '/qNkIONc4Rgmzo23ph7qWp9QfVnW.jpg',
+          poster_path: '/qNkIONc4Rgmzo23ph7qWp9QfVnW.jpg',
         },
         {
           movie_id: 16859,
-          media: '/7nO5DUMnGUuXrA4r2h6ESOKQRrx.jpg',
+          poster_path: '/7nO5DUMnGUuXrA4r2h6ESOKQRrx.jpg',
         },
         {
           movie_id: 149870,
-          media: '/jfwSexzlIzaOgxP9A8bTA6t8YYb.jpg',
+          poster_path: '/jfwSexzlIzaOgxP9A8bTA6t8YYb.jpg',
         },
       ],
     },
@@ -112,7 +112,7 @@ const Lists = () => {
                   <ListCard
                     title={name}
                     author={username}
-                    posters={posters.map(p => p.media)}
+                    posters={posters.map(p => p.poster_path)}
                     list_id={list_id}
                     likes={likes}
                   />
@@ -129,7 +129,7 @@ const Lists = () => {
                 <DetailedListCard
                   key={list.list_id}
                   {...list}
-                  posters={list.posters.map(i => i.media)}
+                  posters={list.posters.map(i => i.poster_path)}
                 />
               ))}
             </VStack>

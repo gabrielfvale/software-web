@@ -21,7 +21,7 @@ const DetailedReview = ({ review, ...rest }) => {
   return (
     <Flex padding="1rem" gap="1rem" width="100%" {...rest}>
       <Box>
-        <Link href={`/movie/${movie_api_id}`}>
+        <Link href={`/films/${movie_api_id}`}>
           <Image
             width="95px"
             height="141px"
@@ -32,7 +32,7 @@ const DetailedReview = ({ review, ...rest }) => {
       </Box>
       <Box>
         <Flex flexDirection="row" alignItems="center">
-          <Link href={`/movie/${movie_api_id}`}>
+          <Link href={`/films/${movie_api_id}`}>
             <Heading size="md" marginRight="0.5rem">
               {title}
             </Heading>

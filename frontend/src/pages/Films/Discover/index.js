@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import MovieGrid from '../../components/MovieGrid';
-import Pagination from '../../components/Pagination';
+import MovieGrid from '../../../components/MovieGrid';
+import Pagination from '../../../components/Pagination';
 import FilteringHeader from './components/FilteringHeader';
 
 const mockList = {
@@ -84,7 +84,7 @@ const mockList = {
     'Et mollitia ut exercitationem qui sed recusandae sint illum. Molestiae quae a odio harum aliquam expedita inventore. Tenetur recusandae maiores vero voluptatem veniam autem saepe laborum.',
 };
 
-const FilmsFiltering = () => {
+const Discover = () => {
   return (
     <Box marginX="15rem" paddingY="1.5rem">
       <FilteringHeader>
@@ -107,4 +107,4 @@ const FilmsFiltering = () => {
   );
 };
 
-export default FilmsFiltering;
+export default Discover;
