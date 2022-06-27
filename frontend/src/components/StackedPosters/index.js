@@ -5,7 +5,7 @@ const StackedPosters = ({ posters = [] }) => {
   const elementRef = useRef();
   const dimensions = useDimensions(elementRef, true);
 
-  const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
+  const mediaUrl = process.env.REACT_APP_API_URL + '/media/';
   const w = 'w300';
 
   const maxImages = posters.length < 4 ? posters.length : 4;

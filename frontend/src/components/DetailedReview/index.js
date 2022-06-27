@@ -4,7 +4,7 @@ import { FaComment } from 'react-icons/fa';
 import Stars from '../Stars';
 import Link from '../Link';
 const DetailedReview = ({ review, ...rest }) => {
-  const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
+  const mediaUrl = process.env.REACT_APP_API_URL + '/media/';
 
   const {
     score,

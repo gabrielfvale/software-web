@@ -1,6 +1,6 @@
 import { LinkBox, Flex, Image, Heading } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
+const mediaUrl = process.env.REACT_APP_API_URL + '/media/';
 
 const ClickablePoster = ({
   movie_id = -1,

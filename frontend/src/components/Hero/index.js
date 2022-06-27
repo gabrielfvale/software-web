@@ -3,7 +3,7 @@ import { Image, Box, Heading, Button, Flex } from '@chakra-ui/react';
 import React from 'react';
 
 const Hero = ({ backdrop, action }) => {
-  const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
+  const mediaUrl = process.env.REACT_APP_API_URL + '/media/';
   const w = 'w1280';
 
   return (

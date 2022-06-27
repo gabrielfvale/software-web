@@ -50,7 +50,7 @@ const MovieCard = ({
     onMoreLists,
   };
 
-  const mediaUrl = process.env.REACT_APP_TMDB_MEDIA_URL;
+  const mediaUrl = process.env.REACT_APP_API_URL + '/media/';
   const release_year = moment(release_date).format('YYYY');
   const formattedScore = Number(score).toFixed(1);
 
