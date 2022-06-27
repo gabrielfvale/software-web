@@ -16,7 +16,7 @@ import {
 
 import ActionRow from './ActionRow';
 const MovieCard = ({
-  movie,
+  movie = {},
   lists = [],
   isOnWatchList = false,
   isFavorite = false,
@@ -74,7 +74,7 @@ const MovieCard = ({
       >
         <Image src={`${mediaUrl}w342${poster_path}`} borderRadius="0.4rem" />
         <Flex gap={2} flexWrap="wrap">
-          {genres.map(genre => (
+          {genres?.slice(0, 2).map(genre => (
             <Tag key={genre.id} bg="m180.pink.500" color="white">
               {genre.name}
             </Tag>
@@ -141,7 +141,7 @@ const MovieCard = ({
               MAIN CAST
             </Heading>
             <VStack alignItems="flex-start">
-              {cast.map(person => (
+              {cast?.map(person => (
                 <HStack key={person.name}>
                   <Avatar
                     name={person.name}
