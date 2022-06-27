@@ -44,4 +44,13 @@ async function config(_, res) {
   }
 }
 
-module.exports = { health, config };
+async function media(req, res) {
+  const { size, path } = req.params;
+
+  const { data } = await tmdb.get("/configuration");
+  const { secure_base_url } = data.images;
+
+  res.status(301).redirect(`${secure_base_url}/${size}/${path}`);
+}
+
+module.exports = { health, config, media };
