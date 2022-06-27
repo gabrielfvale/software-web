@@ -5,83 +5,52 @@ import Pagination from 'components/Pagination';
 import FilteringHeader from './components/FilteringHeader';
 
 const mockList = {
-  list_id: 1,
-  title: 'Upcoming Movies',
-  movies: [
+  page: 1,
+  total_pages: 8,
+  total_results: 200,
+  results: [
     {
-      id: '0',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17514/images-w1400.jpg',
+      id: 16859,
+      title: "Kiki's Delivery Service",
+      poster_path: '/7nO5DUMnGUuXrA4r2h6ESOKQRrx.jpg',
     },
     {
-      id: '1',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17518/images-w1400.jpg',
+      id: 526896,
+      title: 'Morbius',
+      poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
     },
     {
-      id: '2',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17517/images-w1400.jpg',
+      id: 718789,
+      title: 'Lightyear',
+      poster_path: '/vpILbP9eOQEtdQgl4vgjZUNY07r.jpg',
     },
     {
-      id: '3',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17521/images-w1400.jpg',
+      id: 361743,
+      title: 'Top Gun: Maverick',
+      poster_path: '/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',
     },
     {
-      id: '4',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17522/images-w1400.jpg',
+      id: 639933,
+      title: 'The Northman',
+      release_date: '2022-04-07',
+      poster_path: '/8p9zXB7M78nZpm215zHfqpknMeM.jpg',
     },
     {
-      id: '5',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17523/images-w1400.jpg',
+      movie_id: 263115,
+      title: 'Logan',
+      poster_path: '/r9utEhMKiaXUj0Bi6iAa3Yr5hrL.jpg',
     },
     {
-      id: '6',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17524/images-w1400.jpg',
+      movie_id: 31011,
+      title: 'Mr. Nobody',
+      poster_path: '/qNkIONc4Rgmzo23ph7qWp9QfVnW.jpg',
     },
     {
-      id: '7',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17514/images-w1400.jpg',
-    },
-    {
-      id: '8',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17518/images-w1400.jpg',
-    },
-    {
-      id: '9',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17517/images-w1400.jpg',
-    },
-    {
-      id: '10',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17521/images-w1400.jpg',
-    },
-    {
-      id: '11',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17522/images-w1400.jpg',
-    },
-    {
-      id: '12',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17523/images-w1400.jpg',
-    },
-    {
-      id: '13',
-      poster_path:
-        'https://assets.mubicdn.net/images/notebook/post_images/17524/images-w1400.jpg',
+      movie_id: 149870,
+      title: 'The Wind Rises',
+      poster_path: '/jfwSexzlIzaOgxP9A8bTA6t8YYb.jpg',
     },
   ],
-  likes: 1234,
-  description:
-    'Et mollitia ut exercitationem qui sed recusandae sint illum. Molestiae quae a odio harum aliquam expedita inventore. Tenetur recusandae maiores vero voluptatem veniam autem saepe laborum.',
 };
 
 const Discover = () => {
@@ -95,13 +64,13 @@ const Discover = () => {
           alignItems="center"
         >
           <Text color="m180.darkPink" mb="1rem" fontSize="xs">
-            2900 films found
+            {mockList.total_results} films found
           </Text>
-          <MovieGrid data={mockList.movies} />
+          <MovieGrid data={mockList.results} />
         </Box>
       </FilteringHeader>
       <Box flex={1} display="flex" justifyContent="center">
-        <Pagination total_pages={8} />
+        <Pagination page={mockList.page} total_pages={mockList.total_pages} />
       </Box>
     </Box>
   );
