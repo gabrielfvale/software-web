@@ -1,10 +1,16 @@
 import React from 'react';
 import { Grid, Image } from '@chakra-ui/react';
+import ClickablePoster from '../ClickablePoster';
 
 const MoviePosters = ({ data }) => {
   const renderMovieList = () => {
     return data.map(poster => (
-      <Image src={poster.poster_path} alt={poster.id} key={poster.id} />
+      <ClickablePoster
+        key={poster.id}
+        movie_id={poster.id}
+        title={poster.title}
+        poster_path={poster.poster_path}
+      />
     ));
   };
 
