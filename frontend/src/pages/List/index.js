@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import { Box, Text, HStack, Icon, Button } from '@chakra-ui/react';
 import { AiFillHeart } from 'react-icons/ai';
-import MoviePosters from '../../components/MoviePosters';
+import Content from '../../components/Content';
+import MovieGrid from '../../components/MovieGrid';
 
 const mockUser = {
   user_id: 1,
@@ -96,7 +97,7 @@ const List = () => {
   const headerRef = useRef();
 
   return (
-    <Box marginX="15rem" paddingY="1.5rem">
+    <Content>
       <Box
         bg="m180.darkBeige"
         borderRadius="base"
@@ -123,7 +124,7 @@ const List = () => {
           {mockList.description}
         </Text>
       </Box>
-      <MoviePosters data={mockList.movies} />
+      <MovieGrid data={mockList.movies} />
       <Box flex={1} display="flex" justifyContent="flex-end">
         <Button
           fontSize="sm"
@@ -135,7 +136,7 @@ const List = () => {
           EDIT
         </Button>
       </Box>
-    </Box>
+    </Content>
   );
 };
 

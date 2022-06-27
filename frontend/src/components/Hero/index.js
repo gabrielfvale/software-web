@@ -42,7 +42,6 @@ const Hero = ({ backdrop, action }) => {
         <Button
           display="block"
           marginX="auto"
-          width="20rem"
           borderRadius="2rem"
           onClick={action}
         >

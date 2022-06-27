@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import MoviePosters from '../../components/MoviePosters';
+import MovieGrid from '../../components/MovieGrid';
 import Pagination from '../../components/Pagination';
 import FilteringHeader from './components/FilteringHeader';
 
@@ -97,7 +97,7 @@ const FilmsFiltering = () => {
           <Text color="m180.darkPink" mb="1rem" fontSize="xs">
             2900 films found
           </Text>
-          <MoviePosters data={mockList.movies} />
+          <MovieGrid data={mockList.movies} />
         </Box>
       </FilteringHeader>
       <Box flex={1} display="flex" justifyContent="center">
