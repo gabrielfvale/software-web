@@ -1,61 +1,18 @@
-import {
-  Box,
-  Text,
-  Icon,
-  Link,
-  Button,
-  HStack,
-  VStack,
-} from '@chakra-ui/react';
-import { AiFillStar, AiFillHeart } from 'react-icons/ai';
-import { FaComment } from 'react-icons/fa';
-import { useState } from 'react';
-import Comment from './Comment';
-
-const ReviewMovie = ({ username = '' }) => {
-  const [comment, setComment] = useState(false);
-  const [commentValue, setCommentValue] = useState('');
+import { VStack, StackDivider } from '@chakra-ui/react';
+import Review from './Review';
+const ReviewMovie = ({ data = {}, user = -1 }) => {
+  const { page, total_pages, total_results, results } = data;
   return (
-    <VStack width="100%" bg="m180.darkBeige" padding="2rem">
-      <Box width="100%">
-        <Text as="span" fontSize="sm" fontWeight="bold">
-          Reviewed by{' '}
-        </Text>
-        <Text as="span" fontSize="sm">
-          {username}
-        </Text>
-        <HStack>
-          <Text fontSize="sm">22/10/2022</Text>
-          <Icon as={AiFillStar} color="m180.darkPink" fontSize="sm" />
-          <Text fontSize="sm">1.0</Text>
-        </HStack>
-        <Text fontSize="sm" marginTop="0.5rem">
-          loved it so much
-        </Text>
-        <HStack marginTop="0.5" gap={2}>
-          <Link>
-            <HStack>
-              <Icon as={AiFillHeart} color="m180.darkPink" fontSize="sm" />
-              <Text fontSize="xs">Like</Text>
-            </HStack>
-          </Link>
-          <Link>
-            <HStack>
-              <Icon as={FaComment} color="m180.darkPink" fontSize="sm" />
-              <Text fontSize="xs">22 comments</Text>
-            </HStack>
-          </Link>
-          <Button size="xs" onClick={() => setComment(!comment)}>
-            <Text fontSize="xs">Reply</Text>
-          </Button>
-        </HStack>
-        {comment && (
-          <Comment
-            description={commentValue}
-            onChange={e => setCommentValue(e.target.value)}
-          />
-        )}
-      </Box>
+    <VStack
+      width="100%"
+      bg="m180.darkBeige"
+      padding="2rem"
+      gap={2}
+      divider={<StackDivider borderColor="m180.beige" />}
+    >
+      {results?.map(review => {
+        return <Review key={review.review_id} review={review} user={user} />;
+      })}
     </VStack>
   );
 };
