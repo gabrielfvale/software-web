@@ -110,6 +110,7 @@ const Lists = () => {
                 .slice(0, 4)
                 .map(({ list_id, name, posters, likes, username }) => (
                   <ListCard
+                    key={list_id}
                     title={name}
                     author={username}
                     posters={posters.map(p => p.poster_path)}

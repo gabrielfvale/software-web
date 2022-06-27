@@ -3,17 +3,6 @@ import { Grid } from '@chakra-ui/react';
 import ClickablePoster from '../ClickablePoster';
 
 const MoviePosters = ({ data }) => {
-  const renderMovieList = () => {
-    return data.map(poster => (
-      <ClickablePoster
-        key={poster.id}
-        movie_id={poster.id}
-        title={poster.title}
-        poster_path={poster.poster_path}
-      />
-    ));
-  };
-
   return (
     <Grid
       width="100%"
@@ -31,7 +20,14 @@ const MoviePosters = ({ data }) => {
         },
       }}
     >
-      {renderMovieList()}
+      {data.map(poster => (
+        <ClickablePoster
+          key={poster.id}
+          movie_id={poster.id}
+          title={poster.title}
+          poster_path={poster.poster_path}
+        />
+      ))}
     </Grid>
   );
 };
