@@ -16,7 +16,7 @@ const ReviewMovie = ({ username = '' }) => {
   const [comment, setComment] = useState(false);
   const [commentValue, setCommentValue] = useState('');
   return (
-    <VStack width="100%">
+    <VStack width="100%" bg="m180.darkBeige" padding="2rem">
       <Box width="100%">
         <Text as="span" fontSize="sm" fontWeight="bold">
           Reviewed by{' '}
