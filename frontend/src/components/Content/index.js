@@ -5,14 +5,17 @@ const Content = ({ children, ...rest }) => {
     <Box
       paddingY="1rem"
       sx={{
-        '@media (min-width: 480px)': {
+        '@media only screen and (max-width: 768px)': {
           paddingX: '1rem',
         },
-        '@media (min-width: 768px)': {
+        '@media only screen and (min-width: 768px)': {
           paddingX: '7.5rem',
         },
-        '@media (min-width: 1280px)': {
+        '@media only screen and (min-width: 1280px)': {
           paddingX: '15rem',
+        },
+        '@media only screen and (min-width: 1920px)': {
+          paddingX: '20rem',
         },
       }}
       {...rest}
