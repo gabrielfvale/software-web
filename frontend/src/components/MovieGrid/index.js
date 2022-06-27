@@ -16,11 +16,11 @@ const MoviePosters = ({ data }) => {
           gridTemplateColumns: 'repeat(4, 1fr)',
         },
         '@media only screen and (min-width: 1920px)': {
-          gridTemplateColumns: 'repeat(8, 1fr)',
+          gridTemplateColumns: 'repeat(10, 1fr)',
         },
       }}
     >
-      {data.map(poster => (
+      {data?.map(poster => (
         <ClickablePoster
           key={poster.id}
           movie_id={poster.id}

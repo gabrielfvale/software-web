@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import api from 'services/api';
+import { useFetchData } from 'hooks/fetchData';
 import { useDocumentTitle } from 'hooks/documentTitle';
 
 import { VStack } from '@chakra-ui/react';
@@ -8,18 +7,10 @@ import MovieCard from 'components/MovieCard';
 
 const Movie = () => {
   const { movie_id } = useParams();
-  const [movie, setMovie] = useState({});
-
   const setTitle = useDocumentTitle();
-
-  useEffect(() => {
-    const fetchMovie = async () => {
-      const { data } = await api.get(`/movie/${movie_id}`);
-      setMovie({ ...data });
-      setTitle(data.title);
-    };
-    fetchMovie();
-  }, [movie_id, setTitle]);
+  const [data] = useFetchData(`/movie/${movie_id}`, data =>
+    setTitle(data?.title)
+  );
 
   return (
     <VStack
@@ -30,9 +21,9 @@ const Movie = () => {
       paddingY="1rem"
     >
       <MovieCard
-        movie={movie}
-        isOnWatchList={movie?.on_watch}
-        isFavorite={movie?.on_favorites}
+        movie={data}
+        isOnWatchList={data?.on_watch}
+        isFavorite={data?.on_favorites}
       />
     </VStack>
   );

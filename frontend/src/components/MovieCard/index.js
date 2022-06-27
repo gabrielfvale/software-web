@@ -63,7 +63,8 @@ const MovieCard = ({
       paddingY={8}
       bg="m180.darkBeige"
       borderRadius="0.4rem"
-      backgroundImage={`linear-gradient(to bottom, rgba(0,0,0,0.3) 50%, rgba(235, 232, 226, 1) 50%), url(${mediaUrl}w1280${backdrop_path})`}
+      backgroundImage={`linear-gradient(to bottom, rgba(0,0,0,0.3) 50%, rgba(235, 232, 226, 1) 50%), url(${mediaUrl}w780${backdrop_path})`}
+      backgroundSize="100%"
     >
       <GridItem
         rowSpan={2}
