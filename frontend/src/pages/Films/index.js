@@ -1,6 +1,6 @@
 import { VStack } from '@chakra-ui/react';
-import { useParams } from 'react-router-dom';
-import MovieCard from '../../components/MovieCard';
+// import { useParams } from 'react-router-dom';
+import MovieCard from 'components/MovieCard';
 
 const mockMovie = {
   id: 526896,
@@ -88,7 +88,7 @@ const mockMovie = {
 };
 
 const Movie = () => {
-  const { movie_id } = useParams();
+  // const { movie_id } = useParams();
   return (
     <VStack
       gap={2}

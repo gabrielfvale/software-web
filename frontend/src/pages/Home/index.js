@@ -1,14 +1,14 @@
 import { useDisclosure } from '@chakra-ui/react';
 import { Box } from '@chakra-ui/react';
 
-import Content from '../../components/Content';
-import Hero from '../../components/Hero';
-import PopularMoviesRow from '../../components/PopularMoviesRow';
-import HomeCards from '../../components/HomeCards';
+import Content from 'components/Content';
+import Hero from 'components/Hero';
+import PopularMoviesRow from 'components/PopularMoviesRow';
+import HomeCards from 'components/HomeCards';
 
-import Category from '../../components/Category';
-import SignupModal from '../../components/SignupModal';
-import ReviewList from '../../components/ReviewList';
+import Category from 'components/Category';
+import SignupModal from 'components/SignupModal';
+import ReviewList from 'components/ReviewList';
 
 const mockPopularMoviesRow = [
   {

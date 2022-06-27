@@ -1,8 +1,8 @@
 import { Box, Flex } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
-import ListCard from '../../components/ListCard';
-import ReviewList from '../../components/ReviewList';
-import Category from '../../components/Category';
+import ListCard from 'components/ListCard';
+import ReviewList from 'components/ReviewList';
+import Category from 'components/Category';
 
 const mockLists = {
   results: [

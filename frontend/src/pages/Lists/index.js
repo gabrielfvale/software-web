@@ -8,10 +8,10 @@ import {
   HStack,
   VStack,
 } from '@chakra-ui/react';
-import Content from '../../components/Content';
-import Category from '../../components/Category';
-import ListCard from '../../components/ListCard';
-import DetailedListCard from '../../components/DetailedListCard';
+import Content from 'components/Content';
+import Category from 'components/Category';
+import ListCard from 'components/ListCard';
+import DetailedListCard from 'components/DetailedListCard';
 
 const mockUserLists = {
   page: 1,

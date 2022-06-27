@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Text, HStack, Icon, Button } from '@chakra-ui/react';
 import { AiFillHeart } from 'react-icons/ai';
-import Content from '../../../components/Content';
-import MovieGrid from '../../../components/MovieGrid';
+import Content from 'components/Content';
+import MovieGrid from 'components/MovieGrid';
 
 const mockUser = {
   user_id: 1,

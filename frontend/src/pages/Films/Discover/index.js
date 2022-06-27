@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import MovieGrid from '../../../components/MovieGrid';
-import Pagination from '../../../components/Pagination';
+import MovieGrid from 'components/MovieGrid';
+import Pagination from 'components/Pagination';
 import FilteringHeader from './components/FilteringHeader';
 
 const mockList = {

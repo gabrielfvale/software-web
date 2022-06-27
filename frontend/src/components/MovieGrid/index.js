@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Image } from '@chakra-ui/react';
+import { Grid } from '@chakra-ui/react';
 import ClickablePoster from '../ClickablePoster';
 
 const MoviePosters = ({ data }) => {
