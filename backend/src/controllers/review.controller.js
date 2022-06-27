@@ -6,11 +6,14 @@ const {
   getPagesFromCount,
   paginateQuery,
 } = require("../util/paginate");
+const { errorHandler } = require("../util/error");
 
-async function get(req, res, next) {
+async function get(req, res) {
   try {
     const { movie_id } = req.params;
     let { page, per_page } = req.query;
+    const user_id = req.user?.user_id || -1;
+
     page = page || 1;
     per_page = per_page || 10;
 
@@ -22,7 +25,7 @@ async function get(req, res, next) {
     );
 
     if (page > total_pages) {
-      return res.status(400).send({ error: "Page exceeds limit" });
+      return res.status(400).json({ error: "Page exceeds limit" });
     }
 
     const { rows: results } = await pool.query(
@@ -31,29 +34,30 @@ async function get(req, res, next) {
         SELECT reviews.*,
         (SELECT username FROM users WHERE users.user_id = reviews.user_id) AS username,
         (SELECT COUNT(*) FROM comments WHERE comments.review_id = reviews.review_id) AS comments,
-        (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes
-        FROM reviews WHERE movie_api_id=$1
+        (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes,
+        (SELECT EXISTS(SELECT 1 FROM like_review WHERE like_review.user_id=$1 )) AS liked_by_me
+        FROM reviews WHERE movie_api_id=$2
         ORDER BY reviews.created_at DESC
         `,
         page,
         per_page
       ),
-      [movie_id]
+      [user_id, movie_id]
     );
 
-    res.send({
+    res.status(200).json({
       page,
       total_pages,
       total_results,
       results,
     });
   } catch (e) {
-    console.log(e);
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function popular(req, res, next) {
+async function popular(req, res) {
   try {
     let { page, per_page } = req.query;
     page = page || 1;
@@ -76,11 +80,12 @@ async function popular(req, res, next) {
       paginateQuery(
         `
         SELECT popular_reviews.*, users.username FROM (
-          SELECT reviews.*, COUNT(like_review.review_id) AS likes
+          SELECT reviews.*, COUNT(like_review.review_id) AS likes, COUNT(comments) AS comments
                 FROM reviews LEFT JOIN like_review ON reviews.review_id = like_review.review_id
+                LEFT JOIN comments ON comments.review_id = reviews.review_id
                 GROUP BY reviews.review_id
                 HAVING COUNT(like_review.review_id) > 0
-                ORDER BY likes DESC) as popular_reviews
+                ORDER BY likes,comments  DESC) as popular_reviews
           INNER JOIN users ON users.user_id = popular_reviews.user_id
         `,
         page,
@@ -106,13 +111,14 @@ async function popular(req, res, next) {
       JSON.stringify({ total_results, total_pages, results })
     );
 
-    return res.send({ total_results, total_pages, results });
+    return res.status(200).json({ total_results, total_pages, results });
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function create(req, res, next) {
+async function create(req, res) {
   try {
     const { user_id } = req.user;
     const { movie_api_id, score, description } = req.body;
@@ -124,7 +130,7 @@ async function create(req, res, next) {
     );
 
     if (reviewed.length !== 0) {
-      return res.status(400).send({ error: "Movie already reviewed by user" });
+      return res.status(400).json({ error: "Movie already reviewed by user" });
     }
 
     const { rows } = await pool.query(
@@ -138,18 +144,17 @@ async function create(req, res, next) {
     );
 
     if (rows.length !== 1) {
-      return res
-        .status(500)
-        .send({ error: "There was an error sending review" });
+      throw Error("Error sending review");
     }
 
-    res.status(201).send({});
+    res.status(201).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function update(req, res, next) {
+async function update(req, res) {
   try {
     const { user_id } = req.user;
     const { movie_api_id, score, description } = req.body;
@@ -161,7 +166,7 @@ async function update(req, res, next) {
     );
 
     if (reviewed.length === 0) {
-      return res.status(404).send({ error: "Review not found" });
+      return res.status(404).json({ error: "Review not found" });
     }
 
     await pool.query(
@@ -171,13 +176,14 @@ async function update(req, res, next) {
       [score, description, new Date(), user_id, movie_api_id]
     );
 
-    res.status(200).send({});
+    res.status(200).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function deleteReview(req, res, next) {
+async function deleteReview(req, res) {
   try {
     const { user_id } = req.user;
     const { movie_api_id } = req.body;
@@ -189,7 +195,7 @@ async function deleteReview(req, res, next) {
     );
 
     if (reviewed.length === 0) {
-      return res.status(404).send({ error: "Review not found" });
+      return res.status(404).json({ error: "Review not found" });
     }
 
     await pool.query(
@@ -197,13 +203,14 @@ async function deleteReview(req, res, next) {
       [user_id, movie_api_id]
     );
 
-    res.status(200).send({});
+    res.status(200).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function like(req, res, next) {
+async function like(req, res) {
   try {
     const { user_id } = req.user;
     const { review_id } = req.body;
@@ -215,7 +222,7 @@ async function like(req, res, next) {
     );
 
     if (rows.length === 0) {
-      return res.status(404).send({ error: "Review not found" });
+      return res.status(404).json({ error: "Review not found" });
     }
 
     const review = rows[0];
@@ -224,7 +231,7 @@ async function like(req, res, next) {
     if (review.user_id === String(user_id)) {
       return res
         .status(400)
-        .send({ error: "Not possible to like your own review" });
+        .json({ error: "Not possible to like your own review" });
     }
 
     const { rows: like_rows } = await pool.query(
@@ -246,9 +253,10 @@ async function like(req, res, next) {
         [user_id, review.review_id]
       );
     }
-    res.status(200).send({});
+    res.status(200).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 

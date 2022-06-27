@@ -1,14 +1,53 @@
 const { tmdb } = require("../services/tmdb");
+const { pool } = require("../services/db");
 const { setCache } = require("../services/cache");
+const { errorHandler } = require("../util/error");
 
-async function details(req, res, next) {
+async function details(req, res) {
   try {
-    const { params } = req;
-    const { data } = await tmdb.get(
-      `/movie/${params.id}?append_to_response=credits`
+    const { id } = req.params;
+    const { data } = await tmdb.get(`/movie/${id}?append_to_response=credits`);
+    const user_id = req.user?.user_id;
+
+    const { rows: scores } = await pool.query(
+      `
+      SELECT score FROM reviews WHERE movie_api_id=$1
+      `,
+      [id]
     );
-    res.json({
+
+    const score =
+      scores.length === 0
+        ? 0
+        : scores.reduce((prev, cur) => prev + Number(cur.score), 0) /
+          scores.length;
+
+    // Find if movie is in watch or favorite lists
+    let on_list = { on_watch: false, on_favorites: false };
+    if (user_id) {
+      const { rows: onLists } = await pool.query(
+        `
+        SELECT list_type
+        FROM lists LEFT JOIN movies_list ON lists.list_id = movies_list.list_id
+        WHERE lists.user_id=$1
+          AND movies_list.movie_api_id=$2
+          AND list_type in ('watch', 'favorites') 
+        GROUP BY lists.list_id
+        `,
+        [user_id, id]
+      );
+      // Iterate over results to update object
+      onLists.forEach(({ list_type }) => {
+        list_type === "watch"
+          ? (on_list.on_watch = true)
+          : (on_list.on_favorites = true);
+      });
+    }
+
+    res.status(200).json({
       id: data.id,
+      score,
+      ...on_list,
       backdrop_path: data.backdrop_path,
       poster_path: data.poster_path,
       title: data.title,
@@ -16,14 +55,16 @@ async function details(req, res, next) {
       overview: data.overview,
       genres: data.genres,
       release_date: data.release_date,
+      runtime: data.runtime,
       cast: data.credits.cast.slice(0, 4),
     });
   } catch (e) {
-    next(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function many(req, res, next) {
+async function many(req, res) {
   try {
     const { movies } = req.params;
     const moviesArr = movies.split(",");
@@ -44,17 +85,45 @@ async function many(req, res, next) {
 
     return res.status(200).json(results);
   } catch (e) {
-    console.log(e);
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function trending(req, res, next) {
+async function media(req, res) {
+  try {
+    const { movies, media_type } = req.query;
+
+    if (media_type && media_type !== "posters" && media_type !== "backdrops") {
+      return res.status(400).json({ error: "Invalid media_type" });
+    }
+
+    const results = [];
+    for (movie of movies.split(",")) {
+      const { data } = await tmdb.get(`/movie/${movie}/images`);
+      const media = media_type || "posters";
+
+      results.push({
+        movie_id: Number(movie),
+        media: data[media][0].file_path,
+      });
+    }
+
+    setCache(req.originalUrl, JSON.stringify(results));
+
+    return res.status(200).json(results);
+  } catch (e) {
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
+  }
+}
+
+async function popular(req, res) {
   try {
     const { query } = req;
     const page = query.page || 1;
-    const { data } = await tmdb.get(`/trending/movies/week?page=${page}`);
-    res.json({
+    const { data } = await tmdb.get(`/movie/popular?page=${page}`);
+    res.status(200).json({
       page: data.page,
       total_pages: data.total_pages,
       total_results: data.total_results,
@@ -68,18 +137,19 @@ async function trending(req, res, next) {
       })),
     });
   } catch (e) {
-    next(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function recommendations(req, res, next) {
+async function recommendations(req, res) {
   try {
     const { params, query } = req;
     const page = query.page || 1;
     const { data } = await tmdb.get(
       `/movie/${params.id}/recommendations?page=${page}`
     );
-    res.json({
+    res.status(200).json({
       page: data.page,
       total_pages: data.total_pages,
       total_results: data.total_results,
@@ -93,17 +163,18 @@ async function recommendations(req, res, next) {
       })),
     });
   } catch (e) {
-    next(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function discover(req, res, next) {
+async function discover(req, res) {
   const query_params = new URLSearchParams({ ...req.query }).toString();
   try {
     const { data } = await tmdb.get(
       `/discover/movie?include_adult=false&${query_params}`
     );
-    res.json({
+    res.status(200).json({
       page: data.page,
       total_pages: data.total_pages,
       total_results: data.total_results,
@@ -117,8 +188,47 @@ async function discover(req, res, next) {
       })),
     });
   } catch (e) {
-    next(e);
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-module.exports = { details, many, trending, recommendations, discover };
+async function search(req, res) {
+  try {
+    let { query, page } = req.query;
+    page = page || 1;
+    const encodedQuery = encodeURI(query);
+
+    const { data } = await tmdb.get(
+      `/search/movie?query=${encodedQuery}&include_adult=false&page=${page}`
+    );
+
+    res.status(200).json({
+      page: data.page,
+      total_pages: data.total_pages,
+      total_results: data.total_results,
+      results: data.results.map((movie) => ({
+        id: movie.id,
+        poster_path: movie.poster_path,
+        title: movie.title,
+        tagline: movie.tagline,
+        overview: movie.overview,
+        genres: movie.genres,
+        release_date: movie.release_date,
+      })),
+    });
+  } catch (e) {
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
+  }
+}
+
+module.exports = {
+  details,
+  many,
+  media,
+  popular,
+  recommendations,
+  discover,
+  search,
+};

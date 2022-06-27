@@ -1,5 +1,8 @@
 const dotenv = require("dotenv");
 dotenv.config();
+
+const cors = require("cors");
+
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocs = require("./docs");
 
@@ -13,6 +16,7 @@ const authRouter = require("./routes/auth.routes");
 const profileRouter = require("./routes/profile.routes");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // Routes

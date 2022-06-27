@@ -1,6 +1,7 @@
 const { pool } = require("../services/db");
+const { errorHandler } = require("../util/error");
 
-async function get(req, res, next) {
+async function get(req, res) {
   try {
     const { username } = req.params;
 
@@ -12,7 +13,7 @@ async function get(req, res, next) {
     );
 
     if (users.length !== 1) {
-      return res.status(404).send({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
     const user = users[0];
@@ -27,13 +28,14 @@ async function get(req, res, next) {
 
     const { rows: lists } = await pool.query(listQuery, [user.user_id]);
 
-    res.status(200).send({ ...user, lists });
+    res.status(200).json({ ...user, lists });
   } catch (e) {
-    res.status(400).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function stats(req, res, next) {
+async function stats(req, res) {
   try {
     const { username } = req.params;
 
@@ -44,7 +46,7 @@ async function stats(req, res, next) {
     );
 
     if (rows.length !== 1) {
-      return res.status(404).send({ error: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
 
     // Calculate review count
@@ -73,17 +75,18 @@ async function stats(req, res, next) {
     const likes_received =
       Number(like_review[0].count) + Number(like_list[0].count);
 
-    res.status(200).send({
+    res.status(200).json({
       movies_reviewed: Number(movies_reviewed),
       lists_created: Number(lists_created),
       likes_received,
     });
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
-async function update(req, res, next) {
+async function update(req, res) {
   try {
     const { username, first_name, last_name, country, bio } = req.body;
     const { user_id } = req.user;
@@ -95,7 +98,7 @@ async function update(req, res, next) {
     );
 
     if (rows.length === 1 && rows[0].user_id !== user_id) {
-      return res.status(409).send({ error: "Username already taken" });
+      return res.status(409).json({ error: "Username already taken" });
     }
 
     await pool.query(
@@ -105,9 +108,10 @@ async function update(req, res, next) {
       [user_id, username, first_name, last_name, country, bio]
     );
 
-    res.status(200).send({});
+    res.status(200).end();
   } catch (e) {
-    res.status(500).send({});
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
   }
 }
 
