@@ -86,10 +86,13 @@ const MovieCard = ({
       <GridItem display="flex" justifyContent="space-between">
         <Flex flexDir="column" justifyContent="space-between">
           <Box>
-            <HStack>
-              <Heading color="white">{title}</Heading>
-              <Text color="white">{release_year}</Text>
-            </HStack>
+            <Heading display="inline" color="white">
+              {title}
+            </Heading>
+            <Text as="span" color="white" marginLeft="0.5rem">
+              {release_year}
+            </Text>
+
             <Text color="white" fontStyle="italic">
               {tagline}
             </Text>
