@@ -47,10 +47,9 @@ async function config(_, res) {
 async function media(req, res) {
   const { size, path } = req.params;
 
-  const { data } = await tmdb.get("/configuration");
-  const { secure_base_url } = data.images;
+  const mediaURL = process.env.TMDB_MEDIA_URL;
 
-  res.status(301).redirect(`${secure_base_url}/${size}/${path}`);
+  res.status(301).redirect(`${mediaURL}/${size}/${path}`);
 }
 
 module.exports = { health, config, media };
