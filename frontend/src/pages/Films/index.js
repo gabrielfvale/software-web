@@ -1,17 +1,22 @@
-import { useFetchData } from 'hooks/fetchData';
+import useFetchData from 'hooks/fetchData';
 import { useDocumentTitle } from 'hooks/documentTitle';
 
 import { VStack } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import MovieCard from 'components/MovieCard';
 import ReviewMovie from 'components/ReviewMovie';
+import { useEffect } from 'react';
 
 const Movie = () => {
   const { movie_id } = useParams();
   const setTitle = useDocumentTitle();
-  const [data] = useFetchData(`/movie/${movie_id}`, data =>
-    setTitle(data?.title)
-  );
+  const { data } = useFetchData(`/movie/${movie_id}`);
+
+  useEffect(() => {
+    if (data) {
+      setTitle(data.title);
+    }
+  }, [data, setTitle]);
 
   return (
     <VStack

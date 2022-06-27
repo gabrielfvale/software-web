@@ -1,32 +1,73 @@
-import { useEffect, useState, useCallback } from 'react';
+/*
+  IMPLEMENTATION BASED ON "useFetch() react hook" by
+  https://usehooks-ts.com/react-hook/use-fetch
+*/
+
+import { useEffect, useReducer, useRef } from 'react';
 import api from 'services/api';
 
-export const useFetchData = (url = '', callback = () => {}) => {
-  const [data, setData] = useState({});
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+const useFetchData = (url = '') => {
+  const cache = useRef({});
+  const cancelRequest = useRef(false);
 
-  const fetchCallback = useCallback(
-    async url => {
-      setError('');
-      setLoading(true);
+  const initialState = {
+    error: undefined,
+    data: undefined,
+  };
 
-      try {
-        const { data: res } = await api.get(url);
-        setData({ ...res });
-        callback(res);
-      } catch (e) {
-        setError(e.response.data.error);
-      }
+  const fetchReducer = (state, action) => {
+    switch (action.type) {
+      case 'loading':
+        return { ...initialState };
+      case 'fetched':
+        return { ...initialState, data: action.payload };
+      case 'error':
+        return { ...initialState, error: action.payload };
+      default:
+        return state;
+    }
+  };
 
-      setLoading(false);
-    },
-    [callback]
-  );
+  const [state, dispatch] = useReducer(fetchReducer, initialState);
 
   useEffect(() => {
-    fetchCallback(url);
+    if (url === '') return;
+    cancelRequest.current = false;
+
+    const fetchData = async () => {
+      dispatch({ type: 'loading' });
+
+      if (cache.current[url]) {
+        dispatch({ type: 'fetched', payload: cache.current[url] });
+        return;
+      }
+
+      try {
+        const response = await api.get(url);
+        if (!response.data) {
+          throw new Error(response.data.error);
+        }
+
+        const { data } = response;
+        cache.current[url] = data;
+        if (cancelRequest.current) return;
+
+        dispatch({ type: 'fetched', payload: data });
+      } catch (error) {
+        if (cancelRequest.current) return;
+
+        dispatch({ type: 'error', payload: error });
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      cancelRequest.current = true;
+    };
   }, [url]);
 
-  return [data, loading, error];
+  return state;
 };
+
+export default useFetchData;

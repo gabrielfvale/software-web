@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useFetchData } from 'hooks/fetchData';
+import useFetchData from 'hooks/fetchData';
 
 import { Box, Text } from '@chakra-ui/react';
 import Content from 'components/Content';
@@ -9,7 +9,7 @@ import FilteringHeader from './components/FilteringHeader';
 
 const Discover = () => {
   const [page, setPage] = useState(1);
-  const [data] = useFetchData(`/movie/discover/?page=${page}`);
+  const { data } = useFetchData(`/movie/discover/?page=${page}`);
 
   return (
     <Content>
