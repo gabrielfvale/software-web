@@ -1,4 +1,4 @@
-import { LinkBox, Flex, Image, Heading } from '@chakra-ui/react';
+import { LinkBox, Flex, Image, Heading, Text } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 const mediaUrl = process.env.REACT_APP_API_URL + '/media/';
 
@@ -21,7 +21,24 @@ const ClickablePoster = ({
       }}
       {...rest}
     >
-      <Image src={`${mediaUrl}${w}${poster_path}`} alt={movie_id} />
+      <Image
+        src={`${mediaUrl}${w}${poster_path}`}
+        fallback={
+          <Flex
+            w="100%"
+            h="100%"
+            alignItems="center"
+            justifyContent="center"
+            bg="#aaa"
+            padding="0.5rem"
+          >
+            <Heading size="md" w="100%" textAlign="center" color="white">
+              {title}
+            </Heading>
+          </Flex>
+        }
+        alt={movie_id}
+      />
       <Flex
         id="title-container"
         pos="absolute"
