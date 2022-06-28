@@ -125,7 +125,7 @@ async function popular(req, res) {
     const { data } = await tmdb.get(`/movie/popular?page=${page}`);
     res.status(200).json({
       page: data.page,
-      total_pages: data.total_pages,
+      total_pages: Math.min(data.total_pages, 500),
       total_results: data.total_results,
       results: data.results.map((result) => ({
         id: result.id,
@@ -151,7 +151,7 @@ async function recommendations(req, res) {
     );
     res.status(200).json({
       page: data.page,
-      total_pages: data.total_pages,
+      total_pages: Math.min(data.total_pages, 500),
       total_results: data.total_results,
       results: data.results.map((result) => ({
         id: result.id,
@@ -170,13 +170,14 @@ async function recommendations(req, res) {
 
 async function discover(req, res) {
   const query_params = new URLSearchParams({ ...req.query }).toString();
+
   try {
     const { data } = await tmdb.get(
-      `/discover/movie?include_adult=false&${query_params}`
+      `/discover/movie?certification_country=US&certification.lte=PG-13&${query_params}`
     );
     res.status(200).json({
       page: data.page,
-      total_pages: data.total_pages,
+      total_pages: Math.min(data.total_pages, 500),
       total_results: data.total_results,
       results: data.results.map((result) => ({
         id: result.id,
@@ -200,12 +201,12 @@ async function search(req, res) {
     const encodedQuery = encodeURI(query);
 
     const { data } = await tmdb.get(
-      `/search/movie?query=${encodedQuery}&include_adult=false&page=${page}`
+      `/search/movie?query=${encodedQuery}&certification_country=US&certification.lte=PG-13&page=${page}`
     );
 
     res.status(200).json({
       page: data.page,
-      total_pages: data.total_pages,
+      total_pages: Math.min(data.total_pages, 500),
       total_results: data.total_results,
       results: data.results.map((movie) => ({
         id: movie.id,
