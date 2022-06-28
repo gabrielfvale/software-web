@@ -22,7 +22,7 @@ const Comment = ({ username = '', description = '', onChange = () => {} }) => {
         width="100%"
       >
         <Text fontSize="xs">{description.length}/280</Text>
-        <Button size="md">Send</Button>
+        <Button size="sm">Send</Button>
       </HStack>
     </VStack>
   );
