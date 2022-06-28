@@ -1,28 +1,20 @@
-import { useState } from 'react';
 import { HStack, Text, Icon } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 
-const FilteringItem = ({ category, title, onClick, currentCategory }) => {
-  const [order, setOrder] = useState('desc');
-  const isSelected = currentCategory.includes(category);
-
-  const handleClick = () => {
-    if (order === 'asc') {
-      setOrder('desc');
-    } else {
-      setOrder('asc');
-    }
-    onClick(`${category}.${order}`);
-  };
-
+const FilteringItem = ({ order = 'desc', onClick }) => {
   return (
-    <HStack cursor="pointer" onClick={handleClick} gap={0}>
-      <Text fontWeight={isSelected ? 'bold' : 'medium'} fontSize="xs">
-        {title}
+    <HStack
+      cursor="pointer"
+      onClick={() => onClick(order === 'asc' ? 'desc' : 'asc')}
+      gap={0}
+    >
+      <Text fontWeight="semibold" fontSize="xs">
+        {order === 'asc' ? 'ASCENDING' : 'DESCENDING'}
       </Text>
       <Icon
+        fontWeight="semibold"
         as={order === 'desc' ? ChevronDownIcon : ChevronUpIcon}
-        color="m180.darkPink"
+        color="black"
       />
     </HStack>
   );

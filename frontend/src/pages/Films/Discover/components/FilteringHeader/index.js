@@ -1,70 +1,46 @@
 import { useState } from 'react';
-import { HStack, Box, Heading, Divider } from '@chakra-ui/react';
+import { HStack, Heading, Divider, Select, Text } from '@chakra-ui/react';
 import FilteringItem from '../FilteringItem';
 
-const FilteringHeader = ({ children }) => {
-  const [currentCategory, setCurrentCategory] = useState('original_title.desc');
-
-  const handleSelectFilter = value => {
-    setCurrentCategory(value);
-  };
+const FilteringHeader = ({
+  sortOptions = [
+    { value: 'popularity', label: 'Popularity' },
+    { value: 'release_date', label: 'Release date' },
+  ],
+  onSortBy = () => {},
+  children,
+}) => {
+  const [order, setOrder] = useState('desc');
 
   return (
-    <Box>
-      <Box width="100%">
-        <HStack justifyContent="space-between">
-          <Heading size="sm" textTransform="uppercase" fontWeight="medium">
-            Films
-          </Heading>
-          <HStack gap={2}>
-            <FilteringItem
-              title="Original Title"
-              category="original_title"
-              currentCategory={currentCategory}
-              onClick={handleSelectFilter}
-            />
-            <FilteringItem
-              title="Popularity"
-              category="popularity"
-              currentCategory={currentCategory}
-              onClick={handleSelectFilter}
-            />
-            <FilteringItem
-              title="Release Date"
-              category="release_date"
-              currentCategory={currentCategory}
-              onClick={handleSelectFilter}
-            />
-            <FilteringItem
-              title="Revenue"
-              category="revenue"
-              currentCategory={currentCategory}
-              onClick={handleSelectFilter}
-            />
-            <FilteringItem
-              title="Release Date"
-              category="primary_release_date"
-              currentCategory={currentCategory}
-              onClick={handleSelectFilter}
-            />
-            <FilteringItem
-              title="Vote Average"
-              category="vote_average"
-              currentCategory={currentCategory}
-              onClick={handleSelectFilter}
-            />
-            <FilteringItem
-              title="Vote Count"
-              category="vote_count"
-              currentCategory={currentCategory}
-              onClick={handleSelectFilter}
-            />
-          </HStack>
+    <>
+      <HStack width="100%" justifyContent="space-between">
+        <Heading size="sm" textTransform="uppercase" fontWeight="medium">
+          Films
+        </Heading>
+        <HStack>
+          <Text fontSize="xs" whiteSpace="nowrap">
+            Sort by
+          </Text>
+          <Select
+            size="xs"
+            borderRadius="0.4rem"
+            variant="unstyled"
+            onChange={e => onSortBy(`${e.target.value}.${order}`)}
+            fontWeight="semibold"
+          >
+            {sortOptions?.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label?.toUpperCase()}
+              </option>
+            ))}
+          </Select>
+          <FilteringItem order={order} onClick={setOrder} />
         </HStack>
-        <Divider color="darkBeige" />
-      </Box>
+      </HStack>
+      <Divider color="darkBeige" />
       {children}
-    </Box>
+    </>
   );
 };
 

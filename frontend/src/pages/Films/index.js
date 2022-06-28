@@ -15,7 +15,7 @@ const mockReviews = {
   results: [
     {
       review_id: 2,
-      user_id: '1',
+      user_id: '11',
       movie_api_id: '526896',
       score: '2.4',
       description: 'The most movie of all time',
