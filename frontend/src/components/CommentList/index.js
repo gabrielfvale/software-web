@@ -1,34 +1,48 @@
-import { VStack, Box, StackDivider, Text, HStack } from '@chakra-ui/react';
-const CommentList = ({ username = '', count = 0, comment = '' }) => {
+import { useState } from 'react';
+import moment from 'moment';
+import { VStack, Box, Text, HStack } from '@chakra-ui/react';
+import Pagination from 'components/Pagination';
+
+const CommentList = ({ data = {} }) => {
+  const { page, total_pages, total_results, results } = data;
+  const [pageInit, setPage] = useState(page);
+
   return (
-    <VStack
-      divider={<StackDivider borderColor="m180.darkBeige" />}
-      width="100%"
-    >
-      <Box width="100%" marginTop="0.5rem">
-        <Text fontSize="sm">{count} comments. </Text>
-      </Box>
+    <VStack width="100%" gap={1} marginTop="1rem">
+      {results?.map(comment => {
+        return (
+          <Box
+            width="100%"
+            bg="m180.beige"
+            padding="1rem"
+            borderRadius="0.4rem"
+            key={comment.comment_id}
+          >
+            <Box>
+              <HStack alignItems="center">
+                <Text as="span" fontSize="xs">
+                  Commented by{' '}
+                  <Text as="span" fontSize="xs" fontWeight="bold">
+                    {comment.username}
+                  </Text>
+                </Text>
+                <Text fontSize="xs">at {comment.created_at}</Text>
+              </HStack>
 
-      <Box width="100%">
-        <HStack>
-          <Box>
-            <Text as="span" fontSize="xs">
-              Reviewed by{' '}
-            </Text>
-            <Text as="span" fontSize="xs" fontWeight="bold">
-              {username}
-            </Text>
+              <Text as="span" fontSize="xs">
+                {comment.description}
+              </Text>
+            </Box>
           </Box>
-          <Text fontSize="xs">22/10/2022</Text>
-        </HStack>
-
-        <Text as="span" fontSize="xs">
-          Tom cruise would have actually genetically engineered a whole Island
-          worth of dinosaurs and then set them free to the world and then cause
-          havoc, then would have actually trained velociraptors and jumped from
-          trex to trex and killed Chris Pratt, the actual villain and that
-          blonde too.
-        </Text>
+        );
+      })}
+      <Box>
+        <Pagination
+          page={pageInit}
+          total_pages={total_pages || 1}
+          onClick={setPage}
+          showGoTo
+        />
       </Box>
     </VStack>
   );

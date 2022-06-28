@@ -1,13 +1,111 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Text, Button, HStack } from '@chakra-ui/react';
 import { AiFillHeart, AiFillEdit } from 'react-icons/ai';
 import { FaComment } from 'react-icons/fa';
 import Comment from '../Comment';
 import Stars from 'components/Stars';
+import api from 'services/api';
+import CommentList from 'components/CommentList';
+
+const mockComment = {
+  page: 1,
+  total_pages: 2,
+  total_results: 2,
+  results: [
+    {
+      comment_id: 6,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+    {
+      comment_id: 7,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+    {
+      comment_id: 8,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+    {
+      comment_id: 9,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+    {
+      comment_id: 10,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+    {
+      comment_id: 11,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+    {
+      comment_id: 12,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+    {
+      comment_id: 13,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+    {
+      comment_id: 14,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+    {
+      comment_id: 15,
+      user_id: '2',
+      review_id: '2',
+      description: 'oi laurinha vai dar tudo certo.',
+      created_at: '2022-02-25',
+      updated_at: '2022-02-25',
+      username: 'laurinha',
+    },
+  ],
+};
 
 const Review = ({ review = {}, user = -1, ...rest }) => {
-  const [comment, setComment] = useState(false);
-  const [commentValue, setCommentValue] = useState('');
   const {
     review_id,
     user_id,
@@ -20,7 +118,23 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
     likes,
     liked_by_me,
   } = review;
+
+  const [comment, setComment] = useState(false);
+  const [commentValue, setCommentValue] = useState('');
+  const [showCommentList, setShowCommentList] = useState(false);
+  const [commentList, setCommentList] = useState({});
+  useEffect(() => {
+    const fetchData = async () => {
+      // const { data } = await api.get(`/review/${review_id}/comments`);
+      setCommentList(mockComment);
+    };
+    if (showCommentList) {
+      fetchData();
+    }
+  }, [showCommentList]);
+
   const isSameUser = Number(user) === Number(user_id);
+
   return (
     <Box width="100%" {...rest}>
       <HStack justifyContent="space-between">
@@ -60,7 +174,12 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
         >
           {likes} like
         </Button>
-        <Button size="xs" variant="ghost" leftIcon={<FaComment />}>
+        <Button
+          size="xs"
+          variant="ghost"
+          leftIcon={<FaComment />}
+          onClick={() => setShowCommentList(!showCommentList)}
+        >
           {comments} comments
         </Button>
         <Button size="xs" onClick={() => setComment(!comment)}>
@@ -73,6 +192,7 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
           onChange={e => setCommentValue(e.target.value)}
         />
       )}
+      {showCommentList && <CommentList data={commentList} />}
     </Box>
   );
 };
