@@ -1,14 +1,14 @@
 import { HStack, Text, Icon } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 
-const FilteringItem = ({ order = 'desc', onClick }) => {
+const SortOrder = ({ order = 'desc', onClick }) => {
   return (
     <HStack
       cursor="pointer"
       onClick={() => onClick(order === 'asc' ? 'desc' : 'asc')}
       gap={0}
     >
-      <Text fontWeight="semibold" fontSize="xs">
+      <Text fontWeight="medium" fontSize="xs">
         {order === 'asc' ? 'ASCENDING' : 'DESCENDING'}
       </Text>
       <Icon
@@ -20,4 +20,4 @@ const FilteringItem = ({ order = 'desc', onClick }) => {
   );
 };
 
-export default FilteringItem;
+export default SortOrder;

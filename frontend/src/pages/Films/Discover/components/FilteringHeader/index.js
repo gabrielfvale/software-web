@@ -1,16 +1,31 @@
-import { useState } from 'react';
-import { HStack, Heading, Divider, Select, Text } from '@chakra-ui/react';
-import FilteringItem from '../FilteringItem';
+import moment from 'moment';
+import { HStack, Heading, Divider, Text } from '@chakra-ui/react';
+import SortOrder from '../SortOrder';
+import FilterSelect from '../FilterSelect';
 
 const FilteringHeader = ({
-  sortOptions = [
-    { value: 'popularity', label: 'Popularity' },
-    { value: 'release_date', label: 'Release date' },
-  ],
+  decades = 10,
+  genreOptions = [],
+  sortOptions = [],
+  selectedDecade = -1,
+  selectedGenre = -1,
+  selectedSort = -1,
+  sortOrder = 'desc',
+  onDecade = () => {},
+  onGenre = () => {},
   onSortBy = () => {},
+  onSortOrder = () => {},
   children,
 }) => {
-  const [order, setOrder] = useState('desc');
+  const currentDecade = moment().year() - (moment().year() % 10);
+
+  const yearsOptions = [...Array(decades)].map((_, index) => {
+    const decade = `${currentDecade - 10 * index}s`;
+    return {
+      value: decade,
+      label: decade,
+    };
+  });
 
   return (
     <>
@@ -19,23 +34,32 @@ const FilteringHeader = ({
           Films
         </Heading>
         <HStack>
+          {/* Decade */}
+          <FilterSelect
+            placeholder="decade"
+            selected={selectedDecade}
+            options={yearsOptions}
+            onSelect={onDecade}
+            showAll
+          />
+          {/* Genre */}
+          <FilterSelect
+            placeholder="genre"
+            selected={selectedGenre}
+            options={genreOptions}
+            onSelect={onGenre}
+            showAll
+          />
+          {/* Order */}
           <Text fontSize="xs" whiteSpace="nowrap">
             Sort by
           </Text>
-          <Select
-            size="xs"
-            borderRadius="0.4rem"
-            variant="unstyled"
-            onChange={e => onSortBy(`${e.target.value}.${order}`)}
-            fontWeight="semibold"
-          >
-            {sortOptions?.map(({ value, label }) => (
-              <option key={value} value={value}>
-                {label?.toUpperCase()}
-              </option>
-            ))}
-          </Select>
-          <FilteringItem order={order} onClick={setOrder} />
+          <FilterSelect
+            selected={selectedSort}
+            options={sortOptions}
+            onSelect={onSortBy}
+          />
+          <SortOrder order={sortOrder} onClick={onSortOrder} />
         </HStack>
       </HStack>
       <Divider color="darkBeige" />
