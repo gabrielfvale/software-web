@@ -1,6 +1,11 @@
 import { Textarea, Button, VStack, Text, HStack } from '@chakra-ui/react';
 
-const Comment = ({ username = '', description = '', onChange = () => {} }) => {
+const Comment = ({
+  username = '',
+  description = '',
+  onChange = () => {},
+  onSend = () => {},
+}) => {
   return (
     <VStack width="100%" alignItems="flex-start">
       <Text as="span" fontSize="xs">
@@ -22,7 +27,9 @@ const Comment = ({ username = '', description = '', onChange = () => {} }) => {
         width="100%"
       >
         <Text fontSize="xs">{description.length}/280</Text>
-        <Button size="sm">Send</Button>
+        <Button size="sm" onClick={onSend}>
+          Send
+        </Button>
       </HStack>
     </VStack>
   );

@@ -14,7 +14,7 @@ const mockReviews = {
   total_results: 1,
   results: [
     {
-      review_id: 2,
+      review_id: 1,
       user_id: '11',
       movie_api_id: '526896',
       score: '2.4',
@@ -46,6 +46,7 @@ const Movie = () => {
   const { movie_id } = useParams();
   const setTitle = useDocumentTitle();
   const { data } = useFetchData(`/movie/${movie_id}`);
+  const { data: reviews } = useFetchData(`/review/${movie_id}`);
   const user = getUser();
 
   useEffect(() => {
@@ -67,7 +68,7 @@ const Movie = () => {
         isOnWatchList={data?.on_watch}
         isFavorite={data?.on_favorites}
       />
-      <ReviewMovie data={mockReviews} user={user?.user_id || 1} />
+      <ReviewMovie data={reviews?.results} user={user?.user_id || 1} />
     </VStack>
   );
 };

@@ -53,6 +53,7 @@ async function create(req, res) {
     const token = generateAccessToken({ username, user_id });
     res.status(201).json({ token });
   } catch (e) {
+    console.log(e);
     const { status, body } = errorHandler(e);
     res.status(status).json(body);
   }

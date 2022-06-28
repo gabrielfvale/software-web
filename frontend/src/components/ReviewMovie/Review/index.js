@@ -6,104 +6,7 @@ import Comment from '../Comment';
 import Stars from 'components/Stars';
 import api from 'services/api';
 import CommentList from 'components/CommentList';
-
-const mockComment = {
-  page: 1,
-  total_pages: 2,
-  total_results: 2,
-  results: [
-    {
-      comment_id: 6,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-    {
-      comment_id: 7,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-    {
-      comment_id: 8,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-    {
-      comment_id: 9,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-    {
-      comment_id: 10,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-    {
-      comment_id: 11,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-    {
-      comment_id: 12,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-    {
-      comment_id: 13,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-    {
-      comment_id: 14,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-    {
-      comment_id: 15,
-      user_id: '2',
-      review_id: '2',
-      description: 'oi laurinha vai dar tudo certo.',
-      created_at: '2022-02-25',
-      updated_at: '2022-02-25',
-      username: 'laurinha',
-    },
-  ],
-};
+import Pagination from 'components/Pagination';
 
 const Review = ({ review = {}, user = -1, ...rest }) => {
   const {
@@ -119,21 +22,30 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
     liked_by_me,
   } = review;
 
+  const [page, setPage] = useState(1);
   const [comment, setComment] = useState(false);
   const [commentValue, setCommentValue] = useState('');
   const [showCommentList, setShowCommentList] = useState(false);
   const [commentList, setCommentList] = useState({});
   useEffect(() => {
     const fetchData = async () => {
-      // const { data } = await api.get(`/review/${review_id}/comments`);
-      setCommentList(mockComment);
+      const { data } = await api.get(
+        `/review/${review_id}/comments/?page=${page}&per_page=5`
+      );
+      setCommentList(data);
     };
     if (showCommentList) {
       fetchData();
     }
-  }, [showCommentList]);
+  }, [showCommentList, page, review_id]);
 
   const isSameUser = Number(user) === Number(user_id);
+  const onSendComment = async () => {
+    const response = await api.post('/review/comment', {
+      review_id,
+      description: commentValue,
+    });
+  };
 
   return (
     <Box width="100%" {...rest}>
@@ -190,9 +102,25 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
         <Comment
           description={commentValue}
           onChange={e => setCommentValue(e.target.value)}
+          onSend={onSendComment}
         />
       )}
-      {showCommentList && <CommentList data={commentList} />}
+      {showCommentList && (
+        <Box
+          width="100%"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+        >
+          <CommentList data={commentList} />
+          <Pagination
+            page={page}
+            total_pages={commentList?.total_pages || 1}
+            onClick={setPage}
+            showGoTo
+          />
+        </Box>
+      )}
     </Box>
   );
 };

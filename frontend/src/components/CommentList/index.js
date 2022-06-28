@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import moment from 'moment';
 import { VStack, Box, Text, HStack } from '@chakra-ui/react';
-import Pagination from 'components/Pagination';
 
 const CommentList = ({ data = {} }) => {
   const { page, total_pages, total_results, results } = data;
-  const [pageInit, setPage] = useState(page);
 
   return (
     <VStack width="100%" gap={1} marginTop="1rem">
       {results?.map(comment => {
+        let date = moment(comment.created_at).format('MMMM Do YYYY, h:mm a');
         return (
           <Box
             width="100%"
@@ -26,7 +25,7 @@ const CommentList = ({ data = {} }) => {
                     {comment.username}
                   </Text>
                 </Text>
-                <Text fontSize="xs">at {comment.created_at}</Text>
+                <Text fontSize="xs">at {date}</Text>
               </HStack>
 
               <Text as="span" fontSize="xs">
@@ -36,14 +35,6 @@ const CommentList = ({ data = {} }) => {
           </Box>
         );
       })}
-      <Box>
-        <Pagination
-          page={pageInit}
-          total_pages={total_pages || 1}
-          onClick={setPage}
-          showGoTo
-        />
-      </Box>
     </VStack>
   );
 };
