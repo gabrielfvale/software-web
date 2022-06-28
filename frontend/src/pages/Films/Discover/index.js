@@ -56,8 +56,6 @@ const Discover = () => {
     if (genre !== '') newURL += `&with_genres=${genre}`;
     if (sort !== '') newURL += `&sort_by=${sort}.${order}`;
 
-    console.log({ newURL });
-
     setDiscoverURL(newURL);
   }, [page, decade, genre, sort, order]);
 

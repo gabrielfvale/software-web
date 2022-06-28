@@ -7,6 +7,7 @@ const ClickablePoster = ({
   title = '',
   poster_path = '',
   w = 'w342',
+  overlay = true,
   ...rest
 }) => {
   return (
@@ -16,7 +17,7 @@ const ClickablePoster = ({
       pos="relative"
       _hover={{
         '#title-container': {
-          opacity: 1,
+          opacity: overlay ? 1 : 0,
         },
       }}
       {...rest}
