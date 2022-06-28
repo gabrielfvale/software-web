@@ -125,7 +125,7 @@ async function popular(req, res) {
     const { data } = await tmdb.get(`/movie/popular?page=${page}`);
     res.status(200).json({
       page: data.page,
-      total_pages: data.total_pages,
+      total_pages: Math.min(data.total_pages, 500),
       total_results: data.total_results,
       results: data.results.map((result) => ({
         id: result.id,
@@ -151,7 +151,7 @@ async function recommendations(req, res) {
     );
     res.status(200).json({
       page: data.page,
-      total_pages: data.total_pages,
+      total_pages: Math.min(data.total_pages, 500),
       total_results: data.total_results,
       results: data.results.map((result) => ({
         id: result.id,
@@ -177,7 +177,7 @@ async function discover(req, res) {
     );
     res.status(200).json({
       page: data.page,
-      total_pages: data.total_pages,
+      total_pages: Math.min(data.total_pages, 500),
       total_results: data.total_results,
       results: data.results.map((result) => ({
         id: result.id,
@@ -206,7 +206,7 @@ async function search(req, res) {
 
     res.status(200).json({
       page: data.page,
-      total_pages: data.total_pages,
+      total_pages: Math.min(data.total_pages, 500),
       total_results: data.total_results,
       results: data.results.map((movie) => ({
         id: movie.id,
