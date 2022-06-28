@@ -7,23 +7,23 @@ const FilteringHeader = ({
   decades = 10,
   genreOptions = [],
   sortOptions = [],
-  selectedDecade = -1,
-  selectedGenre = -1,
-  selectedSort = -1,
+  selectedDecade = '',
+  selectedGenre = '',
+  selectedSort = '',
   sortOrder = 'desc',
   onDecade = () => {},
   onGenre = () => {},
   onSortBy = () => {},
   onSortOrder = () => {},
-  children,
 }) => {
   const currentDecade = moment().year() - (moment().year() % 10);
 
   const yearsOptions = [...Array(decades)].map((_, index) => {
-    const decade = `${currentDecade - 10 * index}s`;
+    const value = `${currentDecade - 10 * index}`;
+    const label = value + 's';
     return {
-      value: decade,
-      label: decade,
+      value,
+      label,
     };
   });
 
@@ -63,7 +63,6 @@ const FilteringHeader = ({
         </HStack>
       </HStack>
       <Divider color="darkBeige" />
-      {children}
     </>
   );
 };

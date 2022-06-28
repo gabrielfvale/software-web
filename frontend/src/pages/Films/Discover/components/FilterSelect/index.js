@@ -16,9 +16,9 @@ const FilterSelect = ({
   ...rest
 }) => {
   const displayText =
-    selected !== -1 && selected < options.length
-      ? options[selected]?.label
-      : placeholder;
+    (selected !== ''
+      ? options.find(opt => selected === opt.value)?.label
+      : placeholder) || placeholder;
 
   const StyledMenuItem = ({ value, label, ...props }) => (
     <MenuItem
