@@ -133,7 +133,7 @@ async function popular(req, res) {
         genre_ids: result.genre_ids,
         release_date: result.release_date,
         poster_path: result.poster_path,
-        backdrop_path: result.poster_path,
+        backdrop_path: result.backdrop_path,
       })),
     });
   } catch (e) {
@@ -159,7 +159,7 @@ async function recommendations(req, res) {
         genre_ids: result.genre_ids,
         release_date: result.release_date,
         poster_path: result.poster_path,
-        backdrop_path: result.poster_path,
+        backdrop_path: result.backdrop_path,
       })),
     });
   } catch (e) {
@@ -185,7 +185,7 @@ async function discover(req, res) {
         genre_ids: result.genre_ids,
         release_date: result.release_date,
         poster_path: result.poster_path,
-        backdrop_path: result.poster_path,
+        backdrop_path: result.backdrop_path,
       })),
     });
   } catch (e) {
