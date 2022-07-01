@@ -224,7 +224,8 @@ async function user(req, res) {
 
 async function create(req, res) {
   try {
-    const { name, description, list_type, movies } = req.body;
+    const { name, description, movies } = req.body;
+    let { list_type } = req.body;
     const { user_id } = req.user;
 
     const { rows: userRows } = await pool.query(
