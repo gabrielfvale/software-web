@@ -50,7 +50,7 @@ async function create(req, res) {
     );
 
     const { user_id } = rows[0];
-    const token = generateAccessToken({ username, user_id });
+    const token = generateAccessToken({ username, user_id, admin: false });
     res.status(201).json({ token });
   } catch (e) {
     console.log(e);
@@ -65,7 +65,7 @@ async function login(req, res) {
 
     // Find user
     const { rows } = await pool.query(
-      `SELECT user_id, password
+      `SELECT user_id, password, admin
       FROM users
       WHERE username=$1`,
       [username]
@@ -75,13 +75,13 @@ async function login(req, res) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const { user_id, password: userPassword } = rows[0];
+    const { user_id, admin, password: userPassword } = rows[0];
 
     // Compare user password
     const passwordMatch = await comparePassword(password, userPassword);
 
     if (passwordMatch) {
-      const token = generateAccessToken({ username, user_id });
+      const token = generateAccessToken({ username, user_id, admin });
       return res.json({ token });
     }
     res.status(400).json({ error: "Username or password does not match" });
