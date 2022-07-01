@@ -93,7 +93,7 @@ const Profile = () => {
       {lists && (
         <>
           <Flex gap="5">
-            {lists.results.map(({ list_id, name, posters, likes }, index) => (
+            {lists.results?.map(({ list_id, name, posters, likes }, index) => (
               <ListCard
                 key={name + index}
                 list_id={list_id}
