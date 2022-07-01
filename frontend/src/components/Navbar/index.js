@@ -54,7 +54,7 @@ const Navbar = ({ onHomepage = false }) => {
       <HStack gap={4}>
         {routes.map(route => (
           <Link key={route.path} color="white" href={route.path}>
-            {route.title}
+            {route.title.toUpperCase()}
           </Link>
         ))}
         <InputGroup width="12rem">

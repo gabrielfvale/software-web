@@ -1,53 +1,25 @@
-import useFetchData from 'hooks/fetchData';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useToast } from '@chakra-ui/react';
 import { useDocumentTitle } from 'hooks/documentTitle';
+import useFetchData from 'hooks/fetchData';
+import { useUser } from 'providers/UserProvider';
 
 import { VStack } from '@chakra-ui/react';
-import { useParams } from 'react-router-dom';
+import Content from 'components/Content';
 import MovieCard from 'components/MovieCard';
 import ReviewMovie from 'components/ReviewMovie';
-import { useEffect } from 'react';
-import { getUser } from 'services/auth';
-
-const mockReviews = {
-  page: 1,
-  total_pages: 1,
-  total_results: 1,
-  results: [
-    {
-      review_id: 1,
-      user_id: '11',
-      movie_api_id: '526896',
-      score: '2.4',
-      description: 'The most movie of all time',
-      created_at: '2022-06-25T09:09:41.827Z',
-      updated_at: '2022-06-25T09:09:41.827Z',
-      username: 'teste',
-      comments: '0',
-      likes: '1',
-      liked_by_me: false,
-    },
-    {
-      review_id: 3,
-      user_id: '1',
-      movie_api_id: '526896',
-      score: '2.4',
-      description: 'The most movie of all time',
-      created_at: '2022-06-25T09:09:41.827Z',
-      updated_at: '2022-06-25T09:09:41.827Z',
-      username: 'teste',
-      comments: '0',
-      likes: '1',
-      liked_by_me: false,
-    },
-  ],
-};
+import ReviewBox from 'components/ReviewBox';
+import api from 'services/api';
 
 const Movie = () => {
   const { movie_id } = useParams();
+  const toast = useToast();
+
   const setTitle = useDocumentTitle();
   const { data } = useFetchData(`/movie/${movie_id}`);
   const { data: reviews } = useFetchData(`/review/${movie_id}`);
-  const user = getUser();
+  const { user, authenticated } = useUser();
 
   useEffect(() => {
     if (data) {
@@ -55,21 +27,44 @@ const Movie = () => {
     }
   }, [data, setTitle]);
 
+  const onSendReview = async values => {
+    try {
+      await api.post('/review', {
+        movie_api_id: movie_id,
+        ...values,
+      });
+    } catch (e) {
+      toast({
+        title: 'Error',
+        description: e.response.data.error,
+        status: 'error',
+        isClosable: true,
+      });
+    }
+  };
+
   return (
-    <VStack
-      gap={2}
-      flexDir="column"
-      alignItems="center"
-      paddingX="15rem"
-      paddingY="1rem"
-    >
+    <Content>
       <MovieCard
         movie={data}
         isOnWatchList={data?.on_watch}
         isFavorite={data?.on_favorites}
       />
-      <ReviewMovie data={reviews?.results} user={user?.user_id || 1} />
-    </VStack>
+      <VStack
+        gap={10}
+        flexDir="column"
+        alignItems="center"
+        padding="2rem"
+        marginTop="1rem"
+        bg="m180.darkBeige"
+        borderRadius="0.4rem"
+      >
+        {!data?.reviewed_by_me && (
+          <ReviewBox authenticated={authenticated} onSend={onSendReview} />
+        )}
+        <ReviewMovie data={reviews?.results} user={user?.user_id || 1} />
+      </VStack>
+    </Content>
   );
 };
 

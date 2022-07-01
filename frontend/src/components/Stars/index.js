@@ -66,6 +66,7 @@ export const StarInput = ({
   total = 5,
   precision = 0.5,
   onClick = () => {},
+  ...rest
 }) => {
   const elementRef = useRef();
   const dimensions = useDimensions(elementRef, true);
@@ -102,17 +103,19 @@ export const StarInput = ({
   };
 
   return (
-    <Stars
-      ref={elementRef}
-      displayOnly={false}
-      total={total}
-      score={score}
-      isHovered={isHovered}
-      hoverActiveStar={hoverActiveStar}
-      onClick={handleClick}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    />
+    <Box {...rest}>
+      <Stars
+        ref={elementRef}
+        displayOnly={false}
+        total={total}
+        score={score}
+        isHovered={isHovered}
+        hoverActiveStar={hoverActiveStar}
+        onClick={handleClick}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      />
+    </Box>
   );
 };
 
