@@ -1,29 +1,31 @@
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useDebounce } from 'hooks/debounce';
 import SelectMovie from 'components/SelectMovie';
-
-const movies = [
-  {
-    id: 526896,
-    poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-    title: 'Morbius',
-    release_date: '2000-12-10',
-  },
-  {
-    id: 526897,
-    poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-    title: 'Morbius',
-    release_date: '2000-12-10',
-  },
-  {
-    id: 526898,
-    poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-    title: 'Morbius',
-    release_date: '2000-12-10',
-  },
-];
+import useFetchData from 'hooks/fetchData';
 
 const Create = () => {
-  return <SelectMovie data={movies}></SelectMovie>;
+  const [queryUrl, setQueryUrl] = useState('');
+
+  const [inputValue, setInputValue] = useState('');
+  const query = useDebounce(inputValue);
+
+  const { data } = useFetchData(queryUrl);
+
+  useEffect(() => {
+    if (query !== '') {
+      setQueryUrl(`/movie/search?query=${query}`);
+    } else {
+      setQueryUrl('/');
+    }
+  }, [query]);
+
+  return (
+    <SelectMovie
+      data={data?.results || []}
+      query={inputValue}
+      onChange={e => setInputValue(e.target.value)}
+    />
+  );
 };
 
 export default Create;

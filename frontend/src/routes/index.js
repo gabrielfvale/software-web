@@ -13,6 +13,7 @@ import Discover from 'pages/Films/Discover';
 
 import Lists from 'pages/Lists';
 import ListById from 'pages/Lists/ById';
+import CreateList from 'pages/Lists/Create';
 
 // Component for authenticated routes
 const PrivateRoute = ({ redirect = '/login', element = () => {}, ...rest }) => {
@@ -44,6 +45,10 @@ const routes = [
   {
     path: '/lists',
     element: Lists,
+  },
+  {
+    path: '/lists/create',
+    element: CreateList,
   },
   {
     path: '/lists/:list_id',

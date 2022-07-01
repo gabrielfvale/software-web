@@ -25,7 +25,9 @@ const Item = ({
     >
       <HStack>
         <Image w="40px" src={`${mediaUrl}${poster_path}`} alt={title} />
-        <Text fontSize="sm">{title}</Text>
+        <Text fontSize="sm" fontWeight="semibold">
+          {title}
+        </Text>
         <Text fontSize="xs">{formatted_date}</Text>
       </HStack>
     </LinkBox>

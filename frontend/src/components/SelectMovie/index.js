@@ -1,24 +1,11 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import {
   Popover,
-  PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
   PopoverAnchor,
   HStack,
   Input,
-  MenuList,
-  MenuItem,
-  Image,
-  Menu,
-  MenuButton,
   VStack,
-  Divider,
-  StackDivider,
 } from '@chakra-ui/react';
 import Item from './Item';
 
@@ -28,8 +15,11 @@ const SelectMovie = ({
   onChange = () => {},
   onClick = () => {},
 }) => {
+  const initialFocusRef = useRef();
+
   return (
     <Popover
+      initialFocusRef={initialFocusRef}
       isOpen={data.length !== 0}
       closeOnBlur={false}
       isLazy
@@ -46,11 +36,18 @@ const SelectMovie = ({
             variant="unstyled"
             bg="white"
             onChange={onChange}
+            ref={initialFocusRef}
           />
         </PopoverAnchor>
       </HStack>
 
-      <PopoverContent bg="white" width="100%">
+      <PopoverContent
+        bg="white"
+        width="100%"
+        _focus={{
+          outline: 'none !important',
+        }}
+      >
         <VStack gap={0} alignItems="flex-start">
           {data.map(movie => (
             <Item key={movie.id} onClick={onClick} {...movie} />
