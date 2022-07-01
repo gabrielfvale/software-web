@@ -1,63 +1,63 @@
-import { CUIAutoComplete } from 'chakra-ui-autocomplete';
-import React from 'react';
+import { useState } from 'react';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
+  HStack,
+  Input,
+  MenuList,
+  MenuItem,
+  Image,
+  Menu,
+  MenuButton,
+  VStack,
+  Divider,
+  StackDivider,
+} from '@chakra-ui/react';
+import Item from './Item';
 
-const movies = [
-  {
-    label: 'Morbius',
-    id: 526896,
-    backdrop_path: '/kmCBLNHsNnlDEtghSaF2nabpG2T.jpg',
-    poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-    title: 'Morbius',
-    tagline: 'A new Marvel legend arrives.',
-    overview:
-      'Dangerously ill with a rare blood disorder, and determined to save others suffering his same fate, Dr. Michael Morbius attempts a desperate gamble. What at first appears to be a radical success soon reveals itself to be a remedy potentially worse than the disease.',
-  },
-  {
-    id: 526896,
-    backdrop_path: '/kmCBLNHsNnlDEtghSaF2nabpG2T.jpg',
-    poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-    title: 'Morbius',
-    tagline: 'A new Marvel legend arrives.',
-    overview:
-      'Dangerously ill with a rare blood disorder, and determined to save others suffering his same fate, Dr. Michael Morbius attempts a desperate gamble. What at first appears to be a radical success soon reveals itself to be a remedy potentially worse than the disease.',
-  },
-  {
-    id: 526896,
-    backdrop_path: '/kmCBLNHsNnlDEtghSaF2nabpG2T.jpg',
-    poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-    title: 'Morbius',
-    tagline: 'A new Marvel legend arrives.',
-    overview:
-      'Dangerously ill with a rare blood disorder, and determined to save others suffering his same fate, Dr. Michael Morbius attempts a desperate gamble. What at first appears to be a radical success soon reveals itself to be a remedy potentially worse than the disease.',
-  },
-];
-
-const SelectMovie = () => {
-  const [pickerItems, setPickerItems] = React.useState(movies);
-  const [selectedItems, setSelectedItems] = React.useState([]);
-
-  const handleCreateItem = item => {
-    setPickerItems(curr => [...curr, item]);
-    setSelectedItems(curr => [...curr, item]);
-  };
-
-  const handleSelectedItemsChange = selectedItems => {
-    if (selectedItems) {
-      setSelectedItems(selectedItems);
-    }
-  };
+const SelectMovie = ({
+  data = [],
+  query = '',
+  onChange = () => {},
+  onClick = () => {},
+}) => {
   return (
-    <CUIAutoComplete
-      fontSize="xs"
-      label="Choose preferred work locations"
-      placeholder="Type a Movie"
-      onCreateItem={handleCreateItem}
-      items={pickerItems}
-      selectedItems={selectedItems}
-      onSelectedItemsChange={changes =>
-        handleSelectedItemsChange(changes.selectedItems)
-      }
-    />
+    <Popover
+      isOpen={data.length !== 0}
+      closeOnBlur={false}
+      isLazy
+      lazyBehavior="keepMounted"
+      matchWidth
+    >
+      <HStack>
+        <PopoverAnchor>
+          <Input
+            value={query}
+            size="md"
+            padding="0.2rem"
+            display="inline-flex"
+            variant="unstyled"
+            bg="white"
+            onChange={onChange}
+          />
+        </PopoverAnchor>
+      </HStack>
+
+      <PopoverContent bg="white" width="100%">
+        <VStack gap={0} alignItems="flex-start">
+          {data.map(movie => (
+            <Item key={movie.id} onClick={onClick} {...movie} />
+          ))}
+        </VStack>
+      </PopoverContent>
+    </Popover>
   );
 };
 
