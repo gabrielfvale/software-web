@@ -25,7 +25,7 @@ async function list(req, res) {
         `
         SELECT comments.*,
         (SELECT username FROM users WHERE users.user_id = comments.user_id) AS username
-        FROM comments WHERE review_id=$1 ORDER BY comments.created_at ASC
+        FROM comments WHERE review_id=$1 ORDER BY comments.created_at DESC
         `,
         page,
         per_page
