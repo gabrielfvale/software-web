@@ -10,6 +10,7 @@ import Category from 'components/Category';
 import SignupModal from 'components/SignupModal';
 import ReviewList from 'components/ReviewList';
 import useFetchData from 'hooks/fetchData';
+import { useEffect, useState } from 'react';
 
 const mockPopularReviews = [
   {
@@ -45,8 +46,10 @@ const mockPopularReviews = [
 ];
 
 const Home = () => {
+  const [backdrop, _] = useState('/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { data } = useFetchData('/movie/popular');
+  const { data: popularReviews } = useFetchData('/review/popular');
 
   // useEffect(() => {
   //   if (data?.results) {
@@ -58,14 +61,14 @@ const Home = () => {
   return (
     <Box>
       <Box>
-        <Hero backdrop="/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg" action={onOpen} />
+        <Hero backdrop={backdrop} action={onOpen} />
         <SignupModal isOpen={isOpen} onClose={onClose} />
       </Box>
       <Content>
         <PopularMoviesRow data={data?.results} />
         <HomeCards />
         <Category title="Popular Reviews" link="/popular-reviews">
-          <ReviewList data={mockPopularReviews} />
+          <ReviewList data={popularReviews?.results} />
         </Category>
       </Content>
     </Box>
