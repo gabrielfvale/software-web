@@ -1,10 +1,10 @@
-import { HStack } from '@chakra-ui/react';
+import { Grid } from '@chakra-ui/react';
 import ClickablePoster from '../ClickablePoster';
 
-const PopularMoviesRow = ({ data = [] }) => {
+const PopularMoviesRow = ({ data = [], ...rest }) => {
   const modifiedData = data?.slice(0, 6);
   return (
-    <HStack gap={2} marginY="5rem">
+    <Grid templateColumns="repeat(6, 1fr)" gap={2} {...rest}>
       {modifiedData.map(({ id, title, poster_path }) => (
         <ClickablePoster
           key={id}
@@ -14,7 +14,7 @@ const PopularMoviesRow = ({ data = [] }) => {
           overlay={false}
         />
       ))}
-    </HStack>
+    </Grid>
   );
 };
 

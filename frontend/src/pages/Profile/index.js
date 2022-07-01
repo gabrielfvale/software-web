@@ -1,67 +1,16 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import useFetchData from 'hooks/fetchData';
+
+import { getMoviePosters } from 'util/posters';
+
+import { Flex } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
 import ListCard from 'components/ListCard';
 import ReviewList from 'components/ReviewList';
 import Category from 'components/Category';
-
-const mockLists = {
-  results: [
-    {
-      list_id: 1,
-      title: 'Upcoming Movies',
-      posters: [
-        {
-          poster_path: '/vpILbP9eOQEtdQgl4vgjZUNY07r.jpg',
-        },
-        {
-          poster_path: '/kAVRgw7GgK1CfYEJq8ME6EvRIgU.jpg',
-        },
-        {
-          poster_path: '/QaNLpq3Wuu2yp5ESsXYcQCOpUk.jpg',
-        },
-      ],
-      likes: 1234,
-    },
-    {
-      list_id: 2,
-      title: 'Animations',
-      posters: [
-        {
-          poster_path: '/dyhaB19AICF7TO7CK2aD6KfymnQ.jpg',
-        },
-        {
-          poster_path: '/sgheSKxZkttIe8ONsf2sWXPgip3.jpg',
-        },
-        {
-          poster_path: '/2LqaLgk4Z226KkgPJuiOQ58wvrm.jpg',
-        },
-        {
-          poster_path: '/fnKCh67l2DDG9NxxIlk9IpsXQ99.jpg',
-        },
-      ],
-      likes: 1234,
-    },
-    {
-      list_id: 3,
-      title: 'Favorites',
-      posters: [
-        {
-          poster_path: '/vpILbP9eOQEtdQgl4vgjZUNY07r.jpg',
-        },
-        {
-          poster_path: '/stTEycfG9928HYGEISBFaG1ngjM.jpg',
-        },
-        {
-          poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-        },
-        {
-          poster_path: '/qJRB789ceLryrLvOKrZqLKr2CGf.jpg',
-        },
-      ],
-      likes: 1234,
-    },
-  ],
-};
+import Content from 'components/Content';
+import PopularMoviesRow from 'components/PopularMoviesRow';
 
 const mockReviews = [
   {
@@ -96,43 +45,74 @@ const mockReviews = [
   },
 ];
 
-const mockStats = {
-  movies_reviewed: 0,
-  lists_created: 0,
-  likes_received: 0,
-};
-
-const mockUser = {
-  user_id: 1,
-  first_name: 'Usuario',
-  last_name: 'Teste',
-  bio: 'Usuario de teste',
-  country: 'BR',
-  admin: false,
-  stats: mockStats,
-};
-
 const Profile = () => {
-  const lists = mockLists.results;
+  const { username } = useParams();
+
+  const { data: user } = useFetchData(`/profile/${username}`);
+  const { data: userStats } = useFetchData(`/profile/${username}/stats`);
+  const { data } = useFetchData(`/list/user/${username}`);
+
+  const [lists, setLists] = useState({});
+  const [favorites, setFavorites] = useState([]);
+
+  const fetchMoviePosters = async userLists => {
+    // Get posters for regular lists
+    const res = userLists?.results;
+    for (let i = 0; i < res.length; i++) {
+      res[i].posters = await getMoviePosters(res[i].movies);
+    }
+    setLists({ ...userLists, results: [...res] });
+
+    // Get posters for favorite list
+    const favoritesIndex = userLists.special.findIndex(
+      list => list.list_type === 'favorites'
+    );
+    if (favoritesIndex !== -1) {
+      const favoriteList = userLists.special[favoritesIndex];
+      const posters = await getMoviePosters(favoriteList.movies);
+      setFavorites(
+        favoriteList.movies.map((movie, index) => ({
+          id: movie,
+          title: '',
+          poster_path: posters[index],
+        }))
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (data) fetchMoviePosters(data);
+  }, [data]);
+
   return (
-    <Box marginX="15rem" paddingY="1.5rem">
-      <ProfileHeader user={mockUser} />
-      <Box marginBottom="1.5rem" />
-      <Flex gap="5">
-        {lists.map(({ list_id, title, posters, likes }, index) => (
-          <ListCard
-            key={title + index}
-            list_id={list_id}
-            title={title}
-            posters={posters.map(p => p.poster_path)}
-            likes={likes}
-          />
-        ))}
-      </Flex>
-      <Category text="Recent Reviews">
+    <Content paddingY="1.5rem">
+      {user && userStats && (
+        <ProfileHeader user={{ ...user, stats: userStats }} />
+      )}
+
+      {lists && (
+        <>
+          <Flex gap="5">
+            {lists.results.map(({ list_id, name, posters, likes }, index) => (
+              <ListCard
+                key={name + index}
+                list_id={list_id}
+                title={name}
+                posters={posters}
+                likes={likes}
+              />
+            ))}
+          </Flex>
+          <Category title={`My favorites (${favorites.length})`}>
+            <PopularMoviesRow data={favorites} />
+          </Category>
+        </>
+      )}
+
+      <Category title="Recent Reviews">
         <ReviewList data={mockReviews} />
       </Category>
-    </Box>
+    </Content>
   );
 };
 

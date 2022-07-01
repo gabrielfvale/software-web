@@ -26,19 +26,19 @@ const Home = () => {
   // }, [data]);
 
   return (
-    <Box>
+    <>
       <Box>
         <Hero backdrop={backdrop} action={onOpen} />
         <SignupModal isOpen={isOpen} onClose={onClose} />
       </Box>
       <Content>
-        <PopularMoviesRow data={data?.results} />
+        <PopularMoviesRow data={data?.results} marginY="5rem" />
         <HomeCards />
         <Category title="Popular Reviews" link="/popular-reviews">
           <ReviewList data={popularReviews?.results} />
         </Category>
       </Content>
-    </Box>
+    </>
   );
 };
 
