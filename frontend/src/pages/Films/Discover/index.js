@@ -7,6 +7,8 @@ import MovieGrid from 'components/MovieGrid';
 import Pagination from 'components/Pagination';
 import FilteringHeader from './components/FilteringHeader';
 
+import { numberFormatter } from 'util/numbers';
+
 const genres = [
   { value: '28', label: 'Action' },
   { value: '12', label: 'Adventure' },
@@ -77,7 +79,7 @@ const Discover = () => {
       />
       <Box marginY="1rem">
         <Text color="m180.darkPink" mb="1rem" fontSize="xs" textAlign="center">
-          {data?.total_results} films found
+          {numberFormatter(data?.total_results)} films found
         </Text>
         <MovieGrid data={data?.results} />
       </Box>

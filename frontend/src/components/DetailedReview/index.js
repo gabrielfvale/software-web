@@ -6,6 +6,7 @@ import Link from '../Link';
 import ClickablePoster from 'components/ClickablePoster';
 
 import { getWord } from 'util/plural';
+import { numberFormatter } from 'util/numbers';
 
 const DetailedReview = ({ review, ...rest }) => {
   const {
@@ -55,14 +56,14 @@ const DetailedReview = ({ review, ...rest }) => {
           <HStack>
             <Icon as={AiFillHeart} color="m180.darkPink" />
             <Text fontSize="xs">
-              {likes} {getWord('like', likes)}
+              {numberFormatter(likes)} {getWord('like', likes)}
             </Text>
           </HStack>
 
           <HStack>
             <Icon as={FaComment} color="m180.darkPink" />
             <Text fontSize="xs">
-              {comments} {getWord('comment', comments)}
+              {numberFormatter(comments)} {getWord('comment', comments)}
             </Text>
           </HStack>
         </HStack>
