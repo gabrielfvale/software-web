@@ -12,7 +12,8 @@ async function details(req, res) {
     const user_id = req.user?.user_id || -1;
 
     const { rows } = await pool.query(
-      `SELECT * FROM lists
+      `SELECT lists.*, users.username
+      FROM lists LEFT JOIN users ON lists.user_id = users.user_id
       WHERE list_id=$1`,
       [params.id]
     );
@@ -224,7 +225,8 @@ async function user(req, res) {
 
 async function create(req, res) {
   try {
-    const { name, description, list_type, movies } = req.body;
+    const { name, description, movies } = req.body;
+    let { list_type } = req.body;
     const { user_id } = req.user;
 
     const { rows: userRows } = await pool.query(
@@ -313,7 +315,7 @@ async function addSpecial(req, res) {
 
     const { rows: foundList } = await pool.query(
       `
-      SELECT list_id FROM lists WHERE list_type = $1 AND user_id=$2
+      SELECT * FROM lists WHERE list_type = $1 AND user_id=$2
       `,
       [list_type, user_id]
     );
@@ -328,6 +330,36 @@ async function addSpecial(req, res) {
             description: "",
             list_type,
             movies: [movie_api_id],
+          },
+        },
+        res
+      );
+    }
+
+    // Find if movie already belongs to list.
+    const { rows: listMovies } = await pool.query(
+      `
+      SELECT movie_api_id FROM movies_list WHERE list_id=$1
+      `,
+      [foundList[0].list_id]
+    );
+
+    // If movie is found, remove it
+    if (
+      listMovies.length !== 0 &&
+      listMovies.find((movie) => movie.movie_api_id === String(movie_api_id))
+    ) {
+      // Filter movie out of list
+      const newListMovies = listMovies.filter(
+        (value) => Number(value.movie_api_id) !== movie_api_id
+      );
+      return update(
+        {
+          ...req,
+          body: {
+            ...req.body,
+            ...foundList[0],
+            movies: newListMovies.map((m) => m.movie_api_id),
           },
         },
         res

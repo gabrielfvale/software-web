@@ -22,9 +22,14 @@ async function details(req, res) {
         : scores.reduce((prev, cur) => prev + Number(cur.score), 0) /
           scores.length;
 
-    // Find if movie is in watch or favorite lists
-    let on_list = { on_watch: false, on_favorites: false };
+    let metadata = {
+      on_watch: false,
+      on_favorites: false,
+      reviewed_by_me: false,
+    };
+
     if (user_id) {
+      // Find if movie is in watch or favorite lists
       const { rows: onLists } = await pool.query(
         `
         SELECT list_type
@@ -39,15 +44,27 @@ async function details(req, res) {
       // Iterate over results to update object
       onLists.forEach(({ list_type }) => {
         list_type === "watch"
-          ? (on_list.on_watch = true)
-          : (on_list.on_favorites = true);
+          ? (metadata.on_watch = true)
+          : (metadata.on_favorites = true);
       });
+
+      // Find if movie was reviewed by user
+      const { rowCount } = await pool.query(
+        `
+        SELECT review_id
+        FROM reviews WHERE user_id=$1 AND movie_api_id=$2
+        `,
+        [user_id, id]
+      );
+      if (rowCount === 1) {
+        metadata.reviewed_by_me = true;
+      }
     }
 
     res.status(200).json({
       id: data.id,
       score,
-      ...on_list,
+      ...metadata,
       backdrop_path: data.backdrop_path,
       poster_path: data.poster_path,
       title: data.title,
