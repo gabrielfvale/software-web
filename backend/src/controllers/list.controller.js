@@ -12,7 +12,8 @@ async function details(req, res) {
     const user_id = req.user?.user_id || -1;
 
     const { rows } = await pool.query(
-      `SELECT * FROM lists
+      `SELECT lists.*, users.username
+      FROM lists LEFT JOIN users ON lists.user_id = users.user_id
       WHERE list_id=$1`,
       [params.id]
     );
