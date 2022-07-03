@@ -10,6 +10,7 @@ const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState();
+  const authenticated = isAuthenticated();
 
   const login = token => {
     authLogin(token);
@@ -22,12 +23,12 @@ const UserProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (isAuthenticated()) {
+    if (authenticated) {
       setUser(getUser());
     }
-  }, [isAuthenticated()]);
+  }, [authenticated]);
 
-  const values = { user, authenticated: !!user, login, logout };
+  const values = { user, authenticated, login, logout };
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
 };
 

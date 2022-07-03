@@ -13,17 +13,17 @@ import useFetchData from 'hooks/fetchData';
 import { useEffect, useState } from 'react';
 
 const Home = () => {
-  const [backdrop, _] = useState('/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg');
+  const [backdrop, setBackdrop] = useState('/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { data } = useFetchData('/movie/popular');
   const { data: popularReviews } = useFetchData('/review/popular');
 
-  // useEffect(() => {
-  //   if (data?.results) {
-  //     const randIndex = Math.floor(Math.random() * data.results.length);
-  //     setBackdrop(data.results[randIndex].backdrop_path);
-  //   }
-  // }, [data]);
+  useEffect(() => {
+    if (data?.results) {
+      const randIndex = Math.floor(Math.random() * data.results.length);
+      setBackdrop(data.results[randIndex].backdrop_path);
+    }
+  }, [data]);
 
   return (
     <>
