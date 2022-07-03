@@ -1,14 +1,13 @@
-import { useState } from 'react';
 import moment from 'moment';
 import { VStack, Box, Text, HStack } from '@chakra-ui/react';
+import Link from 'components/Link';
 
-const CommentList = ({ data = {} }) => {
-  const { page, total_pages, total_results, results } = data;
-
+const CommentList = ({ data = [] }) => {
   return (
     <VStack width="100%" gap={1} marginTop="1rem">
-      {results?.map(comment => {
-        let date = moment(comment.created_at).format('MMMM Do YYYY, h:mm a');
+      {data?.map(comment => {
+        const date = moment(comment.created_at).format('MMMM Do YYYY, h:mm a');
+        const edited = !moment(comment.created_at).isSame(comment.updated_at);
         return (
           <Box
             width="100%"
@@ -21,11 +20,22 @@ const CommentList = ({ data = {} }) => {
               <HStack alignItems="center">
                 <Text as="span" fontSize="xs">
                   Commented by{' '}
-                  <Text as="span" fontSize="xs" fontWeight="bold">
+                  <Link
+                    href={`/profile/${comment.username}`}
+                    fontSize="xs"
+                    fontWeight="bold"
+                  >
                     {comment.username}
-                  </Text>
+                  </Link>
+                  {edited ? (
+                    <Text as="span" fontStyle="italic">
+                      (edited)
+                    </Text>
+                  ) : (
+                    ''
+                  )}{' '}
+                  at {date}
                 </Text>
-                <Text fontSize="xs">at {date}</Text>
               </HStack>
 
               <Text as="span" fontSize="xs">

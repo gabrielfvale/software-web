@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
+import moment from 'moment';
+import api from 'services/api';
+
 import { Box, Text, Button, HStack } from '@chakra-ui/react';
 import { AiFillHeart, AiFillEdit } from 'react-icons/ai';
 import { FaComment } from 'react-icons/fa';
+
 import Comment from '../Comment';
 import Stars from 'components/Stars';
-import api from 'services/api';
 import CommentList from 'components/CommentList';
 import Pagination from 'components/Pagination';
+import Link from 'components/Link';
+
+import { getWord } from 'util/plural';
 
 const Review = ({ review = {}, user = -1, ...rest }) => {
   const {
@@ -27,6 +33,7 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
   const [commentValue, setCommentValue] = useState('');
   const [showCommentList, setShowCommentList] = useState(false);
   const [commentList, setCommentList] = useState({});
+
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await api.get(
@@ -40,8 +47,11 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
   }, [showCommentList, page, review_id]);
 
   const isSameUser = Number(user) === Number(user_id);
+  const created = moment(created_at).format('DD/MM/YYYY');
+  const edited = !moment(created_at).isSame(updated_at);
+
   const onSendComment = async () => {
-    const response = await api.post('/review/comment', {
+    await api.post('/review/comment', {
       review_id,
       description: commentValue,
     });
@@ -52,9 +62,17 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
       <HStack justifyContent="space-between">
         <Text as="span" fontSize="sm">
           Reviewed by{' '}
-          <Text as="span" fontWeight="bold">
-            {username}
-          </Text>
+          <Link href={`/profile/${username}`} fontWeight="bold">
+            {isSameUser ? 'you' : username}
+          </Link>{' '}
+          on {created}{' '}
+          {edited ? (
+            <Text as="span" fontStyle="italic">
+              (edited)
+            </Text>
+          ) : (
+            ''
+          )}
         </Text>
         {isSameUser && (
           <Button
@@ -69,10 +87,10 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
       </HStack>
 
       <HStack>
-        <Text fontSize="sm">{created_at}</Text>
         <Stars score={score} />
         <Text fontSize="sm">{score}</Text>
       </HStack>
+
       <Text fontSize="sm" marginTop="0.5rem">
         {description}
       </Text>
@@ -84,7 +102,7 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
           disabled={isSameUser}
           leftIcon={<AiFillHeart />}
         >
-          {likes} like
+          {likes} {getWord('like', likes)}
         </Button>
         <Button
           size="xs"
@@ -92,7 +110,7 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
           leftIcon={<FaComment />}
           onClick={() => setShowCommentList(!showCommentList)}
         >
-          {comments} comments
+          {comments} {getWord('comment', comments)}
         </Button>
         <Button size="xs" onClick={() => setComment(!comment)}>
           <Text fontSize="xs">Reply</Text>
@@ -112,7 +130,7 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
           flexDirection="column"
           alignItems="center"
         >
-          <CommentList data={commentList} />
+          <CommentList data={commentList?.results} />
           <Pagination
             page={page}
             total_pages={commentList?.total_pages || 1}

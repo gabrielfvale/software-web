@@ -1,4 +1,4 @@
-import { LinkBox, Flex, Image, Heading, Text } from '@chakra-ui/react';
+import { LinkBox, Flex, Image, Heading } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 const mediaUrl = process.env.REACT_APP_API_URL + '/media/';
 
