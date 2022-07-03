@@ -315,7 +315,7 @@ async function addSpecial(req, res) {
 
     const { rows: foundList } = await pool.query(
       `
-      SELECT list_id FROM lists WHERE list_type = $1 AND user_id=$2
+      SELECT * FROM lists WHERE list_type = $1 AND user_id=$2
       `,
       [list_type, user_id]
     );
@@ -330,6 +330,36 @@ async function addSpecial(req, res) {
             description: "",
             list_type,
             movies: [movie_api_id],
+          },
+        },
+        res
+      );
+    }
+
+    // Find if movie already belongs to list.
+    const { rows: listMovies } = await pool.query(
+      `
+      SELECT movie_api_id FROM movies_list WHERE list_id=$1
+      `,
+      [foundList[0].list_id]
+    );
+
+    // If movie is found, remove it
+    if (
+      listMovies.length !== 0 &&
+      listMovies.find((movie) => movie.movie_api_id === String(movie_api_id))
+    ) {
+      // Filter movie out of list
+      const newListMovies = listMovies.filter(
+        (value) => Number(value.movie_api_id) !== movie_api_id
+      );
+      return update(
+        {
+          ...req,
+          body: {
+            ...req.body,
+            ...foundList[0],
+            movies: newListMovies.map((m) => m.movie_api_id),
           },
         },
         res
