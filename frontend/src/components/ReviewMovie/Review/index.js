@@ -2,15 +2,16 @@ import { useState, useEffect } from 'react';
 import moment from 'moment';
 import api from 'services/api';
 
-import { Box, Text, Button, HStack } from '@chakra-ui/react';
-import { AiFillHeart, AiFillEdit } from 'react-icons/ai';
+import { Box, Text, Button, HStack, Textarea } from '@chakra-ui/react';
+import { AiFillHeart } from 'react-icons/ai';
 import { FaComment } from 'react-icons/fa';
 
 import Comment from '../Comment';
-import Stars from 'components/Stars';
+import Stars, { StarInput } from 'components/Stars';
 import CommentList from 'components/CommentList';
 import Pagination from 'components/Pagination';
 import Link from 'components/Link';
+import EditControls from 'components/EditControls';
 
 import { getWord } from 'util/plural';
 
@@ -18,22 +19,29 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
   const {
     review_id,
     user_id,
-    score,
-    description,
+    score: default_score,
+    description: default_description,
     created_at,
     updated_at,
     username,
-    comments,
+    comments: default_comments,
     likes,
     liked_by_me,
   } = review;
 
   const [page, setPage] = useState(1);
+
   const [comment, setComment] = useState(false);
   const [commentValue, setCommentValue] = useState('');
+
   const [showCommentList, setShowCommentList] = useState(false);
   const [commentList, setCommentList] = useState({});
-  const [refreshCounter, setRefreshCounter] = useState(0);
+
+  const [isEditing, setEditing] = useState(false);
+  const [description, setDescription] = useState(default_description);
+  const [score, setScore] = useState(default_score);
+
+  const [comments, setComments] = useState(Number(default_comments));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +54,7 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
     if (showCommentList) {
       fetchData();
     }
-  }, [showCommentList, page, review_id, refreshCounter]);
+  }, [showCommentList, page, review_id, comments]);
 
   const isSameUser = Number(user) === Number(user_id);
   const created = moment(created_at).format('DD/MM/YYYY');
@@ -57,7 +65,22 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
       review_id,
       description: commentValue,
     });
-    setRefreshCounter(prev => prev + 1);
+    setComments(prev => prev + 1);
+    // Reset and toggle comment list
+    setCommentValue('');
+    setComment(false);
+    setShowCommentList(true);
+  };
+
+  const onEditClose = () => {
+    setScore(default_score);
+    setDescription(default_description);
+    setEditing(false);
+  };
+
+  const onEditFinish = async () => {
+    await api.put('/review', { review_id, score, description });
+    setEditing(false);
   };
 
   return (
@@ -77,32 +100,42 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
             ''
           )}
         </Text>
-        {isSameUser && (
-          <Button
-            alignSelf="flex-end"
-            size="sm"
-            variant="link"
-            leftIcon={<AiFillEdit />}
-          >
-            Edit
-          </Button>
-        )}
+        <EditControls
+          visible={isSameUser}
+          isEditing={isEditing}
+          onEdit={setEditing}
+          onCancel={onEditClose}
+          onSave={onEditFinish}
+        />
       </HStack>
 
       <HStack>
-        <Stars score={score} />
+        {isEditing ? (
+          <StarInput score={score} onClick={setScore} />
+        ) : (
+          <Stars score={score} />
+        )}
         <Text fontSize="sm">{score}</Text>
       </HStack>
 
-      <Text fontSize="sm" marginTop="0.5rem">
-        {description}
-      </Text>
+      {isEditing ? (
+        <Textarea
+          bg="white"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+        ></Textarea>
+      ) : (
+        <Text fontSize="sm" marginTop="0.5rem">
+          {description}
+        </Text>
+      )}
+
       <HStack marginTop="0.5rem" gap={2}>
         <Button
           size="xs"
           variant="ghost"
           color={liked_by_me ? 'm180.pink.500' : 'gray'}
-          disabled={isSameUser}
+          pointerEvents={isSameUser || user === -1 ? 'none' : 'auto'}
           leftIcon={<AiFillHeart />}
         >
           {likes} {getWord('like', likes)}
@@ -112,12 +145,15 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
           variant="ghost"
           leftIcon={<FaComment />}
           onClick={() => setShowCommentList(!showCommentList)}
+          pointerEvents={Number(comments) === 0 ? 'none' : 'auto'}
         >
           {comments} {getWord('comment', comments)}
         </Button>
-        <Button size="xs" onClick={() => setComment(!comment)}>
-          <Text fontSize="xs">Reply</Text>
-        </Button>
+        {user !== -1 && (
+          <Button size="xs" onClick={() => setComment(!comment)}>
+            <Text fontSize="xs">Reply</Text>
+          </Button>
+        )}
       </HStack>
       {comment && (
         <Comment

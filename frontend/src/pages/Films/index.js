@@ -108,7 +108,7 @@ const Movie = () => {
             onSend={onSendReview}
           />
         )}
-        <ReviewMovie data={reviews?.results} user={user?.user_id || 1} />
+        <ReviewMovie data={reviews?.results} user={user?.user_id || -1} />
       </VStack>
     </Content>
   );
