@@ -15,6 +15,8 @@ import Lists from 'pages/Lists';
 import ListById from 'pages/Lists/ById';
 import CreateList from 'pages/Lists/Create';
 
+import SignIn from 'pages/SignIn';
+
 // Component for authenticated routes
 const PrivateRoute = ({ redirect = '/login', element = () => {}, ...rest }) => {
   const auth = isAuthenticated();
@@ -62,6 +64,11 @@ const routes = [
   {
     path: '/profile/settings',
     element: props => <PrivateRoute element={Settings} {...props} />,
+  },
+
+  {
+    path: '/sign-in',
+    element: SignIn,
   },
 
   {
