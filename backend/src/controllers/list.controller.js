@@ -347,11 +347,13 @@ async function addSpecial(req, res) {
     // If movie is found, remove it
     if (
       listMovies.length !== 0 &&
-      listMovies.find((movie) => movie.movie_api_id === String(movie_api_id))
+      listMovies.find(
+        (movie) => Number(movie.movie_api_id) === Number(movie_api_id)
+      )
     ) {
       // Filter movie out of list
       const newListMovies = listMovies.filter(
-        (value) => Number(value.movie_api_id) !== movie_api_id
+        (value) => Number(value.movie_api_id) !== Number(movie_api_id)
       );
       return update(
         {
