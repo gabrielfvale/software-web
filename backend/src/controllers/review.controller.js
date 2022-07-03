@@ -185,8 +185,8 @@ async function update(req, res) {
 
 async function deleteReview(req, res) {
   try {
-    const { user_id } = req.user;
-    const { movie_api_id } = req.body;
+    const { user_id: requestingUser } = req.user;
+    const { user_id, movie_api_id } = req.body;
 
     // Find if review exists
     const { rows: reviewed } = await pool.query(
@@ -198,10 +198,23 @@ async function deleteReview(req, res) {
       return res.status(404).json({ error: "Review not found" });
     }
 
-    await pool.query(
-      `DELETE FROM reviews WHERE user_id=$1 AND movie_api_id=$2`,
-      [user_id, movie_api_id]
+    const { rows: user } = await pool.query(
+      `
+      SELECT * from users WHERE user_id=$1
+      `,
+      [requestingUser]
     );
+
+    // Delete review if user_id matches or requesting user is admin
+    if (
+      user.length !== 0 &&
+      (Number(user[0].user_id) === Number(user_id) || user[0].admin)
+    ) {
+      await pool.query(
+        `DELETE FROM reviews WHERE user_id=$1 AND movie_api_id=$2`,
+        [user_id, movie_api_id]
+      );
+    }
 
     res.status(200).end();
   } catch (e) {
