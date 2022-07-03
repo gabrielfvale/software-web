@@ -4,26 +4,26 @@ import SelectMovie from 'components/SelectMovie';
 import useFetchData from 'hooks/fetchData';
 
 const Create = () => {
-  const [queryUrl, setQueryUrl] = useState('');
+  const [movies, setMovies] = useState([]);
 
   const [inputValue, setInputValue] = useState('');
   const query = useDebounce(inputValue);
 
-  const { data } = useFetchData(queryUrl);
+  const { data } = useFetchData(`/movie/search?query=${query}`, false);
 
-  useEffect(() => {
-    if (query !== '') {
-      setQueryUrl(`/movie/search?query=${query}`);
-    } else {
-      setQueryUrl('/');
-    }
-  }, [query]);
+  const onItemClick = item => {
+    const newMovies = [...movies];
+    newMovies.push(item);
+    setMovies([...newMovies]);
+    setInputValue('');
+  };
 
   return (
     <SelectMovie
       data={data?.results || []}
       query={inputValue}
       onChange={e => setInputValue(e.target.value)}
+      onClick={onItemClick}
     />
   );
 };

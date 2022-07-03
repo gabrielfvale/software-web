@@ -3,8 +3,8 @@ import moment from 'moment';
 
 const Item = ({
   id = '',
-  poster_path = '',
   title = '',
+  poster_path = '',
   release_date = '',
   onClick = () => {},
   ...rest
@@ -21,7 +21,7 @@ const Item = ({
       bg="transparent"
       transition="all 0.2s ease-in-out"
       {...rest}
-      onClick={() => onClick(id)}
+      onClick={() => onClick({ id, title, poster_path, release_date })}
     >
       <HStack>
         <Image w="40px" src={`${mediaUrl}${poster_path}`} alt={title} />

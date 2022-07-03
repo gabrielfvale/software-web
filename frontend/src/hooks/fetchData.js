@@ -6,9 +6,10 @@
 import { useEffect, useReducer, useRef } from 'react';
 import api from 'services/api';
 
-const useFetchData = (url = '') => {
+const useFetchData = (url = '', onMount = true) => {
   const cache = useRef({});
   const cancelRequest = useRef(false);
+  const isMounted = useRef(false);
 
   const initialState = {
     error: undefined,
@@ -33,6 +34,11 @@ const useFetchData = (url = '') => {
   useEffect(() => {
     if (url === '') return;
     cancelRequest.current = false;
+
+    if (!onMount && !isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
 
     const fetchData = async () => {
       dispatch({ type: 'loading' });
