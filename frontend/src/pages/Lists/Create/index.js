@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDebounce } from 'hooks/debounce';
 import SelectMovie from 'components/SelectMovie';
 import useFetchData from 'hooks/fetchData';

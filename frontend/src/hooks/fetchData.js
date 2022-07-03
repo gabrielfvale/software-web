@@ -71,7 +71,7 @@ const useFetchData = (url = '', onMount = true) => {
     return () => {
       cancelRequest.current = true;
     };
-  }, [url]);
+  }, [url, onMount]);
 
   return state;
 };
