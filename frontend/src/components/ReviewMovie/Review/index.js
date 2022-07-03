@@ -33,6 +33,7 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
   const [commentValue, setCommentValue] = useState('');
   const [showCommentList, setShowCommentList] = useState(false);
   const [commentList, setCommentList] = useState({});
+  const [refreshCounter, setRefreshCounter] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,10 +42,11 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
       );
       setCommentList(data);
     };
+
     if (showCommentList) {
       fetchData();
     }
-  }, [showCommentList, page, review_id]);
+  }, [showCommentList, page, review_id, refreshCounter]);
 
   const isSameUser = Number(user) === Number(user_id);
   const created = moment(created_at).format('DD/MM/YYYY');
@@ -55,6 +57,7 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
       review_id,
       description: commentValue,
     });
+    setRefreshCounter(prev => prev + 1);
   };
 
   return (

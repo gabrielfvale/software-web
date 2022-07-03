@@ -15,7 +15,7 @@ const Comment = ({
         </Text>
       </Text>
       <Textarea
-        maxlength="280"
+        maxLength="280"
         bg="white"
         fontSize="xs"
         value={description}

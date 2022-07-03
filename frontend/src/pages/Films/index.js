@@ -14,15 +14,21 @@ import ReviewBox from 'components/ReviewMovie/ReviewBox';
 
 const Movie = () => {
   const { movie_id } = useParams();
-  const toast = useToast();
-
-  const setTitle = useDocumentTitle();
-  const { data } = useFetchData(`/movie/${movie_id}`);
-  const { data: reviews } = useFetchData(`/review/${movie_id}`);
-  const { user, authenticated } = useUser();
 
   const [isOnWatch, setIsOnWatch] = useState(false);
   const [isOnFavorites, setIsOnFavorites] = useState(false);
+  const [reviewedByMe, setReviewedByMe] = useState(false);
+  const [refreshCounter, setRefreshCounter] = useState(0);
+
+  const toast = useToast();
+  const setTitle = useDocumentTitle();
+  const { data } = useFetchData(`/movie/${movie_id}`);
+  const { data: reviews } = useFetchData(
+    `/review/${movie_id}`,
+    true,
+    refreshCounter
+  );
+  const { user, authenticated } = useUser();
 
   useEffect(() => {
     if (data) {
@@ -34,6 +40,7 @@ const Movie = () => {
     if (data) {
       setIsOnWatch(data.on_watch);
       setIsOnFavorites(data.on_favorites);
+      setReviewedByMe(data.reviewed_by_me);
     }
   }, [data]);
 
@@ -63,6 +70,8 @@ const Movie = () => {
         movie_api_id: movie_id,
         ...values,
       });
+      setReviewedByMe(true);
+      setRefreshCounter(prev => prev + 1);
     } catch (e) {
       toast({
         title: 'Error',
@@ -92,7 +101,7 @@ const Movie = () => {
         bg="m180.darkBeige"
         borderRadius="0.4rem"
       >
-        {!data?.reviewed_by_me && (
+        {!reviewedByMe && (
           <ReviewBox
             authenticated={authenticated}
             loginRedirect={`/films/${movie_id}`}

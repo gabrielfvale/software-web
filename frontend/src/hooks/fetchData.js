@@ -6,10 +6,11 @@
 import { useEffect, useReducer, useRef } from 'react';
 import api from 'services/api';
 
-const useFetchData = (url = '', onMount = true) => {
+const useFetchData = (url = '', onMount = true, refresh = 0) => {
   const cache = useRef({});
   const cancelRequest = useRef(false);
   const isMounted = useRef(false);
+  const refreshCounter = useRef(0);
 
   const initialState = {
     error: undefined,
@@ -43,7 +44,7 @@ const useFetchData = (url = '', onMount = true) => {
     const fetchData = async () => {
       dispatch({ type: 'loading' });
 
-      if (cache.current[url]) {
+      if (refreshCounter.current === refresh && cache.current[url]) {
         dispatch({ type: 'fetched', payload: cache.current[url] });
         return;
       }
@@ -71,7 +72,7 @@ const useFetchData = (url = '', onMount = true) => {
     return () => {
       cancelRequest.current = true;
     };
-  }, [url, onMount]);
+  }, [url, onMount, refresh]);
 
   return state;
 };
