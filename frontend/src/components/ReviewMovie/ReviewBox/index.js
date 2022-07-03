@@ -11,7 +11,11 @@ import Link from 'components/Link';
 import { StarInput } from 'components/Stars';
 import { useState } from 'react';
 
-const ReviewBox = ({ authenticated = false, onSend = () => {} }) => {
+const ReviewBox = ({
+  authenticated = false,
+  loginRedirect = '/',
+  onSend = () => {},
+}) => {
   const [score, setScore] = useState(0);
   const [description, setDescription] = useState('');
 
@@ -29,13 +33,16 @@ const ReviewBox = ({ authenticated = false, onSend = () => {} }) => {
         >
           <Text>
             To review,{' '}
-            <Link href="" color="m180.pink.500">
+            <Link href="/sign-up" color="m180.pink.500">
               create your account now.
             </Link>
           </Text>
           <Text>
             Already have an account?{' '}
-            <Link href="" color="m180.pink.500">
+            <Link
+              href={`/sign-in/?redirect=${loginRedirect}`}
+              color="m180.pink.500"
+            >
               login
             </Link>
           </Text>

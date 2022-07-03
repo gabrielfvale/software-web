@@ -18,6 +18,7 @@ const ActionRow = ({
   lists = [],
   isOnWatchList,
   isFavorite,
+  loading,
   onAddToWatchList,
   onAddToList,
   onFavorite,
@@ -33,6 +34,7 @@ const ActionRow = ({
         colorScheme="m180.white"
         color="m180.pink.400"
         onClick={onAddToWatchList}
+        disabled={loading}
       >
         Wanna watch
       </Button>
@@ -43,6 +45,7 @@ const ActionRow = ({
           size="sm"
           colorScheme="m180.white"
           color="m180.pink.400"
+          disabled={loading}
         >
           Add to list
         </MenuButton>
@@ -75,6 +78,7 @@ const ActionRow = ({
         colorScheme={isFavorite ? 'm180.pink' : 'm180.white'}
         color={isFavorite ? 'white' : 'm180.pink.400'}
         onClick={onFavorite}
+        disabled={loading}
       >
         Favorite
       </Button>
