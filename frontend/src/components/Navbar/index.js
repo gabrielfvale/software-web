@@ -1,3 +1,5 @@
+import { useLocation } from 'react-router-dom';
+import { useUser } from 'providers/UserProvider';
 import {
   Flex,
   Image,
@@ -11,16 +13,18 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import Content from 'components/Content';
 import Link from '../Link';
 import Logo from '../../assets/Logo.svg';
-import { isAuthenticated } from 'services/auth';
 
 const Navbar = ({ onHomepage = false }) => {
+  const location = useLocation();
+
+  const { user, authenticated, logout } = useUser();
   const background = onHomepage
     ? 'linear(to-b,transparent,transparent)'
     : 'linear(to-r,m180.navyBlue.500,m180.navyBlue.400)';
 
-  const userRoute = isAuthenticated()
-    ? { title: 'My profile', path: '/profile' }
-    : { title: 'Sign in', path: '/sign-in' };
+  const userRoute = authenticated
+    ? { title: 'My profile', path: `/profile/${user.username}` }
+    : { title: 'Sign in', path: `/sign-in/?redirect=${location.pathname}` };
 
   const routes = [
     {
@@ -57,6 +61,17 @@ const Navbar = ({ onHomepage = false }) => {
             {route.title.toUpperCase()}
           </Link>
         ))}
+        {authenticated && (
+          <Link
+            href="#"
+            onClick={() => {
+              logout();
+              window.location.reload();
+            }}
+          >
+            LOG OUT
+          </Link>
+        )}
         <InputGroup width="12rem">
           <InputLeftElement
             pointerEvents="none"

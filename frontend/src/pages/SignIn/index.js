@@ -1,7 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { useUser } from 'providers/UserProvider';
+import * as Yup from 'yup';
+import api from 'services/api';
+
 import {
   Box,
   Flex,
@@ -14,7 +16,6 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import Content from 'components/Content';
-import api from 'services/api';
 
 const SigninSchema = Yup.object().shape({
   username: Yup.string().max(30, 'Too Long!').required('Required'),
@@ -23,6 +24,7 @@ const SigninSchema = Yup.object().shape({
 
 const SignIn = () => {
   const { login } = useUser();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -36,7 +38,8 @@ const SignIn = () => {
         status: 'success',
         isClosable: true,
       });
-      navigate('/');
+      const redirect = searchParams.get('redirect');
+      navigate(redirect || '/');
     } catch (e) {
       toast({
         title: 'Error',
