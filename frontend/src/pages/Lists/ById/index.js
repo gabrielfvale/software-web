@@ -1,71 +1,36 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { useUser } from 'providers/UserProvider';
+
 import { Box, Text, HStack, Icon, Button } from '@chakra-ui/react';
-import { AiFillHeart } from 'react-icons/ai';
+import { AiFillEdit, AiFillHeart } from 'react-icons/ai';
+
 import Content from 'components/Content';
 import MovieGrid from 'components/MovieGrid';
+import useFetchData from 'hooks/fetchData';
+import { useParams } from 'react-router-dom';
+import Link from 'components/Link';
+import { getWord } from 'util/plural';
+import api from 'services/api';
 
-const mockUser = {
-  user_id: 1,
-  first_name: 'Usuario',
-  last_name: 'Teste',
-  bio: 'Usuario de teste',
-  country: 'BR',
-  admin: false,
-};
+const ListById = () => {
+  const { list_id } = useParams();
+  const { data } = useFetchData(`/list/${list_id}`);
+  const { user } = useUser();
 
-const mockList = {
-  list_id: 1,
-  title: 'Upcoming Movies',
-  description:
-    'Et mollitia ut exercitationem qui sed recusandae sint illum. Molestiae quae a odio harum aliquam expedita inventore. Tenetur recusandae maiores vero voluptatem veniam autem saepe laborum.',
-  likes: 1234,
-  movies: [16859, 526896, 718789, 361743, 639933, 263115, 31011, 149870],
-  details: [
-    {
-      id: 16859,
-      title: "Kiki's Delivery Service",
-      poster_path: '/7nO5DUMnGUuXrA4r2h6ESOKQRrx.jpg',
-    },
-    {
-      id: 526896,
-      title: 'Morbius',
-      poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-    },
-    {
-      id: 718789,
-      title: 'Lightyear',
-      poster_path: '/vpILbP9eOQEtdQgl4vgjZUNY07r.jpg',
-    },
-    {
-      id: 361743,
-      title: 'Top Gun: Maverick',
-      poster_path: '/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',
-    },
-    {
-      id: 639933,
-      title: 'The Northman',
-      release_date: '2022-04-07',
-      poster_path: '/8p9zXB7M78nZpm215zHfqpknMeM.jpg',
-    },
-    {
-      movie_id: 263115,
-      title: 'Logan',
-      poster_path: '/r9utEhMKiaXUj0Bi6iAa3Yr5hrL.jpg',
-    },
-    {
-      movie_id: 31011,
-      title: 'Mr. Nobody',
-      poster_path: '/qNkIONc4Rgmzo23ph7qWp9QfVnW.jpg',
-    },
-    {
-      movie_id: 149870,
-      title: 'The Wind Rises',
-      poster_path: '/jfwSexzlIzaOgxP9A8bTA6t8YYb.jpg',
-    },
-  ],
-};
+  const [list, setList] = useState({});
 
-const ListByUsername = () => {
+  const fetchMovieDetails = async listData => {
+    const movies = listData.movies.join(',');
+    const { data } = await api.get(`/movie/many/${movies}`);
+    setList({ ...listData, details: [...data] });
+  };
+
+  useEffect(() => {
+    if (data) {
+      fetchMovieDetails(data);
+    }
+  }, [data]);
+
   return (
     <Content>
       <Box
@@ -74,39 +39,35 @@ const ListByUsername = () => {
         padding="1rem"
         marginBottom="2rem"
       >
-        <HStack>
-          <Text>List by</Text>
-          <Text fontWeight={'bold'}>
-            {mockUser.first_name} {mockUser.last_name}
-          </Text>
-        </HStack>
-        <HStack gap={'1rem'} marginY="0.5rem">
-          <Text fontWeight={'medium'}>{mockList.title}</Text>
-          <HStack>
-            <Icon as={AiFillHeart} color="m180.pink.500" />
-            <Text fontSize="xs" fontWeight="medium">
-              {mockList.likes} likes
-            </Text>
+        <HStack justifyContent="space-between">
+          <HStack gap="1rem">
+            <Text fontWeight="medium">{list?.name}</Text>
+            <HStack spacing={1}>
+              <Icon as={AiFillHeart} color="m180.pink.500" />
+              <Text fontSize="xs" fontWeight="medium">
+                {list?.likes} {getWord('like', list?.likes)}
+              </Text>
+            </HStack>
           </HStack>
+          {Number(user?.user_id) === Number(list?.user_id) && (
+            <Button size="sm" mt="1rem" leftIcon={<AiFillEdit />}>
+              Edit
+            </Button>
+          )}
         </HStack>
-        <Text width="50%" fontSize="xs">
-          {mockList.description}
+        <Text fontSize="sm">
+          by{' '}
+          <Link href={`/profile/${list?.username}`} fontWeight="bold">
+            {list?.username}
+          </Link>
         </Text>
+
+        <Text fontSize="xs">{list?.description}</Text>
       </Box>
-      <MovieGrid data={mockList.details} />
-      <Box flex={1} display="flex" justifyContent="flex-end">
-        <Button
-          fontSize="sm"
-          fontWeight="medium"
-          colorScheme="m180.pink"
-          padding="0.5rem 1.5rem"
-          mt="1rem"
-        >
-          EDIT
-        </Button>
-      </Box>
+      <MovieGrid data={list?.details} />
+      <Box flex={1} display="flex" justifyContent="flex-end"></Box>
     </Content>
   );
 };
 
-export default ListByUsername;
+export default ListById;

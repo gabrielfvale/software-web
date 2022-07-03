@@ -23,7 +23,7 @@ const Navbar = ({ onHomepage = false }) => {
     : 'linear(to-r,m180.navyBlue.500,m180.navyBlue.400)';
 
   const userRoute = authenticated
-    ? { title: 'My profile', path: `/profile/${user.username}` }
+    ? { title: 'My profile', path: `/profile/${user?.username}` }
     : { title: 'Sign in', path: `/sign-in/?redirect=${location.pathname}` };
 
   const routes = [
