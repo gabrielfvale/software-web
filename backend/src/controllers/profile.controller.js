@@ -6,7 +6,7 @@ async function get(req, res) {
     const { username } = req.params;
 
     const { rows: users } = await pool.query(
-      `SELECT user_id, first_name, last_name, bio, country, admin
+      `SELECT user_id, first_name, last_name, email, bio, admin
       FROM users
       WHERE username=$1`,
       [username]
@@ -58,7 +58,8 @@ async function stats(req, res) {
 
     // Calculate list count
     const { rows: list } = await pool.query(
-      `SELECT COUNT(*) FROM lists WHERE user_id=$1`,
+      `SELECT COUNT(*) FROM lists
+      WHERE user_id=$1 AND list_type NOT IN ('watch', 'favorites')`,
       [rows[0].user_id]
     );
     const { count: lists_created } = list[0];
@@ -88,7 +89,7 @@ async function stats(req, res) {
 
 async function update(req, res) {
   try {
-    const { username, first_name, last_name, country, bio } = req.body;
+    const { username, first_name, last_name, email, bio } = req.body;
     const { user_id } = req.user;
 
     // Find if user exists
@@ -103,9 +104,9 @@ async function update(req, res) {
 
     await pool.query(
       `UPDATE users SET
-      username=$2, first_name=$3, last_name=$4, country=$5, bio=$6
+      username=$2, first_name=$3, last_name=$4, email=$5, bio=$6
       WHERE user_id=$1`,
-      [user_id, username, first_name, last_name, country, bio]
+      [user_id, username, first_name, last_name, email, bio]
     );
 
     res.status(200).end();
