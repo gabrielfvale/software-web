@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL,
-    country CHAR(2) NULL,
-    bio VARCHAR(280) NULL,
+    country CHAR(2) DEFAULT '',
+    bio VARCHAR(280) DEFAULT '',
     token VARCHAR(250) NULL,
     admin BOOLEAN NOT NULL DEFAULT FALSE
 );
