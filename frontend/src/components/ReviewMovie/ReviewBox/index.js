@@ -3,21 +3,40 @@ import {
   Button,
   Flex,
   Heading,
+  HStack,
   Text,
   Textarea,
   VStack,
 } from '@chakra-ui/react';
 import Link from 'components/Link';
 import { StarInput } from 'components/Stars';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const ReviewBox = ({
   authenticated = false,
   loginRedirect = '/',
+  reviewedByMe = false,
+  review = {},
   onSend = () => {},
+  onUpdate = () => {},
 }) => {
   const [score, setScore] = useState(0);
   const [description, setDescription] = useState('');
+
+  useEffect(() => {
+    if (reviewedByMe) {
+      setScore(review.score);
+      setDescription(review.description);
+    }
+  }, [reviewedByMe]);
+
+  const onClick = () => {
+    if (reviewedByMe) {
+      onUpdate({ score, description });
+      return;
+    }
+    onSend({ score, description });
+  };
 
   const renderContent = () => {
     if (!authenticated) {
@@ -61,13 +80,12 @@ const ReviewBox = ({
           value={description}
           onChange={e => setDescription(e.target.value)}
         />
-        <Button
-          size="sm"
-          alignSelf="flex-end"
-          onClick={() => onSend({ score, description })}
-        >
-          Send
-        </Button>
+        <HStack justifyContent="space-between" w="full">
+          <Text></Text>
+          <Button size="sm" alignSelf="flex-end" onClick={onClick}>
+            {reviewedByMe ? 'Update' : 'Send'}
+          </Button>
+        </HStack>
       </VStack>
     );
   };
@@ -75,7 +93,7 @@ const ReviewBox = ({
   return (
     <Box w="100%">
       <Heading size="sm" fontWeight="semibold" textTransform="uppercase">
-        Review
+        {reviewedByMe ? 'Your' : ''} Review
       </Heading>
       {renderContent()}
     </Box>

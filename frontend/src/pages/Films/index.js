@@ -18,16 +18,12 @@ const Movie = () => {
   const [isOnWatch, setIsOnWatch] = useState(false);
   const [isOnFavorites, setIsOnFavorites] = useState(false);
   const [reviewedByMe, setReviewedByMe] = useState(false);
-  const [refreshCounter, setRefreshCounter] = useState(0);
+  const [review, setReview] = useState(0);
 
   const toast = useToast();
   const setTitle = useDocumentTitle();
   const { data } = useFetchData(`/movie/${movie_id}`);
-  const { data: reviews } = useFetchData(
-    `/review/${movie_id}`,
-    true,
-    refreshCounter
-  );
+  const { data: reviews } = useFetchData(`/review/${movie_id}`);
   const { user, authenticated } = useUser();
 
   useEffect(() => {
@@ -41,6 +37,7 @@ const Movie = () => {
       setIsOnWatch(data.on_watch);
       setIsOnFavorites(data.on_favorites);
       setReviewedByMe(data.reviewed_by_me);
+      setReview(data.review);
     }
   }, [data]);
 
@@ -64,14 +61,25 @@ const Movie = () => {
     }
   };
 
-  const onSendReview = async values => {
+  const onEditReview = async (values, action = 'send') => {
     try {
-      await api.post('/review', {
+      const body = {
         movie_api_id: movie_id,
         ...values,
+      };
+      if (action === 'send') {
+        await api.post('/review', body);
+      } else {
+        await api.put('/review', body);
+      }
+      toast({
+        description: 'Review updated',
+        status: 'success',
+        isClosable: true,
+        duration: 2000,
       });
       setReviewedByMe(true);
-      setRefreshCounter(prev => prev + 1);
+      setReview({ ...body });
     } catch (e) {
       toast({
         title: 'Error',
@@ -101,13 +109,14 @@ const Movie = () => {
         bg="m180.darkBeige"
         borderRadius="0.4rem"
       >
-        {!reviewedByMe && (
-          <ReviewBox
-            authenticated={authenticated}
-            loginRedirect={`/films/${movie_id}`}
-            onSend={onSendReview}
-          />
-        )}
+        <ReviewBox
+          authenticated={authenticated}
+          loginRedirect={`/films/${movie_id}`}
+          reviewedByMe={reviewedByMe}
+          review={review}
+          onSend={onEditReview}
+          onUpdate={values => onEditReview(values, 'update')}
+        />
         <ReviewMovie data={reviews?.results} user={user?.user_id || -1} />
       </VStack>
     </Content>
