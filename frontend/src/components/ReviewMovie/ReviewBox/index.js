@@ -42,18 +42,20 @@ const ReviewBox = ({
       );
       setCommentList(data);
     };
+    if (showCommentList) {
+      fetchData();
+    }
+  }, [showCommentList, page, comments]);
+
+  useEffect(() => {
     if (reviewedByMe) {
       setScore(review.score);
       setDescription(review.description);
 
-      setLikes(review.likes);
-      setComments(review.comments);
-
-      if (showCommentList) {
-        fetchData();
-      }
+      setLikes(Number(review.likes));
+      setComments(Number(review.comments));
     }
-  }, [reviewedByMe, review, showCommentList, page, comments]);
+  }, [reviewedByMe, review]);
 
   const onClick = () => {
     if (reviewedByMe) {
