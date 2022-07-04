@@ -26,6 +26,7 @@ async function details(req, res) {
       on_watch: false,
       on_favorites: false,
       reviewed_by_me: false,
+      review: {},
     };
 
     if (user_id) {
@@ -49,15 +50,18 @@ async function details(req, res) {
       });
 
       // Find if movie was reviewed by user
-      const { rowCount } = await pool.query(
+      const { rows: review } = await pool.query(
         `
-        SELECT review_id
+        SELECT reviews.*,
+        (SELECT COUNT(*) FROM comments WHERE comments.review_id = reviews.review_id) AS comments,
+        (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes
         FROM reviews WHERE user_id=$1 AND movie_api_id=$2
         `,
         [user_id, id]
       );
-      if (rowCount === 1) {
+      if (review.length === 1) {
         metadata.reviewed_by_me = true;
+        metadata.review = { ...review[0] };
       }
     }
 

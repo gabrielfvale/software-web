@@ -19,8 +19,8 @@ async function get(req, res) {
 
     const { total_results, total_pages } = await getPages(
       "reviews",
-      "movie_api_id",
-      movie_id,
+      ["movie_api_id"],
+      [movie_id],
       per_page
     );
 

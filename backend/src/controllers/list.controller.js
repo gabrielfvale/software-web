@@ -119,8 +119,8 @@ async function curated(req, res) {
 
     const { total_results, total_pages } = await getPages(
       "lists",
-      "list_type",
-      "admin",
+      ["list_type"],
+      ["admin"],
       per_page
     );
 
@@ -164,8 +164,8 @@ async function user(req, res) {
 
     const { total_results, total_pages } = await getPages(
       "lists",
-      "user_id",
-      rows[0].user_id,
+      ["user_id"],
+      [rows[0].user_id],
       per_page
     );
 
