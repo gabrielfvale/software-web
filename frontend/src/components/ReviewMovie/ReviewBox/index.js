@@ -52,8 +52,8 @@ const ReviewBox = ({
       setScore(review.score);
       setDescription(review.description);
 
-      setLikes(Number(review.likes));
-      setComments(Number(review.comments));
+      setLikes(Number(review.likes) || 0);
+      setComments(Number(review.comments) || 0);
     }
   }, [reviewedByMe, review]);
 

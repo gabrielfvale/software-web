@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useFetchData from 'hooks/fetchData';
+import { useUser } from 'providers/UserProvider';
 
 import { getMoviePosters } from 'util/posters';
 
@@ -47,13 +48,14 @@ const mockReviews = [
 
 const Profile = () => {
   const { username } = useParams();
+  const { user, authenticated } = useUser();
 
-  const { data: user } = useFetchData(`/profile/${username}`);
+  const { data: userData } = useFetchData(`/profile/${username}`);
   const { data: userStats } = useFetchData(`/profile/${username}/stats`);
   const { data } = useFetchData(`/list/user/${username}`);
 
   const [lists, setLists] = useState({});
-  const [favorites, setFavorites] = useState([]);
+  const [special, setSpecial] = useState([]);
 
   const fetchMoviePosters = async userLists => {
     // Get posters for regular lists
@@ -63,21 +65,22 @@ const Profile = () => {
     }
     setLists({ ...userLists, results: [...res] });
 
-    // Get posters for favorite list
-    const favoritesIndex = userLists.special.findIndex(
-      list => list.list_type === 'favorites'
-    );
-    if (favoritesIndex !== -1) {
-      const favoriteList = userLists.special[favoritesIndex];
-      const posters = await getMoviePosters(favoriteList.movies);
-      setFavorites(
-        favoriteList.movies.map((movie, index) => ({
-          id: movie,
-          title: '',
-          poster_path: posters[index],
-        }))
-      );
+    const newSpecial = [];
+
+    // Get posters for watch and favorite lists
+    for (const special of userLists.special) {
+      const posters = await getMoviePosters(special.movies);
+      const formattedPoster = special.movies.map((movie, index) => ({
+        id: movie,
+        poster_path: posters[index],
+      }));
+      newSpecial.push({
+        id: special.list_id,
+        name: special.name,
+        posters: [...formattedPoster],
+      });
     }
+    setSpecial([...newSpecial]);
   };
 
   useEffect(() => {
@@ -86,8 +89,11 @@ const Profile = () => {
 
   return (
     <Content paddingY="1.5rem">
-      {user && userStats && (
-        <ProfileHeader user={{ ...user, stats: userStats }} />
+      {userData && userStats && (
+        <ProfileHeader
+          user={{ ...userData, stats: userStats }}
+          onEditProfile={() => {}}
+        />
       )}
 
       {lists && (
@@ -103,9 +109,15 @@ const Profile = () => {
               />
             ))}
           </Flex>
-          <Category title={`My favorites (${favorites.length})`}>
-            <PopularMoviesRow data={favorites} />
-          </Category>
+          {special.map(({ id, name, posters }) => (
+            <Category
+              key={id}
+              title={`${name} (${posters.length})`}
+              link={posters.length > 6 ? `/lists/${id}` : ''}
+            >
+              <PopularMoviesRow data={posters} />
+            </Category>
+          ))}
         </>
       )}
 

@@ -1,9 +1,9 @@
 import { HStack, Box, Heading, Divider } from '@chakra-ui/react';
 import Link from '../Link';
 
-const Category = ({ title = '', link = '', children }) => {
+const Category = ({ title = '', link = '', children, ...rest }) => {
   return (
-    <Box>
+    <Box {...rest}>
       <Box width="100%" marginY="1rem">
         <HStack justifyContent="space-between">
           <Heading size="sm" fontWeight="semibold" textTransform="uppercase">
