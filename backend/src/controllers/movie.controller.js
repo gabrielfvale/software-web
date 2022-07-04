@@ -119,6 +119,10 @@ async function media(req, res) {
       return res.status(400).json({ error: "Invalid media_type" });
     }
 
+    if (movies === "") {
+      return res.status(200).json([]);
+    }
+
     const results = [];
     for (movie of movies.split(",")) {
       const { data } = await tmdb.get(`/movie/${movie}/images`);

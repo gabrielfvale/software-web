@@ -414,20 +414,19 @@ async function update(req, res) {
       [list_id]
     );
 
-    // Bulk insert new movies in auxiliary table
-    const { rows: insertedMovieList } = await pool.query(
-      `INSERT INTO movies_list (list_id, movie_api_id)
+    if (movies.length > 0) {
+      // Bulk insert new movies in auxiliary table
+      await pool.query(
+        `INSERT INTO movies_list (list_id, movie_api_id)
       VALUES
       ${movies.map((movie_id) => `(${list_id}, ${movie_id})`).join(",")}
       RETURNING movie_api_id`
-    );
-
-    if (insertedMovieList.length == movies.length) {
-      res.status(200).end();
-    } else {
-      throw Error("Unexpected");
+      );
     }
+
+    res.status(200).end();
   } catch (e) {
+    console.log(e);
     const { status, body } = errorHandler(e);
     res.status(status).json(body);
   }
