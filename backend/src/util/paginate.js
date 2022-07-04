@@ -1,11 +1,13 @@
 const { pool } = require("../services/db");
 
-async function getPages(table, column, value, per_page) {
+async function getPages(table, columns = [], values = [], per_page = 10) {
+  const formattedColumns = columns.map((col, i) => `${col}=$${i + 1}`);
+
   const { rows: review_count } = await pool.query(
     `
-    SELECT COUNT(*) FROM ${table} WHERE ${column}=$1
+    SELECT COUNT(*) FROM ${table} WHERE ${formattedColumns.join("AND ")}
     `,
-    [value]
+    [...values]
   );
 
   const total_results = Number(review_count[0].count);

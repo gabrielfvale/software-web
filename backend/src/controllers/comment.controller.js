@@ -11,8 +11,8 @@ async function list(req, res) {
 
     const { total_results, total_pages } = await getPages(
       "comments",
-      "review_id",
-      id,
+      ["review_id"],
+      [id],
       per_page
     );
 
