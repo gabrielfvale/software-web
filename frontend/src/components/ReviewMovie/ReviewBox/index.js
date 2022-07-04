@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   Box,
   Button,
@@ -10,7 +12,10 @@ import {
 } from '@chakra-ui/react';
 import Link from 'components/Link';
 import { StarInput } from 'components/Stars';
-import { useEffect, useState } from 'react';
+import CommentSection from '../CommentSection';
+import ReviewActions from '../ReviewActions';
+
+import api from 'services/api';
 
 const ReviewBox = ({
   authenticated = false,
@@ -23,12 +28,32 @@ const ReviewBox = ({
   const [score, setScore] = useState(0);
   const [description, setDescription] = useState('');
 
+  const [likes, setLikes] = useState(0);
+  const [comments, setComments] = useState(0);
+
+  const [showCommentList, setShowCommentList] = useState(false);
+  const [page, setPage] = useState(1);
+  const [commentList, setCommentList] = useState({});
+
   useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await api.get(
+        `/review/${review?.review_id}/comments/?page=${page}&per_page=5`
+      );
+      setCommentList(data);
+    };
     if (reviewedByMe) {
       setScore(review.score);
       setDescription(review.description);
+
+      setLikes(review.likes);
+      setComments(review.comments);
+
+      if (showCommentList) {
+        fetchData();
+      }
     }
-  }, [reviewedByMe]);
+  }, [reviewedByMe, review, showCommentList, page, comments]);
 
   const onClick = () => {
     if (reviewedByMe) {
@@ -36,6 +61,14 @@ const ReviewBox = ({
       return;
     }
     onSend({ score, description });
+  };
+
+  const onSendComment = async description => {
+    await api.post('/review/comment', {
+      review_id: review.review_id,
+      description,
+    });
+    setComments(prev => prev + 1);
   };
 
   const renderContent = () => {
@@ -81,11 +114,28 @@ const ReviewBox = ({
           onChange={e => setDescription(e.target.value)}
         />
         <HStack justifyContent="space-between" w="full">
-          <Text></Text>
+          <Box>
+            {reviewedByMe && (
+              <ReviewActions
+                likes={likes}
+                comments={comments}
+                likeDisabled={true}
+                onComment={() => setShowCommentList(value => !value)}
+              />
+            )}
+          </Box>
           <Button size="sm" alignSelf="flex-end" onClick={onClick}>
             {reviewedByMe ? 'Update' : 'Send'}
           </Button>
         </HStack>
+        {showCommentList && (
+          <CommentSection
+            page={page}
+            commentList={commentList}
+            onChangePage={setPage}
+            onSendComment={onSendComment}
+          />
+        )}
       </VStack>
     );
   };

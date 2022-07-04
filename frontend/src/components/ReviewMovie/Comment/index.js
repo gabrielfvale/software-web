@@ -8,16 +8,17 @@ const Comment = ({
 }) => {
   return (
     <VStack width="100%" alignItems="flex-start">
-      <Text as="span" fontSize="xs">
+      {/* <Text as="span" fontSize="xs">
         Commenting as{' '}
         <Text as="span" fontSize="xs" fontWeight="bold">
           {username}
         </Text>
-      </Text>
+      </Text> */}
       <Textarea
-        maxLength="280"
         bg="white"
+        resize="none"
         fontSize="xs"
+        maxLength="280"
         value={description}
         onChange={onChange}
       />
@@ -28,7 +29,7 @@ const Comment = ({
       >
         <Text fontSize="xs">{description.length}/280</Text>
         <Button size="sm" onClick={onSend}>
-          Send
+          Reply
         </Button>
       </HStack>
     </VStack>
