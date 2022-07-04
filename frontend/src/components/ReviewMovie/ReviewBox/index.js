@@ -45,7 +45,7 @@ const ReviewBox = ({
     if (showCommentList) {
       fetchData();
     }
-  }, [showCommentList, page, comments]);
+  }, [showCommentList, page, comments, review?.review_id]);
 
   useEffect(() => {
     if (reviewedByMe) {

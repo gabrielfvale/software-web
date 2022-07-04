@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { useUser } from 'providers/UserProvider';
@@ -93,7 +93,7 @@ const Settings = () => {
         false
       );
     }
-  }, [data]);
+  }, [data, formik, username]);
 
   console.log({ authenticated, user });
 

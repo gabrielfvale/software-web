@@ -39,12 +39,14 @@ const DetailedReview = ({ review, ...rest }) => {
             <Heading size="xs">{release_date}</Heading>
           </HStack>
           <HStack>
-            <Text fontSize="xs">
-              by{' '}
-              <Link href={`/profile/${username}`} fontWeight="semibold">
-                {username}
-              </Link>
-            </Text>
+            {username && (
+              <Text fontSize="xs">
+                by{' '}
+                <Link href={`/profile/${username}`} fontWeight="semibold">
+                  {username}
+                </Link>
+              </Text>
+            )}
             <Stars score={Number(score)} />
           </HStack>
           <Text fontSize="sm" noOfLines={3}>

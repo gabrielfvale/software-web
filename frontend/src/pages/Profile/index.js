@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useFetchData from 'hooks/fetchData';
-import { useUser } from 'providers/UserProvider';
 
 import { getMoviePosters } from 'util/posters';
 
@@ -12,52 +11,25 @@ import ReviewList from 'components/ReviewList';
 import Category from 'components/Category';
 import Content from 'components/Content';
 import PopularMoviesRow from 'components/PopularMoviesRow';
-
-const mockReviews = [
-  {
-    review_id: '1',
-    user_id: '1',
-    movie_api_id: '526896',
-    score: '2.5',
-    description: 'The most move of all time',
-    created_at: '2022-06-09T03:27:33.143Z',
-    updated_at: '2022-06-09T00:27:57.936Z',
-    likes: 21980,
-    comments: '1',
-    username: 'laurazona4',
-    title: 'Morbius',
-    release_date: '2022-03-30',
-    poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-  },
-  {
-    review_id: '2',
-    user_id: '2',
-    movie_api_id: '526896',
-    score: '5.0',
-    description: 'The most move of all time',
-    created_at: '2022-06-09T03:27:33.143Z',
-    updated_at: '2022-06-09T00:27:57.936Z',
-    likes: 2498,
-    comments: '1',
-    username: 'laurazona4',
-    title: 'Morbius',
-    release_date: '2022-03-30',
-    poster_path: '/6JjfSchsU6daXk2AKX8EEBjO3Fm.jpg',
-  },
-];
+import Pagination from 'components/Pagination';
+import api from 'services/api';
 
 const Profile = () => {
   const { username } = useParams();
-  const { user, authenticated } = useUser();
+
+  const [reviewPage, setReviewPage] = useState(1);
+  const [lists, setLists] = useState({});
+  const [special, setSpecial] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   const { data: userData } = useFetchData(`/profile/${username}`);
   const { data: userStats } = useFetchData(`/profile/${username}/stats`);
-  const { data } = useFetchData(`/list/user/${username}`);
+  const { data: userLists } = useFetchData(`/list/user/${username}`);
+  const { data: userReviews } = useFetchData(
+    `/review/user/${username}/?per_page=5&page=${reviewPage}`
+  );
 
-  const [lists, setLists] = useState({});
-  const [special, setSpecial] = useState([]);
-
-  const fetchMoviePosters = async userLists => {
+  const fetchListPosters = async userLists => {
     // Get posters for regular lists
     const res = userLists?.results;
     for (let i = 0; i < res.length; i++) {
@@ -83,9 +55,26 @@ const Profile = () => {
     setSpecial([...newSpecial]);
   };
 
+  const fetchReviewMovies = async userReviews => {
+    if (!userReviews) return;
+    const movies = userReviews.map(review => review.movie_api_id).join(',');
+    const { data } = await api.get(`/movie/many/${movies}`);
+    const newReviews = [];
+    for (let i = 0; i < userReviews.length; i++) {
+      newReviews.push({ ...userReviews[i], ...data[i] });
+    }
+    setReviews([...newReviews]);
+  };
+
   useEffect(() => {
-    if (data) fetchMoviePosters(data);
-  }, [data]);
+    if (userLists) fetchListPosters(userLists);
+  }, [userLists]);
+
+  useEffect(() => {
+    if (userReviews) {
+      fetchReviewMovies(userReviews.results);
+    }
+  }, [userReviews]);
 
   return (
     <Content paddingY="1.5rem">
@@ -122,7 +111,12 @@ const Profile = () => {
       )}
 
       <Category title="Recent Reviews">
-        <ReviewList data={mockReviews} />
+        <ReviewList data={reviews} />
+        <Pagination
+          page={reviewPage}
+          total_pages={userReviews?.total_pages}
+          onClick={setReviewPage}
+        />
       </Category>
     </Content>
   );
