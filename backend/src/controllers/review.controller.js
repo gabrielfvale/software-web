@@ -57,6 +57,63 @@ async function get(req, res) {
   }
 }
 
+async function user(req, res) {
+  try {
+    const { username } = req.params;
+    let { page, per_page } = req.query;
+
+    page = page || 1;
+    per_page = per_page || 10;
+
+    const { rows: user } = await pool.query(
+      `SELECT user_id FROM users WHERE username=$1`,
+      [username]
+    );
+
+    if (user.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const user_id = user[0].user_id;
+
+    const { total_results, total_pages } = await getPages(
+      "reviews",
+      ["user_id"],
+      [user_id],
+      per_page
+    );
+
+    if (page > total_pages) {
+      return res.status(400).json({ error: "Page exceeds limit" });
+    }
+
+    const { rows: results } = await pool.query(
+      paginateQuery(
+        `
+        SELECT reviews.*,
+        (SELECT COUNT(*) FROM comments WHERE comments.review_id = reviews.review_id) AS comments,
+        (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes
+        FROM reviews WHERE user_id=$1
+        ORDER BY reviews.created_at DESC
+        `,
+        page,
+        per_page
+      ),
+      [user_id]
+    );
+
+    res.status(200).json({
+      page,
+      total_pages,
+      total_results,
+      results,
+    });
+  } catch (e) {
+    const { status, body } = errorHandler(e);
+    res.status(status).json(body);
+  }
+}
+
 async function popular(req, res) {
   try {
     let { page, per_page } = req.query;
@@ -275,6 +332,7 @@ async function like(req, res) {
 
 module.exports = {
   get,
+  user,
   popular,
   create,
   update,

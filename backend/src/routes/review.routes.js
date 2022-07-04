@@ -6,6 +6,7 @@ const reviewController = require("../controllers/review.controller");
 const commentController = require("../controllers/comment.controller");
 
 router.get("/popular", cacheMiddleware, reviewController.popular);
+router.get("/user/:username", optionalToken, reviewController.user);
 router.get("/:id/comments", commentController.list);
 router.get("/:movie_id", optionalToken, reviewController.get);
 
