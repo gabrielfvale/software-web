@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 import { useUser } from 'providers/UserProvider';
 import {
   Flex,
@@ -8,23 +8,30 @@ import {
   InputGroup,
   InputLeftElement,
   Icon,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { AiOutlineSearch } from 'react-icons/ai';
 import Content from 'components/Content';
+import SigninModal from 'components/SigninModal';
 import Link from '../Link';
 import Logo from '../../assets/Logo.svg';
 
 const Navbar = ({ onHomepage = false }) => {
-  const location = useLocation();
+  // const location = useLocation();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { user, authenticated, logout } = useUser();
   const background = onHomepage
     ? 'linear(to-b,transparent,transparent)'
     : 'linear(to-r,m180.navyBlue.500,m180.navyBlue.400)';
 
+  // const userRoute = authenticated
+  //   ? { title: 'My profile', path: `/profile/${user?.username}` }
+  //   : { title: 'Sign in', path: `/sign-in/?redirect=${location.pathname}` };
+
   const userRoute = authenticated
-    ? { title: 'My profile', path: `/profile/${user?.username}` }
-    : { title: 'Sign in', path: `/sign-in/?redirect=${location.pathname}` };
+    ? [{ title: 'My profile', path: `/profile/${user?.username}` }]
+    : [];
 
   const routes = [
     {
@@ -35,7 +42,7 @@ const Navbar = ({ onHomepage = false }) => {
       title: 'Lists',
       path: '/lists',
     },
-    userRoute,
+    ...userRoute,
   ];
 
   const position = onHomepage ? 'absolute' : 'static';
@@ -51,6 +58,7 @@ const Navbar = ({ onHomepage = false }) => {
       alignItems="center"
       zIndex="2"
     >
+      <SigninModal isOpen={isOpen} onClose={onClose} />
       <Link href="/">
         <Image src={Logo} h="4.5rem" objectFit="contain" />
       </Link>
@@ -61,7 +69,7 @@ const Navbar = ({ onHomepage = false }) => {
             {route.title.toUpperCase()}
           </Link>
         ))}
-        {authenticated && (
+        {authenticated ? (
           <Link
             href="#"
             onClick={() => {
@@ -70,6 +78,10 @@ const Navbar = ({ onHomepage = false }) => {
             }}
           >
             LOG OUT
+          </Link>
+        ) : (
+          <Link href="#" onClick={onOpen}>
+            SIGN IN
           </Link>
         )}
         <InputGroup width="12rem">
