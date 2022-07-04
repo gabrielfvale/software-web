@@ -2,7 +2,7 @@ import { Image, Box, Heading, Button, Flex } from '@chakra-ui/react';
 
 import React from 'react';
 
-const Hero = ({ backdrop, action }) => {
+const Hero = ({ backdrop = '', prompt = '', action = () => {} }) => {
   const mediaUrl = process.env.REACT_APP_API_URL + '/media/';
   const w = 'w1280';
 
@@ -42,10 +42,10 @@ const Hero = ({ backdrop, action }) => {
         <Button
           display="block"
           marginX="auto"
-          borderRadius="2rem"
+          borderRadius="full"
           onClick={action}
         >
-          GET STARTED RIGHT NOW!
+          {prompt.toUpperCase()}
         </Button>
       </Flex>
     </Box>
