@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import {
   isAuthenticated,
   getUser,
@@ -9,7 +9,7 @@ import {
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(getUser());
   const authenticated = isAuthenticated();
 
   const login = token => {
@@ -22,13 +22,11 @@ const UserProvider = ({ children }) => {
     setUser({});
   };
 
-  useEffect(() => {
-    if (authenticated) {
-      setUser(getUser());
-    }
-  }, [authenticated]);
+  const setUsername = username => {
+    setUser({ ...user, username });
+  };
 
-  const values = { user, authenticated, login, logout };
+  const values = { user, authenticated, login, logout, setUsername };
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
 };
 

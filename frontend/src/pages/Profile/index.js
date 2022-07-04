@@ -91,7 +91,7 @@ const Profile = () => {
     <Content paddingY="1.5rem">
       {userData && userStats && (
         <ProfileHeader
-          user={{ ...userData, stats: userStats }}
+          user={{ ...userData, username, stats: userStats }}
           onEditProfile={() => {}}
         />
       )}

@@ -10,7 +10,7 @@ const ProfileHeader = ({ user }) => {
             {user.first_name} {user.last_name}
           </Text>
           <Box marginLeft={2}>
-            <Link to={'/accountSettings'} as={Link}>
+            <Link href={`/profile/${user.username}/settings`}>
               <Button
                 h="1.75rem"
                 fontSize="sm"
