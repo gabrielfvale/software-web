@@ -15,7 +15,6 @@ import ReviewBox from 'components/ReviewMovie/ReviewBox';
 import ScrollToTop from 'components/ScrollToTop';
 import CreateListModal from 'components/CreateListModal';
 import PopularMoviesRow from 'components/PopularMoviesRow';
-import Category from 'components/Category';
 
 const Movie = () => {
   const { movie_id } = useParams();
