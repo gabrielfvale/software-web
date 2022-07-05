@@ -426,7 +426,6 @@ async function update(req, res) {
 
     res.status(200).end();
   } catch (e) {
-    console.log(e);
     const { status, body } = errorHandler(e);
     res.status(status).json(body);
   }

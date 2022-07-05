@@ -98,30 +98,30 @@ async function update(req, res) {
 
 async function deleteComment(req, res) {
   try {
-    const { user_id: requestingUser } = req.user;
-    const { user_id, comment_id } = req.body;
+    const { user_id } = req.user;
+    const { comment_id } = req.query;
 
     // Find if comment exists
     const { rows: commented } = await pool.query(
-      `SELECT * FROM comments WHERE user_id=$1 AND comment_id=$2`,
-      [user_id, comment_id]
+      `SELECT * FROM comments WHERE comment_id=$1`,
+      [comment_id]
     );
 
     if (commented.length === 0) {
-      return res.status(404).json({ error: "Review not found" });
+      return res.status(404).json({ error: "Comment not found" });
     }
 
     const { rows: user } = await pool.query(
       `
       SELECT * from users WHERE user_id=$1
       `,
-      [requestingUser]
+      [user_id]
     );
 
     // Delete comment if user_id matches or requesting user is admin
     if (
       user.length !== 0 &&
-      (Number(user[0].user_id) === Number(user_id) || user[0].admin)
+      (Number(commented[0].user_id) === Number(user_id) || user[0].admin)
     ) {
       await pool.query(
         `DELETE FROM comments WHERE user_id=$1 AND comment_id=$2`,
