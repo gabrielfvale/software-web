@@ -7,6 +7,10 @@ import Link from 'components/Link';
 const CommentList = ({ data = [], onDelete = () => {} }) => {
   const { user } = useUser();
 
+  if (data.length === 0) {
+    return <Text fontSize="sm">There are no comments.</Text>;
+  }
+
   return (
     <VStack width="100%" gap={1} marginTop="1rem">
       {data?.map(comment => {
@@ -42,7 +46,7 @@ const CommentList = ({ data = [], onDelete = () => {} }) => {
                     at {date}
                   </Text>
                 </HStack>
-                {user?.username === comment.username && (
+                {(user?.username === comment.username || user?.admin) && (
                   <HStack>
                     <IconButton
                       icon={<FaTrash />}

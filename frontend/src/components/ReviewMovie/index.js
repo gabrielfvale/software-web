@@ -1,6 +1,11 @@
 import { VStack, StackDivider } from '@chakra-ui/react';
+import { useUser } from 'providers/UserProvider';
 import Review from './Review';
-const ReviewMovie = ({ data = [], user = -1 }) => {
+const ReviewMovie = ({ data = [] }) => {
+  const { user } = useUser();
+  const filteredData = data.filter(
+    review => Number(review.user_id) !== Number(user?.user_id)
+  );
   return (
     <VStack
       width="100%"
@@ -8,7 +13,7 @@ const ReviewMovie = ({ data = [], user = -1 }) => {
       gap={2}
       divider={<StackDivider borderColor="m180.beige" />}
     >
-      {data?.map(review => {
+      {filteredData.map(review => {
         return <Review key={review.review_id} review={review} user={user} />;
       })}
     </VStack>

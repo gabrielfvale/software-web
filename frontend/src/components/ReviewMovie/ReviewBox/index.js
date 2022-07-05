@@ -31,6 +31,7 @@ const ReviewBox = ({
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState(0);
 
+  const [showReply, setShowReply] = useState(false);
   const [showCommentList, setShowCommentList] = useState(false);
   const [page, setPage] = useState(1);
   const [commentList, setCommentList] = useState({});
@@ -71,6 +72,8 @@ const ReviewBox = ({
       description,
     });
     setComments(prev => prev + 1);
+    setShowReply(false);
+    setShowCommentList(true);
   };
 
   const renderContent = () => {
@@ -122,7 +125,8 @@ const ReviewBox = ({
                 likes={likes}
                 comments={comments}
                 likeDisabled={true}
-                onComment={() => setShowCommentList(value => !value)}
+                onComment={() => setShowReply(value => !value)}
+                onList={() => setShowCommentList(value => !value)}
               />
             )}
           </Box>
@@ -130,14 +134,14 @@ const ReviewBox = ({
             {reviewedByMe ? 'Update' : 'Send'}
           </Button>
         </HStack>
-        {showCommentList && (
-          <CommentSection
-            page={page}
-            commentList={commentList}
-            onChangePage={setPage}
-            onSendComment={onSendComment}
-          />
-        )}
+        <CommentSection
+          page={page}
+          commentList={commentList}
+          onChangePage={setPage}
+          onSendComment={onSendComment}
+          showList={showCommentList}
+          showReply={showReply}
+        />
       </VStack>
     );
   };

@@ -117,7 +117,7 @@ const Movie = () => {
           onSend={onEditReview}
           onUpdate={values => onEditReview(values, 'update')}
         />
-        <ReviewMovie data={reviews?.results} user={user?.user_id || -1} />
+        <ReviewMovie data={reviews?.results} />
       </VStack>
     </Content>
   );

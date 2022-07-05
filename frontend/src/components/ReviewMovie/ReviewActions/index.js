@@ -1,5 +1,5 @@
 import { Box, HStack, Button } from '@chakra-ui/react';
-import { AiFillHeart } from 'react-icons/ai';
+import { AiFillEdit, AiFillHeart } from 'react-icons/ai';
 import { FaComment } from 'react-icons/fa';
 
 import { getWord } from 'util/plural';
@@ -10,7 +10,9 @@ const ReviewActions = ({
   comments = 0,
   likeDisabled = false,
   commentDisabled = false,
+  replyDisabled = false,
   onLike = () => {},
+  onList = () => {},
   onComment = () => {},
   ...rest
 }) => {
@@ -32,15 +34,20 @@ const ReviewActions = ({
           variant="ghost"
           leftIcon={<FaComment />}
           pointerEvents={commentDisabled ? 'none' : 'auto'}
-          onClick={onComment}
+          onClick={onList}
         >
           {comments} {getWord('comment', comments)}
         </Button>
-        {/* {user !== -1 && (
-    <Button size="xs" onClick={() => setComment(!comment)}>
-      <Text fontSize="xs">Reply</Text>
-    </Button>
-  )} */}
+        {!replyDisabled && (
+          <Button
+            size="xs"
+            variant="ghost"
+            leftIcon={<AiFillEdit />}
+            onClick={onComment}
+          >
+            Reply
+          </Button>
+        )}
       </HStack>
     </Box>
   );

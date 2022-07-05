@@ -8,8 +8,9 @@ import Stars from 'components/Stars';
 import Link from 'components/Link';
 import ReviewActions from '../ReviewActions';
 import CommentSection from '../CommentSection';
+import { useUser } from 'providers/UserProvider';
 
-const Review = ({ review = {}, user = -1, ...rest }) => {
+const Review = ({ review = {}, ...rest }) => {
   const {
     review_id,
     user_id,
@@ -23,10 +24,13 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
     liked_by_me,
   } = review;
 
+  const { user, authenticated } = useUser();
+
   const toast = useToast();
 
   const [liked, setLiked] = useState(liked_by_me);
 
+  const [showReply, setShowReply] = useState(false);
   const [showCommentList, setShowCommentList] = useState(false);
   const [page, setPage] = useState(1);
   const [commentList, setCommentList] = useState({});
@@ -56,6 +60,8 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
       description,
     });
     setComments(prev => prev + 1);
+    setShowReply(false);
+    setShowCommentList(true);
   };
 
   const onDeleteComment = async comment_id => {
@@ -117,22 +123,25 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
         liked={liked}
         likes={likes}
         comments={comments}
-        likeDisabled={user === -1 || Number(user) === Number(user_id)}
-        commentDisabled={user === -1 && comments === 0}
+        likeDisabled={
+          !authenticated || Number(user.user_id) === Number(user_id)
+        }
+        commentDisabled={!authenticated && comments === 0}
+        replyDisabled={!authenticated}
         onLike={onLike}
-        onComment={() => setShowCommentList(prev => !prev)}
+        onList={() => setShowCommentList(prev => !prev)}
+        onComment={() => setShowReply(prev => !prev)}
       />
 
-      {showCommentList && (
-        <CommentSection
-          page={page}
-          commentList={commentList}
-          showReply={user !== -1}
-          onChangePage={setPage}
-          onSendComment={onSendComment}
-          onDelete={onDeleteComment}
-        />
-      )}
+      <CommentSection
+        page={page}
+        commentList={commentList}
+        showReply={showReply}
+        showList={showCommentList}
+        onChangePage={setPage}
+        onSendComment={onSendComment}
+        onDelete={onDeleteComment}
+      />
     </Box>
   );
 };
