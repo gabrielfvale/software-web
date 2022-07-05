@@ -89,7 +89,7 @@ const ListById = () => {
     });
   };
 
-  const isSameUser = Number(user.user_id) === Number(list?.user_id);
+  const isSameUser = Number(user?.user_id) === Number(list?.user_id);
   const conventionalList =
     list?.list_type !== 'watch' || list?.list_type !== 'favorites';
 
