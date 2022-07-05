@@ -12,79 +12,29 @@ import Content from 'components/Content';
 import Category from 'components/Category';
 import ListCard from 'components/ListCard';
 import DetailedListCard from 'components/DetailedListCard';
-
-const mockUserLists = {
-  page: 1,
-  total_pages: 1,
-  total_results: 1,
-  results: [
-    {
-      list_id: 2,
-      user_id: 2,
-      username: 'gabrielfvale',
-      name: 'Animations',
-      description:
-        'Id omnis sit inventore voluptate quo a fugiat. Autem corporis et ea quia. Reprehenderit blanditiis cupiditate earum. Mollitia iure possimus et. Debitis nihil architecto maxime est est.',
-      list_type: 'public',
-      created_at: '2022-06-22T01:13:24.072Z',
-      updated_at: '2022-06-21T22:15:39.611Z',
-      likes: '1',
-      movies: [585, 862, 9806, 9487],
-      posters: [
-        {
-          movie_id: 585,
-          poster_path: '/sgheSKxZkttIe8ONsf2sWXPgip3.jpg',
-        },
-        {
-          movie_id: 862,
-          poster_path: '/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg',
-        },
-        {
-          movie_id: 9806,
-          poster_path: '/2LqaLgk4Z226KkgPJuiOQ58wvrm.jpg',
-        },
-        {
-          movie_id: 9487,
-          poster_path: '/kEgOJBBXsY9RrPCFwaT398SSyfS.jpg',
-        },
-      ],
-    },
-    {
-      list_id: 3,
-      user_id: '1',
-      username: 'laurapetrola',
-      name: 'My favorite movies',
-      description:
-        'Id omnis sit inventore voluptate quo a fugiat. Autem corporis et ea quia. Reprehenderit blanditiis cupiditate earum. Mollitia iure possimus et. Debitis nihil architecto maxime est est.',
-      list_type: 'public',
-      created_at: '2022-06-22T01:13:24.072Z',
-      updated_at: '2022-06-21T22:15:39.611Z',
-      likes: '1',
-      movies: [263115, 31011, 16859, 149870],
-      posters: [
-        {
-          movie_id: 263115,
-          poster_path: '/r9utEhMKiaXUj0Bi6iAa3Yr5hrL.jpg',
-        },
-        {
-          movie_id: 31011,
-          poster_path: '/qNkIONc4Rgmzo23ph7qWp9QfVnW.jpg',
-        },
-        {
-          movie_id: 16859,
-          poster_path: '/7nO5DUMnGUuXrA4r2h6ESOKQRrx.jpg',
-        },
-        {
-          movie_id: 149870,
-          poster_path: '/jfwSexzlIzaOgxP9A8bTA6t8YYb.jpg',
-        },
-      ],
-    },
-  ],
-};
+import { useEffect, useState } from 'react';
+import useFetchData from 'hooks/fetchData';
+import { getMoviePosters } from 'util/posters';
 
 const Lists = () => {
   const navigate = useNavigate();
+  const [popularLists, setPopularLists] = useState([]);
+  const { data } = useFetchData('/list/popular');
+
+  const fetchPopularPosters = async lists => {
+    const newPopularLists = [];
+    for (const list of lists) {
+      const posters = await getMoviePosters(list.movies);
+      newPopularLists.push({ ...list, posters });
+    }
+    setPopularLists([...newPopularLists]);
+  };
+
+  useEffect(() => {
+    if (data) {
+      fetchPopularPosters(data.results);
+    }
+  }, [data]);
 
   return (
     <Content>
@@ -95,7 +45,7 @@ const Lists = () => {
         <Button
           size="sm"
           borderRadius="2rem"
-          onClick={() => navigate('/create-list')}
+          onClick={() => navigate('/lists/create')}
         >
           START YOUR OWN LIST
         </Button>
@@ -106,14 +56,14 @@ const Lists = () => {
         <GridItem colSpan={2}>
           <Category title="Popular lists" link="/lists/popular">
             <HStack>
-              {mockUserLists.results
+              {popularLists
                 .slice(0, 4)
                 .map(({ list_id, name, posters, likes, username }) => (
                   <ListCard
                     key={list_id}
                     title={name}
                     author={username}
-                    posters={posters.map(p => p.poster_path)}
+                    posters={posters}
                     list_id={list_id}
                     likes={likes}
                   />
@@ -126,11 +76,11 @@ const Lists = () => {
         <GridItem>
           <Category title="Recent lists">
             <VStack gap={4} alignItems="flex-start">
-              {mockUserLists.results.map(list => (
+              {popularLists.map(list => (
                 <DetailedListCard
                   key={list.list_id}
                   {...list}
-                  posters={list.posters.map(i => i.poster_path)}
+                  posters={list.posters}
                 />
               ))}
             </VStack>

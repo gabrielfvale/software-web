@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useUser } from 'providers/UserProvider';
 
-import { Box, Text, HStack, Icon, Button } from '@chakra-ui/react';
+import {
+  Box,
+  Text,
+  HStack,
+  Icon,
+  Button,
+  IconButton,
+  useToast,
+} from '@chakra-ui/react';
 import { AiFillEdit, AiFillHeart } from 'react-icons/ai';
 
 import Content from 'components/Content';
@@ -15,9 +23,12 @@ import api from 'services/api';
 const ListById = () => {
   const { list_id } = useParams();
   const { data } = useFetchData(`/list/${list_id}`);
-  const { user } = useUser();
+  const { user, authenticated } = useUser();
+  const toast = useToast();
 
   const [list, setList] = useState({});
+  const [likes, setLikes] = useState(0);
+  const [liked, setLiked] = useState(false);
 
   const fetchMovieDetails = async listData => {
     const movies = listData.movies.join(',');
@@ -28,8 +39,27 @@ const ListById = () => {
   useEffect(() => {
     if (data) {
       fetchMovieDetails(data);
+      setLikes(Number(data.likes));
+      setLiked(data.liked_by_me);
     }
   }, [data]);
+
+  const handleLike = async () => {
+    try {
+      await api.post('/list/like', { list_id });
+      setLikes(prev => (liked ? prev - 1 : prev + 1));
+      setLiked(value => !value);
+    } catch (e) {
+      toast({
+        description: e.response.data.error,
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const isSameUser = Number(user.user_id) === Number(list?.user_id);
 
   return (
     <Content>
@@ -45,15 +75,25 @@ const ListById = () => {
             <HStack spacing={1}>
               <Icon as={AiFillHeart} color="m180.pink.500" />
               <Text fontSize="xs" fontWeight="medium">
-                {list?.likes} {getWord('like', list?.likes)}
+                {likes} {getWord('like', likes)}
               </Text>
             </HStack>
           </HStack>
-          {Number(user?.user_id) === Number(list?.user_id) && (
-            <Button size="sm" mt="1rem" leftIcon={<AiFillEdit />}>
-              Edit
-            </Button>
-          )}
+          <HStack>
+            {authenticated && !isSameUser && (
+              <IconButton
+                icon={<AiFillHeart />}
+                size="sm"
+                variant={liked ? 'solid' : 'ghost'}
+                onClick={handleLike}
+              />
+            )}
+            {Number(user?.user_id) === Number(list?.user_id) && (
+              <Button size="sm" leftIcon={<AiFillEdit />}>
+                Edit
+              </Button>
+            )}
+          </HStack>
         </HStack>
         <Text fontSize="sm">
           by{' '}

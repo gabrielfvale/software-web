@@ -12,6 +12,8 @@ import Item from './Item';
 const SelectMovie = ({
   data = [],
   query = '',
+  isOpen = false,
+  setOpen = () => {},
   onChange = () => {},
   onClick = () => {},
 }) => {
@@ -20,7 +22,7 @@ const SelectMovie = ({
   return (
     <Popover
       initialFocusRef={initialFocusRef}
-      isOpen={data.length !== 0}
+      isOpen={isOpen}
       closeOnBlur={false}
       isLazy
       lazyBehavior="keepMounted"
@@ -29,6 +31,7 @@ const SelectMovie = ({
       <HStack>
         <PopoverAnchor>
           <Input
+            ref={initialFocusRef}
             value={query}
             size="md"
             padding="0.2rem"
@@ -36,7 +39,8 @@ const SelectMovie = ({
             variant="unstyled"
             bg="white"
             onChange={onChange}
-            ref={initialFocusRef}
+            onBlur={() => setOpen(false)}
+            onFocus={() => setOpen(true)}
           />
         </PopoverAnchor>
       </HStack>
@@ -48,7 +52,7 @@ const SelectMovie = ({
           outline: 'none !important',
         }}
       >
-        <VStack gap={0} alignItems="flex-start">
+        <VStack gap={0} alignItems="flex-start" maxH="20rem" overflowY="scroll">
           {data.map(movie => (
             <Item key={movie.id} onClick={onClick} {...movie} />
           ))}

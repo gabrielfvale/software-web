@@ -1,4 +1,4 @@
-import { HStack, Image, Text, LinkBox } from '@chakra-ui/react';
+import { HStack, Image, Text, LinkBox, Box } from '@chakra-ui/react';
 import moment from 'moment';
 
 const Item = ({
@@ -24,7 +24,12 @@ const Item = ({
       onClick={() => onClick({ id, title, poster_path, release_date })}
     >
       <HStack>
-        <Image w="40px" src={`${mediaUrl}${poster_path}`} alt={title} />
+        <Image
+          w="40px"
+          src={`${mediaUrl}${poster_path}`}
+          alt={title}
+          fallback={<></>}
+        />
         <Text fontSize="sm" fontWeight="semibold">
           {title}
         </Text>

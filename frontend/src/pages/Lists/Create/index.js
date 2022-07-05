@@ -28,12 +28,16 @@ const Create = () => {
   const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
 
+  const [selectOpen, setSelectOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const query = useDebounce(inputValue);
 
   const { data } = useFetchData(`/movie/search?query=${query}`, false);
 
   const onItemClick = item => {
+    if (movies.findIndex(movie => movie.id === item.id) !== -1) {
+      return;
+    }
     const newMovies = [...movies];
     newMovies.push(item);
     setMovies([...newMovies]);
@@ -67,7 +71,7 @@ const Create = () => {
 
   return (
     <Content as={Flex} align="center" justify="center">
-      <Box bg="m180.darkBeige" p={6} width="100%" paddingX="20rem">
+      <Box bg="m180.darkBeige" p={6} width="100%">
         <form onSubmit={formik.handleSubmit}>
           <VStack>
             <FormControl>
@@ -106,6 +110,8 @@ const Create = () => {
               <SelectMovie
                 data={data?.results || []}
                 query={inputValue}
+                isOpen={selectOpen && data}
+                setOpen={setSelectOpen}
                 onChange={e => setInputValue(e.target.value)}
                 onClick={onItemClick}
               />
@@ -116,7 +122,13 @@ const Create = () => {
                   'YYYY'
                 );
                 return (
-                  <HStack>
+                  <HStack key={movie.title + index}>
+                    <IconButton
+                      icon={<FaTimes />}
+                      size="sm"
+                      onClick={() => onRemove(index)}
+                      variant="ghost"
+                    />
                     <Image
                       w="40px"
                       src={`${mediaUrl}${movie.poster_path}`}
@@ -126,13 +138,6 @@ const Create = () => {
                       {movie.title}
                     </Text>
                     <Text fontSize="xs">{formatted_date}</Text>
-                    <IconButton
-                      icon={<FaTimes />}
-                      justifySelf="flex-end"
-                      size="sm"
-                      onClick={() => onRemove(index)}
-                      variant="ghost"
-                    />
                   </HStack>
                 );
               })}
