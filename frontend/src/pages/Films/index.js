@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useToast } from '@chakra-ui/react';
+import { Box, Text, useToast } from '@chakra-ui/react';
 import { useDocumentTitle } from 'hooks/documentTitle';
 import useFetchData from 'hooks/fetchData';
 import { useUser } from 'providers/UserProvider';
+import { useInfiniteScroll } from 'hooks/inifiteScroll';
 import api from 'services/api';
 
-import { VStack } from '@chakra-ui/react';
+import { VStack, Spinner } from '@chakra-ui/react';
 import Content from 'components/Content';
 import MovieCard from 'components/MovieCard';
 import ReviewMovie from 'components/ReviewMovie';
 import ReviewBox from 'components/ReviewMovie/ReviewBox';
+import ScrollToTop from 'components/ScrollToTop';
 
 const Movie = () => {
   const { movie_id } = useParams();
@@ -20,11 +22,15 @@ const Movie = () => {
   const [reviewedByMe, setReviewedByMe] = useState(false);
   const [review, setReview] = useState(0);
 
+  const [reviewPage, setReviewPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [fetchingReviews, setFetchingReviews] = useState(false);
+  const [reviews, setReviews] = useState([]);
+
   const toast = useToast();
   const setTitle = useDocumentTitle();
   const { data } = useFetchData(`/movie/${movie_id}`);
-  const { data: reviews } = useFetchData(`/review/${movie_id}`);
-  const { user, authenticated } = useUser();
+  const { authenticated } = useUser();
 
   useEffect(() => {
     if (data) {
@@ -40,6 +46,23 @@ const Movie = () => {
       setReview(data.review);
     }
   }, [data]);
+
+  const onPaginateReviews = async () => {
+    if (reviewPage <= totalPages) {
+      setFetchingReviews(true);
+      const { data } = await api.get(
+        `/review/${movie_id}?per_page=5&page=${reviewPage}`
+      );
+      setReviews([...reviews, ...data.results]);
+      if (totalPages === 1) {
+        setTotalPages(data.total_pages);
+      }
+      setReviewPage(value => value + 1);
+      setFetchingReviews(false);
+    }
+  };
+
+  const scrollRef = useInfiniteScroll(onPaginateReviews, fetchingReviews);
 
   const onAddToSpecial = async list_type => {
     try {
@@ -91,7 +114,7 @@ const Movie = () => {
   };
 
   return (
-    <Content>
+    <Content pos="relative">
       <MovieCard
         movie={data}
         isOnWatchList={isOnWatch}
@@ -117,8 +140,14 @@ const Movie = () => {
           onSend={onEditReview}
           onUpdate={values => onEditReview(values, 'update')}
         />
-        <ReviewMovie data={reviews?.results} />
+        <ReviewMovie data={reviews} />
+        <Spinner
+          ref={scrollRef}
+          color="m180.pink.500"
+          opacity={fetchingReviews ? '1' : '0'}
+        />
       </VStack>
+      <ScrollToTop />
     </Content>
   );
 };
