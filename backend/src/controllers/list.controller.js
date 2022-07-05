@@ -12,10 +12,17 @@ async function details(req, res) {
     const user_id = req.user?.user_id || -1;
 
     const { rows } = await pool.query(
-      `SELECT lists.*, users.username
+      `SELECT lists.*, users.username,
+      (SELECT COUNT(*)
+        FROM like_list WHERE like_list.list_id = lists.list_id) AS likes,
+      (SELECT EXISTS(
+        SELECT 1 FROM like_list
+        WHERE like_list.list_id = lists.list_id
+        AND like_list.user_id=$1
+        )) AS liked_by_me
       FROM lists LEFT JOIN users ON lists.user_id = users.user_id
-      WHERE list_id=$1`,
-      [params.id]
+      WHERE list_id=$2`,
+      [user_id, params.id]
     );
 
     // List not found
@@ -173,7 +180,9 @@ async function user(req, res) {
     // If not, display only public lists.
     const { rows: userLists } = await pool.query(
       paginateQuery(
-        `SELECT * FROM lists WHERE user_id = $1 AND list_type ${
+        `SELECT *, (SELECT COUNT(*)
+        FROM like_list WHERE like_list.list_id = lists.list_id) AS likes
+        FROM lists WHERE user_id = $1 AND list_type ${
           rows[0].user_id === user_id
             ? `NOT IN ('watch', 'favorites')`
             : `= 'public'`
