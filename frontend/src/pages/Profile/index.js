@@ -4,7 +4,7 @@ import useFetchData from 'hooks/fetchData';
 
 import { getMoviePosters } from 'util/posters';
 
-import { Flex } from '@chakra-ui/react';
+import { Flex, HStack } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
 import ListCard from 'components/ListCard';
 import ReviewList from 'components/ReviewList';
@@ -24,7 +24,7 @@ const Profile = () => {
 
   const { data: userData } = useFetchData(`/profile/${username}`);
   const { data: userStats } = useFetchData(`/profile/${username}/stats`);
-  const { data: userLists } = useFetchData(`/list/user/${username}`);
+  const { data: userLists } = useFetchData(`/list/user/${username}?per_page=3`);
   const { data: userReviews } = useFetchData(
     `/review/user/${username}/?per_page=5&page=${reviewPage}`
   );
@@ -87,7 +87,7 @@ const Profile = () => {
 
       {lists && (
         <>
-          <Flex gap="5">
+          <HStack flexWrap="wrap" justifyContent="space-between">
             {lists.results?.map(({ list_id, name, posters, likes }, index) => (
               <ListCard
                 key={name + index}
@@ -97,7 +97,7 @@ const Profile = () => {
                 likes={likes}
               />
             ))}
-          </Flex>
+          </HStack>
           {special.map(({ id, name, posters }) => (
             <Category
               key={id}

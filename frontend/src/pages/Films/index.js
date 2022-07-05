@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Text, useToast } from '@chakra-ui/react';
+import { useDisclosure, useToast } from '@chakra-ui/react';
 import { useDocumentTitle } from 'hooks/documentTitle';
 import useFetchData from 'hooks/fetchData';
 import { useUser } from 'providers/UserProvider';
@@ -13,6 +13,7 @@ import MovieCard from 'components/MovieCard';
 import ReviewMovie from 'components/ReviewMovie';
 import ReviewBox from 'components/ReviewMovie/ReviewBox';
 import ScrollToTop from 'components/ScrollToTop';
+import CreateListModal from 'components/CreateListModal';
 
 const Movie = () => {
   const { movie_id } = useParams();
@@ -20,6 +21,7 @@ const Movie = () => {
   const [isOnWatch, setIsOnWatch] = useState(false);
   const [isOnFavorites, setIsOnFavorites] = useState(false);
   const [reviewedByMe, setReviewedByMe] = useState(false);
+  const [lists, setLists] = useState([]);
   const [review, setReview] = useState(0);
 
   const [reviewPage, setReviewPage] = useState(1);
@@ -30,13 +32,25 @@ const Movie = () => {
   const toast = useToast();
   const setTitle = useDocumentTitle();
   const { data } = useFetchData(`/movie/${movie_id}`);
-  const { authenticated } = useUser();
+  const { user, authenticated } = useUser();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     if (data) {
       setTitle(data.title);
     }
   }, [data, setTitle]);
+
+  useEffect(() => {
+    const fetchLists = async () => {
+      const { data } = await api.get(`/list/user/${user.username}`);
+      setLists([...data.results]);
+    };
+    if (authenticated) {
+      fetchLists();
+    }
+  }, [authenticated]);
 
   useEffect(() => {
     if (data) {
@@ -113,14 +127,62 @@ const Movie = () => {
     }
   };
 
+  const onAddToList = async list_id => {
+    let description = 'Film added to list';
+    let status = 'success';
+    try {
+      await api.post('/list/add-movie', { list_id, movie_api_id: movie_id });
+    } catch (e) {
+      description = e.response.data.error;
+      status = 'error';
+    }
+    toast({
+      description,
+      status,
+      duration: 2000,
+      isClosable: true,
+    });
+  };
+
+  const onCreateList = async values => {
+    let description = 'Movie added to a new list';
+    let status = 'success';
+    try {
+      await api.post('/list', {
+        user_id: user.user_id,
+        name: values.name,
+        list_type: values.is_public ? 'public' : 'private',
+        movies: [movie_id],
+      });
+      onClose();
+    } catch (e) {
+      description = e.response.data.error;
+      status = 'error';
+    }
+    toast({
+      description,
+      status,
+      duration: 2000,
+      isClosable: true,
+    });
+  };
+
   return (
     <Content pos="relative">
+      <CreateListModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSubmit={onCreateList}
+      />
       <MovieCard
         movie={data}
         isOnWatchList={isOnWatch}
         isFavorite={isOnFavorites}
+        lists={lists}
         onAddToWatchList={() => onAddToSpecial('watch')}
         onFavorite={() => onAddToSpecial('favorites')}
+        onAddToList={onAddToList}
+        onCreateList={onOpen}
         loading={!data}
       />
       <VStack
