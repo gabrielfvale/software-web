@@ -400,12 +400,8 @@ async function update(req, res) {
   try {
     const { list_id, name, description, movies, list_type } = req.body;
 
-    if (list_type !== "public" && list_type !== "private") {
-      return res.status(400).json({ error: "Invalid list type" });
-    }
-
     const { rows } = await pool.query(
-      `SELECT list_id FROM lists
+      `SELECT list_id, list_type FROM lists
       WHERE list_id=$1`,
       [list_id]
     );
@@ -413,6 +409,18 @@ async function update(req, res) {
     // List not found
     if (rows.length !== 1) {
       return res.status(404).json({ error: "List not found" });
+    }
+
+    const standardLists = ["public", "private"];
+
+    if (
+      standardLists.includes(rows[0].list_type) &&
+      list_type !== "public" &&
+      list_type !== "private"
+    ) {
+      return res.status(400).json({ error: "Invalid list type" });
+    } else if (rows[0].list_type !== list_type) {
+      return res.status(400).json({ error: "Invalid list type" });
     }
 
     // Updates list
