@@ -7,6 +7,7 @@ const cache = new Redis({
   port: REDIS_PORT,
   username: REDIS_USERNAME,
   password: REDIS_PASSWORD,
+  maxRetriesPerRequest: 1,
 });
 
 cache.on("error", () => {});
@@ -16,8 +17,10 @@ async function getCache(key) {
 }
 
 async function setCache(key, value, expiration = 1800) {
-  // Defaults expiration to 30 minutes
-  return await cache.set(key, value, "EX", expiration);
+  try {
+    // Defaults expiration to 30 minutes
+    await cache.set(key, value, "EX", expiration);
+  } catch (e) {}
 }
 
 module.exports = { cache, getCache, setCache };
