@@ -5,7 +5,7 @@ import { useDocumentTitle } from 'hooks/documentTitle';
 
 import { getMoviePosters } from 'util/posters';
 
-import { Grid, Skeleton } from '@chakra-ui/react';
+import { Grid, HStack, Skeleton, VStack } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
 import ListCard from 'components/ListCard';
 import ReviewList from 'components/ReviewList';
@@ -21,6 +21,7 @@ const Profile = () => {
   const { username } = useParams();
   const setTitle = useDocumentTitle();
 
+  const [loading, setLoading] = useState(false);
   const [listPage, setListPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [reviewPage, setReviewPage] = useState(1);
@@ -42,6 +43,7 @@ const Profile = () => {
   }, [username, setTitle]);
 
   const fetchListPosters = async userLists => {
+    setLoading(true);
     // Get posters for regular lists
     const res = userLists?.results;
     for (let i = 0; i < res.length; i++) {
@@ -65,6 +67,7 @@ const Profile = () => {
       });
     }
     setSpecial([...newSpecial]);
+    setLoading(false);
   };
 
   const fetchReviewMovies = async userReviews => {
@@ -81,9 +84,7 @@ const Profile = () => {
   useEffect(() => {
     if (userLists) {
       fetchListPosters(userLists);
-      if (totalPages === 1) {
-        setTotalPages(userLists.total_pages);
-      }
+      setTotalPages(userLists.total_pages);
     }
   }, [userLists]);
 
@@ -112,7 +113,7 @@ const Profile = () => {
         />
       )}
 
-      {lists && (
+      {!loading && (
         <>
           <Category title="Lists">
             <Carousel
@@ -149,16 +150,27 @@ const Profile = () => {
         </>
       )}
 
-      {!userLists &&
-        [...Array(2)].map((_, i) => (
-          <Category key={i}>
-            <Grid templateColumns="repeat(6, 1fr)" gap={2}>
-              {[...Array(6)].map((_, index) => (
-                <Skeleton key={index} w="124px" h="186px" />
+      {loading && (
+        <VStack>
+          <Category title="Lists">
+            <HStack gap={3}>
+              {[...Array(3)].map((_, i) => (
+                <Skeleton w="253px" h="206px" borderRadius="0.4rem" />
               ))}
-            </Grid>
+            </HStack>
           </Category>
-        ))}
+
+          {[...Array(2)].map((_, i) => (
+            <Category key={i}>
+              <Grid templateColumns="repeat(6, 1fr)" gap={2}>
+                {[...Array(6)].map((_, index) => (
+                  <Skeleton key={index} w="124px" h="186px" />
+                ))}
+              </Grid>
+            </Category>
+          ))}
+        </VStack>
+      )}
 
       <Category title="Recent Reviews">
         <ReviewList data={reviews} />
