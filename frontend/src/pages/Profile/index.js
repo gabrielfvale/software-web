@@ -4,7 +4,7 @@ import useFetchData from 'hooks/fetchData';
 
 import { getMoviePosters } from 'util/posters';
 
-import { Flex, HStack } from '@chakra-ui/react';
+import { HStack } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
 import ListCard from 'components/ListCard';
 import ReviewList from 'components/ReviewList';
@@ -12,11 +12,14 @@ import Category from 'components/Category';
 import Content from 'components/Content';
 import PopularMoviesRow from 'components/PopularMoviesRow';
 import Pagination from 'components/Pagination';
+import Carousel from 'components/Carousel';
 import api from 'services/api';
 
 const Profile = () => {
   const { username } = useParams();
 
+  const [listPage, setListPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [reviewPage, setReviewPage] = useState(1);
   const [lists, setLists] = useState({});
   const [special, setSpecial] = useState([]);
@@ -24,7 +27,9 @@ const Profile = () => {
 
   const { data: userData } = useFetchData(`/profile/${username}`);
   const { data: userStats } = useFetchData(`/profile/${username}/stats`);
-  const { data: userLists } = useFetchData(`/list/user/${username}?per_page=3`);
+  const { data: userLists } = useFetchData(
+    `/list/user/${username}?per_page=3&page=${listPage}`
+  );
   const { data: userReviews } = useFetchData(
     `/review/user/${username}/?per_page=5&page=${reviewPage}`
   );
@@ -67,7 +72,12 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (userLists) fetchListPosters(userLists);
+    if (userLists) {
+      fetchListPosters(userLists);
+      if (totalPages === 1) {
+        setTotalPages(userLists.total_pages);
+      }
+    }
   }, [userLists]);
 
   useEffect(() => {
@@ -75,6 +85,12 @@ const Profile = () => {
       fetchReviewMovies(userReviews.results);
     }
   }, [userReviews]);
+
+  const onCarouselChange = newPage => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setListPage(newPage);
+    }
+  };
 
   return (
     <Content paddingY="1.5rem">
@@ -87,17 +103,29 @@ const Profile = () => {
 
       {lists && (
         <>
-          <HStack flexWrap="wrap" justifyContent="space-between">
-            {lists.results?.map(({ list_id, name, posters, likes }, index) => (
-              <ListCard
-                key={name + index}
-                list_id={list_id}
-                title={name}
-                posters={posters}
-                likes={likes}
-              />
-            ))}
-          </HStack>
+          <Category title="Lists">
+            <Carousel
+              count={3}
+              onPrev={() => onCarouselChange(listPage - 1)}
+              onNext={() => onCarouselChange(listPage + 1)}
+              showPrev={listPage !== 1}
+              showNext={listPage !== totalPages}
+              itemRenderer={() =>
+                lists.results?.map(
+                  ({ list_id, name, posters, likes }, index) => (
+                    <ListCard
+                      key={name + index}
+                      list_id={list_id}
+                      title={name}
+                      posters={posters}
+                      likes={likes}
+                    />
+                  )
+                )
+              }
+            />
+          </Category>
+          <HStack flexWrap="wrap" justifyContent="space-between"></HStack>
           {special.map(({ id, name, posters }) => (
             <Category
               key={id}
