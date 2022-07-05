@@ -198,11 +198,7 @@ const Movie = () => {
         <Heading size="sm" fontWeight="semibold" textTransform="uppercase">
           YOU MIGHT ALSO LIKE
         </Heading>
-        <PopularMoviesRow
-          maxColumns={8}
-          gap={4}
-          data={recommendations?.results}
-        />
+        <PopularMoviesRow columns={8} gap={4} data={recommendations?.results} />
       </Box>
       <VStack
         gap={10}
