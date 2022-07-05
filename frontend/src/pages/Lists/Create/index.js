@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebounce } from 'hooks/debounce';
 import { useFormik } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import SelectMovie from 'components/SelectMovie';
 import useFetchData from 'hooks/fetchData';
 import Content from 'components/Content';
@@ -19,18 +19,28 @@ import {
   Image,
   Checkbox,
   IconButton,
+  useToast,
 } from '@chakra-ui/react';
 import moment from 'moment';
 import api from 'services/api';
 import { FaTimes } from 'react-icons/fa';
+import NotFound from 'pages/NotFound';
 
 const Create = () => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const toast = useToast();
+
+  const [error, setError] = useState(false);
+
   const [movies, setMovies] = useState([]);
 
   const [selectOpen, setSelectOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [editing, setEditing] = useState(false);
   const query = useDebounce(inputValue);
+
+  const mediaUrl = process.env.REACT_APP_API_URL + '/media/w92';
 
   const { data } = useFetchData(`/movie/search?query=${query}`, false);
 
@@ -45,12 +55,32 @@ const Create = () => {
   };
 
   const onSubmit = async values => {
-    const { data } = await api.post('/list', {
+    const body = {
       ...values,
       movies: movies.map(movie => movie.id),
       list_type: values.is_public ? 'public' : 'private',
+    };
+    let description = 'List created';
+    let status = 'success';
+    try {
+      if (editing) {
+        const list_id = searchParams.get('list_id');
+        await api.put('/list', { ...body, list_id });
+        description = 'List updated';
+      } else {
+        const { data } = await api.post('/list', body);
+        navigate(`/lists/${data.list_id}`);
+      }
+    } catch (e) {
+      description = e.response.data.error;
+      status = 'error';
+    }
+    toast({
+      description,
+      status,
+      duration: 2000,
+      isClosable: true,
     });
-    navigate(`/lists/${data.list_id}`);
   };
 
   const onRemove = index => {
@@ -67,7 +97,37 @@ const Create = () => {
     },
     onSubmit,
   });
-  const mediaUrl = process.env.REACT_APP_API_URL + '/media/w92';
+
+  useEffect(() => {
+    const fetchEditableList = async () => {
+      const list_id = searchParams.get('list_id');
+      if (list_id) {
+        try {
+          const { data } = await api.get(`/list/${list_id}`);
+          formik.setValues(
+            {
+              name: data.name,
+              description: data.description,
+              is_public: data.list_type === 'public',
+            },
+            false
+          );
+          const { data: movieDetails } = await api.get(
+            `/movie/many/${data.movies.join(',')}`
+          );
+          setEditing(true);
+          setMovies([...movieDetails]);
+        } catch (e) {
+          setError(true);
+        }
+      }
+    };
+    fetchEditableList();
+  }, [searchParams]);
+
+  if (error) {
+    return <NotFound />;
+  }
 
   return (
     <Content as={Flex} align="center" justify="center">

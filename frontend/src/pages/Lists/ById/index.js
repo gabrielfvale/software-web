@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from 'providers/UserProvider';
 import useFetchData from 'hooks/fetchData';
 
@@ -22,6 +22,7 @@ import { getWord } from 'util/plural';
 import api from 'services/api';
 
 const ListById = () => {
+  const navigate = useNavigate();
   const { list_id } = useParams();
   const { data, error } = useFetchData(`/list/${list_id}`);
   const { user, authenticated } = useUser();
@@ -94,7 +95,11 @@ const ListById = () => {
               />
             )}
             {Number(user?.user_id) === Number(list?.user_id) && (
-              <Button size="sm" leftIcon={<AiFillEdit />}>
+              <Button
+                size="sm"
+                leftIcon={<AiFillEdit />}
+                onClick={() => navigate(`/lists/edit/?list_id=${list_id}`)}
+              >
                 Edit
               </Button>
             )}

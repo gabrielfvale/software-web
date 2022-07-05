@@ -55,6 +55,10 @@ const routes = [
     element: CreateList,
   },
   {
+    path: '/lists/edit',
+    element: CreateList,
+  },
+  {
     path: '/lists/:list_id',
     element: ListById,
   },
