@@ -3,6 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from 'providers/UserProvider';
 import useFetchData from 'hooks/fetchData';
 
+import api from 'services/api';
+import { getWord } from 'util/plural';
+
 import {
   Box,
   Text,
@@ -18,8 +21,7 @@ import Content from 'components/Content';
 import MovieGrid from 'components/MovieGrid';
 import Link from 'components/Link';
 import NotFound from 'pages/NotFound';
-import { getWord } from 'util/plural';
-import api from 'services/api';
+import { FaTrash } from 'react-icons/fa';
 
 const ListById = () => {
   const navigate = useNavigate();
@@ -61,6 +63,24 @@ const ListById = () => {
     }
   };
 
+  const handleDelete = async () => {
+    let description = 'List deleted successfully';
+    let status = 'success';
+    try {
+      await api.delete(`/list/${list_id}`);
+      navigate(`/profile/${user.username}`);
+    } catch (e) {
+      description = e.response.data.error;
+      status = 'error';
+    }
+    toast({
+      description,
+      status,
+      duration: 2000,
+      isClosable: true,
+    });
+  };
+
   const isSameUser = Number(user.user_id) === Number(list?.user_id);
 
   if (error) {
@@ -94,7 +114,7 @@ const ListById = () => {
                 onClick={handleLike}
               />
             )}
-            {Number(user?.user_id) === Number(list?.user_id) && (
+            {isSameUser && (
               <Button
                 size="sm"
                 leftIcon={<AiFillEdit />}
@@ -102,6 +122,9 @@ const ListById = () => {
               >
                 Edit
               </Button>
+            )}
+            {(isSameUser || user?.admin) && (
+              <IconButton icon={<FaTrash />} size="sm" onClick={handleDelete} />
             )}
           </HStack>
         </HStack>
