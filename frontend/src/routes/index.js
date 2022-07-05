@@ -16,6 +16,7 @@ import ListById from 'pages/Lists/ById';
 import CreateList from 'pages/Lists/Create';
 
 import SignIn from 'pages/SignIn';
+import ResetPassword from 'pages/ResetPassword';
 
 // Component for authenticated routes
 const PrivateRoute = ({ redirect = '/', children }) => {
@@ -73,6 +74,10 @@ const routes = [
   {
     path: '/sign-in',
     element: SignIn,
+  },
+  {
+    path: '/reset-password',
+    element: ResetPassword,
   },
 
   {

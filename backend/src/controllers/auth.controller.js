@@ -108,7 +108,7 @@ async function requestResetPassword(req, res) {
     }
 
     const userInfo = rows[0];
-    if (userInfo.token !== "" && userInfo.token !== "NULL") {
+    if (userInfo.token && userInfo.token !== "" && userInfo.token !== "NULL") {
       return res
         .status(400)
         .json({ error: "A recover email was already sent" });

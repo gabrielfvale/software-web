@@ -52,6 +52,7 @@ const ActionRow = ({
         <MenuList>
           {iterableLists.map(list => (
             <MenuItem
+              key={list.name}
               onClick={() => onAddToList(list.list_id)}
               command={list.movies.length}
             >
