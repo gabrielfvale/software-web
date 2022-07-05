@@ -20,7 +20,7 @@ const Home = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // /zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg
-  const [backdrop, setBackdrop] = useState('');
+  const [backdrop, setBackdrop] = useState('/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg');
   const { data } = useFetchData('/movie/popular');
   const { data: popularReviews } = useFetchData('/review/popular?per_page=4');
 

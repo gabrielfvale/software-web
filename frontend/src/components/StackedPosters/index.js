@@ -6,7 +6,7 @@ const StackedPosters = ({ posters = [] }) => {
   const dimensions = useDimensions(elementRef, true);
 
   const mediaUrl = process.env.REACT_APP_API_URL + '/media/';
-  const w = 'w300';
+  const w = 'w342';
 
   const maxImages = posters.length < 4 ? posters.length : 4;
   const iterableImages = posters.slice(0, maxImages);
