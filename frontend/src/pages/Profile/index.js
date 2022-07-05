@@ -4,7 +4,6 @@ import useFetchData from 'hooks/fetchData';
 
 import { getMoviePosters } from 'util/posters';
 
-import { HStack } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
 import ListCard from 'components/ListCard';
 import ReviewList from 'components/ReviewList';
@@ -14,6 +13,7 @@ import PopularMoviesRow from 'components/PopularMoviesRow';
 import Pagination from 'components/Pagination';
 import Carousel from 'components/Carousel';
 import api from 'services/api';
+import NotFound from 'pages/NotFound';
 
 const Profile = () => {
   const { username } = useParams();
@@ -25,7 +25,7 @@ const Profile = () => {
   const [special, setSpecial] = useState([]);
   const [reviews, setReviews] = useState([]);
 
-  const { data: userData } = useFetchData(`/profile/${username}`);
+  const { data: userData, error } = useFetchData(`/profile/${username}`);
   const { data: userStats } = useFetchData(`/profile/${username}/stats`);
   const { data: userLists } = useFetchData(
     `/list/user/${username}?per_page=3&page=${listPage}`
@@ -92,6 +92,10 @@ const Profile = () => {
     }
   };
 
+  if (error) {
+    return <NotFound />;
+  }
+
   return (
     <Content paddingY="1.5rem">
       {userData && userStats && (
@@ -105,7 +109,8 @@ const Profile = () => {
         <>
           <Category title="Lists">
             <Carousel
-              count={3}
+              perPage={3}
+              itemCount={lists.results.length}
               onPrev={() => onCarouselChange(listPage - 1)}
               onNext={() => onCarouselChange(listPage + 1)}
               prevDisabled={listPage === 1}
@@ -125,7 +130,6 @@ const Profile = () => {
               }
             />
           </Category>
-          <HStack flexWrap="wrap" justifyContent="space-between"></HStack>
           {special.map(({ id, name, posters }) => (
             <Category
               key={id}

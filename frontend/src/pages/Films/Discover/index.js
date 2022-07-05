@@ -81,7 +81,7 @@ const Discover = () => {
         <Text color="m180.darkPink" mb="1rem" fontSize="xs" textAlign="center">
           {numberFormatter(data?.total_results)} films found
         </Text>
-        <MovieGrid data={data?.results} />
+        <MovieGrid data={data?.results} loading={!data} />
       </Box>
       <Box flex={1} display="flex" justifyContent="center">
         <Pagination

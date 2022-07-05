@@ -1,8 +1,8 @@
 import React from 'react';
-import { Grid } from '@chakra-ui/react';
+import { Grid, Skeleton } from '@chakra-ui/react';
 import ClickablePoster from '../ClickablePoster';
 
-const MoviePosters = ({ data }) => {
+const MoviePosters = ({ data = [], loading = false, mockCount = 20 }) => {
   return (
     <Grid
       width="100%"
@@ -20,14 +20,18 @@ const MoviePosters = ({ data }) => {
         },
       }}
     >
-      {data?.map(poster => (
-        <ClickablePoster
-          key={poster.id}
-          movie_id={poster.id}
-          title={poster.title}
-          poster_path={poster.poster_path}
-        />
-      ))}
+      {loading
+        ? [...Array(mockCount)].map((_, i) => (
+            <Skeleton key={i} w="184px" h="276px" />
+          ))
+        : data?.map(poster => (
+            <ClickablePoster
+              key={poster.id}
+              movie_id={poster.id}
+              title={poster.title}
+              poster_path={poster.poster_path}
+            />
+          ))}
     </Grid>
   );
 };

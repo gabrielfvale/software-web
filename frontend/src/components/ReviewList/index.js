@@ -1,8 +1,23 @@
-import { VStack, StackDivider } from '@chakra-ui/react';
+import { VStack, StackDivider, Text } from '@chakra-ui/react';
 import moment from 'moment';
 import DetailedReview from '../DetailedReview';
+import Skeleton from 'components/DetailedReview/skeleton';
 
-const ReviewList = ({ data = [] }) => {
+const ReviewList = ({ data = [], loading = false }) => {
+  if (loading) {
+    return (
+      <VStack divider={<StackDivider color="darkBeige" />} spacing={4}>
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} />
+        ))}
+      </VStack>
+    );
+  }
+
+  if (data && data.length === 0) {
+    return <Text>This content is empty.</Text>;
+  }
+
   return (
     <VStack divider={<StackDivider color="darkBeige" />} spacing={4}>
       {data.map(review => {

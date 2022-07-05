@@ -1,13 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import {
-  Heading,
-  Button,
-  Grid,
-  GridItem,
-  HStack,
-  VStack,
-} from '@chakra-ui/react';
+import { Heading, Button, HStack, VStack, Skeleton } from '@chakra-ui/react';
 import Content from 'components/Content';
 import Category from 'components/Category';
 import ListCard from 'components/ListCard';
@@ -27,6 +20,7 @@ const Lists = () => {
       const posters = await getMoviePosters(list.movies);
       newPopularLists.push({ ...list, posters });
     }
+
     setPopularLists([...newPopularLists]);
   };
 
@@ -51,12 +45,14 @@ const Lists = () => {
         </Button>
       </VStack>
 
-      <Grid templateColumns="2fr 1fr" gap={6}>
-        {/* Popular lists */}
-        <GridItem colSpan={2}>
-          <Category title="Popular lists" link="/lists/popular">
-            <HStack>
-              {popularLists
+      {/* Popular lists */}
+      <Category title="Popular lists" link="/lists/popular">
+        <HStack overflow="hidden" borderRadius="0.4rem">
+          {!data
+            ? [...Array(4)].map((_, i) => (
+                <Skeleton key={i} w="240px" h="206px" />
+              ))
+            : popularLists
                 .slice(0, 4)
                 .map(({ list_id, name, posters, likes, username }) => (
                   <ListCard
@@ -68,30 +64,23 @@ const Lists = () => {
                     likes={likes}
                   />
                 ))}
-            </HStack>
-          </Category>
-        </GridItem>
+        </HStack>
+      </Category>
 
-        {/* Recent lists */}
-        <GridItem>
-          <Category title="Recent lists">
-            <VStack gap={4} alignItems="flex-start">
-              {popularLists.map(list => (
+      {/* Recent lists */}
+      <Category title="Recent lists">
+        <VStack gap={4} alignItems="flex-start" w="full">
+          {!data
+            ? [...Array(4)].map((_, i) => <Skeleton key={i} h="164px" />)
+            : popularLists.map(list => (
                 <DetailedListCard
                   key={list.list_id}
                   {...list}
                   posters={list.posters}
                 />
               ))}
-            </VStack>
-          </Category>
-        </GridItem>
-
-        {/* TODO: Crew picks */}
-        <GridItem>
-          <Category title="Crew picks" />
-        </GridItem>
-      </Grid>
+        </VStack>
+      </Category>
     </Content>
   );
 };

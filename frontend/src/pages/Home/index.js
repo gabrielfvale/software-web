@@ -13,15 +13,16 @@ import HomeCards from 'components/HomeCards';
 import Category from 'components/Category';
 import SignupModal from 'components/SignupModal';
 import ReviewList from 'components/ReviewList';
+import Pagination from 'components/Pagination';
 
 const Home = () => {
   const { authenticated } = useUser();
   const navigate = useNavigate();
-
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [backdrop, setBackdrop] = useState('/zvQgzyelcgSYNr4GpPXEEgl1i7O.jpg');
   const { data } = useFetchData('/movie/popular');
-  const { data: popularReviews } = useFetchData('/review/popular');
+  const { data: popularReviews } = useFetchData('/review/popular?per_page=4');
 
   useEffect(() => {
     if (data?.results) {
@@ -47,7 +48,7 @@ const Home = () => {
         <PopularMoviesRow data={data?.results} marginY="5rem" />
         <HomeCards />
         <Category title="Popular Reviews" link="/popular-reviews">
-          <ReviewList data={popularReviews?.results} />
+          <ReviewList data={popularReviews?.results} loading={!data} />
         </Category>
       </Content>
     </>

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useUser } from 'providers/UserProvider';
+import useFetchData from 'hooks/fetchData';
 
 import {
   Box,
@@ -14,15 +16,14 @@ import { AiFillEdit, AiFillHeart } from 'react-icons/ai';
 
 import Content from 'components/Content';
 import MovieGrid from 'components/MovieGrid';
-import useFetchData from 'hooks/fetchData';
-import { useParams } from 'react-router-dom';
 import Link from 'components/Link';
+import NotFound from 'pages/NotFound';
 import { getWord } from 'util/plural';
 import api from 'services/api';
 
 const ListById = () => {
   const { list_id } = useParams();
-  const { data } = useFetchData(`/list/${list_id}`);
+  const { data, error } = useFetchData(`/list/${list_id}`);
   const { user, authenticated } = useUser();
   const toast = useToast();
 
@@ -60,6 +61,10 @@ const ListById = () => {
   };
 
   const isSameUser = Number(user.user_id) === Number(list?.user_id);
+
+  if (error) {
+    return <NotFound />;
+  }
 
   return (
     <Content>
@@ -104,8 +109,7 @@ const ListById = () => {
 
         <Text fontSize="xs">{list?.description}</Text>
       </Box>
-      <MovieGrid data={list?.details} />
-      <Box flex={1} display="flex" justifyContent="flex-end"></Box>
+      <MovieGrid data={list?.details} loading={!data} mockCount={8} />
     </Content>
   );
 };

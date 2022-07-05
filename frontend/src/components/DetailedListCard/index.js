@@ -2,6 +2,7 @@ import { HStack, Box, VStack, Heading, Text, Icon } from '@chakra-ui/react';
 import { AiFillHeart } from 'react-icons/ai';
 import StackedPosters from '../StackedPosters';
 import Link from '../Link';
+import { getWord } from 'util/plural';
 
 const DetailedListCard = ({
   list_id = -1,
@@ -19,6 +20,7 @@ const DetailedListCard = ({
       padding="0.5rem"
       borderRadius="0.4rem"
       alignItems="flex-start"
+      w="full"
       {...rest}
     >
       <Box
@@ -45,10 +47,10 @@ const DetailedListCard = ({
             </Text>
 
             <Text fontSize="xs" color="gray.600">
-              {movies.length} films
+              {movies.length} {getWord('film', movies.length)}
             </Text>
             <Text fontSize="xs" color="gray.600">
-              <Icon as={AiFillHeart} /> {likes} like{likes > 1 ? 's' : ''}
+              <Icon as={AiFillHeart} /> {likes} {getWord('like', likes)}
             </Text>
           </HStack>
         </Box>

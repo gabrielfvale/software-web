@@ -1,9 +1,10 @@
-import { Flex, Grid, HStack, IconButton } from '@chakra-ui/react';
+import { Flex, Grid, IconButton, Text } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const Carousel = ({
-  count = 3,
+  perPage = 3,
   gap = 3,
+  itemCount = 0,
   itemRenderer = () => {},
   prevDisabled = false,
   nextDisabled = false,
@@ -12,6 +13,11 @@ const Carousel = ({
   overflow = true,
 }) => {
   const controlPos = overflow ? -8 : 0;
+
+  if (itemCount === 0) {
+    return <Text>This content is empty.</Text>;
+  }
+
   return (
     <Flex
       w="full"
@@ -29,7 +35,7 @@ const Carousel = ({
         disabled={prevDisabled}
         onClick={onPrev}
       />
-      <Grid flex={1} templateColumns={`repeat(${count}, 1fr)`} gap={gap}>
+      <Grid flex={1} templateColumns={`repeat(${perPage}, 1fr)`} gap={gap}>
         {itemRenderer()}
       </Grid>
       <IconButton
