@@ -15,11 +15,15 @@ router.post("/like", authenticateToken, reviewController.like);
 // Comments CRUD
 router.post("/comment", authenticateToken, commentController.create);
 router.put("/comment", authenticateToken, commentController.update);
-router.delete("/comment", authenticateToken, commentController.deleteComment);
+router.delete(
+  "/comment/:id",
+  authenticateToken,
+  commentController.deleteComment
+);
 
 // Reviews CRUD
 router.post("/", authenticateToken, reviewController.create);
 router.put("/", authenticateToken, reviewController.update);
-router.delete("/", authenticateToken, reviewController.deleteReview);
+router.delete("/:id", authenticateToken, reviewController.deleteReview);
 
 module.exports = router;

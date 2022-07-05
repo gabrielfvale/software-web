@@ -433,20 +433,37 @@ async function update(req, res) {
 
 async function deleteList(req, res) {
   try {
-    const { list_id } = req.body;
     const { user_id } = req.user;
+    const { id } = req.params;
 
-    const { rowCount } = await pool.query(
-      `DELETE FROM lists
-      WHERE list_id=$1 AND user_id=$2`,
-      [list_id, user_id]
+    // Find if list exists
+    const { rows: list } = await pool.query(
+      `SELECT * FROM lists WHERE list_id=$1`,
+      [id]
     );
 
-    if (rowCount == 1) {
-      res.status(200).end();
-    } else {
-      res.status(404).json({ error: "List does not exist" });
+    if (list.length === 0) {
+      return res.status(404).json({ error: "List not found" });
     }
+
+    const { rows: user } = await pool.query(
+      `
+      SELECT * from users WHERE user_id=$1
+      `,
+      [user_id]
+    );
+
+    // Delete comment if user_id matches or requesting user is admin
+    if (
+      user.length !== 0 &&
+      (Number(list[0].user_id) === Number(user_id) || user[0].admin)
+    ) {
+      await pool.query(`DELETE FROM lists WHERE list_id=$1`, [id]);
+    } else {
+      return res.status(403).end();
+    }
+
+    res.status(200).end();
   } catch (e) {
     const { status, body } = errorHandler(e);
     res.status(status).json(body);

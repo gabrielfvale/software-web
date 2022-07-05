@@ -99,12 +99,12 @@ async function update(req, res) {
 async function deleteComment(req, res) {
   try {
     const { user_id } = req.user;
-    const { comment_id } = req.query;
+    const { id } = req.params;
 
     // Find if comment exists
     const { rows: commented } = await pool.query(
       `SELECT * FROM comments WHERE comment_id=$1`,
-      [comment_id]
+      [id]
     );
 
     if (commented.length === 0) {
@@ -123,14 +123,14 @@ async function deleteComment(req, res) {
       user.length !== 0 &&
       (Number(commented[0].user_id) === Number(user_id) || user[0].admin)
     ) {
-      await pool.query(
-        `DELETE FROM comments WHERE user_id=$1 AND comment_id=$2`,
-        [user_id, comment_id]
-      );
+      await pool.query(`DELETE FROM comments WHERE comment_id=$1`, [id]);
+    } else {
+      return res.status(403).end();
     }
 
     res.status(200).end();
   } catch (e) {
+    console.log(e);
     const { status, body } = errorHandler(e);
     res.status(status).json(body);
   }

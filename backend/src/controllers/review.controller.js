@@ -244,13 +244,13 @@ async function update(req, res) {
 
 async function deleteReview(req, res) {
   try {
-    const { user_id: requestingUser } = req.user;
-    const { user_id, movie_api_id } = req.body;
+    const { user_id } = req.user;
+    const { id } = req.params;
 
     // Find if review exists
     const { rows: reviewed } = await pool.query(
-      `SELECT review_id FROM reviews WHERE user_id=$1 AND movie_api_id=$2`,
-      [user_id, movie_api_id]
+      `SELECT user_id FROM reviews WHERE review_id=$1`,
+      [id]
     );
 
     if (reviewed.length === 0) {
@@ -261,18 +261,17 @@ async function deleteReview(req, res) {
       `
       SELECT * from users WHERE user_id=$1
       `,
-      [requestingUser]
+      [user_id]
     );
 
     // Delete review if user_id matches or requesting user is admin
     if (
       user.length !== 0 &&
-      (Number(user[0].user_id) === Number(user_id) || user[0].admin)
+      (Number(reviewed[0].user_id) === Number(user_id) || user[0].admin)
     ) {
-      await pool.query(
-        `DELETE FROM reviews WHERE user_id=$1 AND movie_api_id=$2`,
-        [user_id, movie_api_id]
-      );
+      await pool.query(`DELETE FROM reviews WHERE review_id=$1`, [id]);
+    } else {
+      return res.status(403).end();
     }
 
     res.status(200).end();
