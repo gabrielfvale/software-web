@@ -10,6 +10,7 @@ import Settings from 'pages/Profile/Settings';
 
 import Movie from 'pages/Films';
 import Discover from 'pages/Films/Discover';
+import Search from 'pages/Films/Search';
 
 import Lists from 'pages/Lists';
 import ListById from 'pages/Lists/ById';
@@ -34,15 +35,15 @@ const routes = [
 
   {
     path: '/films',
-    element: () => {},
+    element: Discover,
+  },
+  {
+    path: '/films/search',
+    element: Search,
   },
   {
     path: '/films/:movie_id',
     element: Movie,
-  },
-  {
-    path: '/films/discover',
-    element: Discover,
   },
 
   {

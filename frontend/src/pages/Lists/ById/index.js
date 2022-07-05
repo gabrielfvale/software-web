@@ -27,7 +27,7 @@ const ListById = () => {
   const { user, authenticated } = useUser();
   const toast = useToast();
 
-  const [list, setList] = useState({});
+  const [list, setList] = useState(null);
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
 
@@ -109,7 +109,7 @@ const ListById = () => {
 
         <Text fontSize="xs">{list?.description}</Text>
       </Box>
-      <MovieGrid data={list?.details} loading={!data} mockCount={8} />
+      <MovieGrid data={list?.details} loading={!list} mockCount={8} />
     </Content>
   );
 };

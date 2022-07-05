@@ -110,7 +110,7 @@ const Profile = () => {
           <Category title="Lists">
             <Carousel
               perPage={3}
-              itemCount={lists.results.length}
+              itemCount={lists?.results?.length}
               onPrev={() => onCarouselChange(listPage - 1)}
               onNext={() => onCarouselChange(listPage + 1)}
               prevDisabled={listPage === 1}

@@ -31,8 +31,7 @@ const Home = () => {
     }
   }, [data]);
 
-  const onHeroAction = () =>
-    authenticated ? navigate('/films/discover') : onOpen();
+  const onHeroAction = () => (authenticated ? navigate('/films') : onOpen());
 
   return (
     <>

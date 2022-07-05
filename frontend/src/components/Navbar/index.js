@@ -1,4 +1,5 @@
-// import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from 'providers/UserProvider';
 import {
   Flex,
@@ -17,17 +18,14 @@ import Link from '../Link';
 import Logo from '../../assets/Logo.svg';
 
 const Navbar = ({ onHomepage = false }) => {
-  // const location = useLocation();
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [query, setQuery] = useState('');
 
   const { user, authenticated, logout } = useUser();
   const background = onHomepage
     ? 'linear(to-b,transparent,transparent)'
     : 'linear(to-r,m180.navyBlue.500,m180.navyBlue.400)';
-
-  // const userRoute = authenticated
-  //   ? { title: 'My profile', path: `/profile/${user?.username}` }
-  //   : { title: 'Sign in', path: `/sign-in/?redirect=${location.pathname}` };
 
   const userRoute = authenticated
     ? [{ title: 'My profile', path: `/profile/${user?.username}` }]
@@ -94,7 +92,15 @@ const Navbar = ({ onHomepage = false }) => {
             variant="filled"
             type="search"
             placeholder="Search"
+            color="black"
             _focus={{ background: '#d5dbe0' }}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                navigate(`/films/search/?query=${query}`);
+              }
+            }}
           />
         </InputGroup>
       </HStack>
