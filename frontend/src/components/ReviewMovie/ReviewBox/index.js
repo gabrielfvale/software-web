@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useUser } from 'providers/UserProvider';
 
 import {
   Box,
@@ -6,6 +7,7 @@ import {
   Flex,
   Heading,
   HStack,
+  IconButton,
   Text,
   Textarea,
   VStack,
@@ -16,6 +18,7 @@ import CommentSection from '../CommentSection';
 import ReviewActions from '../ReviewActions';
 
 import api from 'services/api';
+import { FaTrash } from 'react-icons/fa';
 
 const ReviewBox = ({
   authenticated = false,
@@ -24,7 +27,9 @@ const ReviewBox = ({
   review = {},
   onSend = () => {},
   onUpdate = () => {},
+  onDelete = () => {},
 }) => {
+  const { user } = useUser();
   const [score, setScore] = useState(0);
   const [description, setDescription] = useState('');
 
@@ -130,9 +135,18 @@ const ReviewBox = ({
               />
             )}
           </Box>
-          <Button size="sm" alignSelf="flex-end" onClick={onClick}>
-            {reviewedByMe ? 'Update' : 'Send'}
-          </Button>
+          <HStack>
+            <Button size="sm" alignSelf="flex-end" onClick={onClick}>
+              {reviewedByMe ? 'Update' : 'Send'}
+            </Button>
+            {(reviewedByMe || user?.admin) && (
+              <IconButton
+                icon={<FaTrash />}
+                size="sm"
+                onClick={() => onDelete(review?.review_id)}
+              />
+            )}
+          </HStack>
         </HStack>
         <CommentSection
           page={page}

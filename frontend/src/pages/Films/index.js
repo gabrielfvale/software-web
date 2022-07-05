@@ -107,8 +107,10 @@ const Movie = () => {
         movie_api_id: movie_id,
         ...values,
       };
+      let review_id = review?.review_id;
       if (action === 'send') {
-        await api.post('/review', body);
+        const { data } = await api.post('/review', body);
+        review_id = data.review_id;
       } else {
         await api.put('/review', body);
       }
@@ -119,7 +121,7 @@ const Movie = () => {
         duration: 2000,
       });
       setReviewedByMe(true);
-      setReview({ ...body });
+      setReview({ ...body, review_id });
     } catch (e) {
       toast({
         title: 'Error',
@@ -128,6 +130,27 @@ const Movie = () => {
         isClosable: true,
       });
     }
+  };
+
+  const onDeleteReview = async review_id => {
+    let description = 'Review deleted';
+    let status = 'success';
+    try {
+      await api.delete(`/review/${review_id}`);
+      if (reviewedByMe && review?.review_id === review_id) {
+        setReviewedByMe(false);
+        setReview({});
+      }
+    } catch (e) {
+      description = e.response.data.error;
+      status = 'error';
+    }
+    toast({
+      description,
+      status,
+      isClosable: true,
+      duration: 2000,
+    });
   };
 
   const onAddToList = async list_id => {
@@ -215,8 +238,9 @@ const Movie = () => {
           review={review}
           onSend={onEditReview}
           onUpdate={values => onEditReview(values, 'update')}
+          onDelete={onDeleteReview}
         />
-        <ReviewMovie data={reviews} />
+        <ReviewMovie data={reviews} onDelete={onDeleteReview} />
         <Spinner
           ref={scrollRef}
           color="m180.pink.500"

@@ -1,16 +1,17 @@
-import { useState, useEffect } from 'react';
 import moment from 'moment';
+import { useState, useEffect } from 'react';
+import { useUser } from 'providers/UserProvider';
 import api from 'services/api';
 
-import { Box, Text, HStack, useToast } from '@chakra-ui/react';
+import { Box, Text, HStack, useToast, IconButton } from '@chakra-ui/react';
 
 import Stars from 'components/Stars';
 import Link from 'components/Link';
 import ReviewActions from '../ReviewActions';
 import CommentSection from '../CommentSection';
-import { useUser } from 'providers/UserProvider';
+import { FaTrash } from 'react-icons/fa';
 
-const Review = ({ review = {}, ...rest }) => {
+const Review = ({ review = {}, onDelete = () => {}, ...rest }) => {
   const {
     review_id,
     user_id,
@@ -107,6 +108,13 @@ const Review = ({ review = {}, ...rest }) => {
             ''
           )}
         </Text>
+        {user?.admin && (
+          <IconButton
+            icon={<FaTrash />}
+            size="xs"
+            onClick={() => onDelete(review_id)}
+          />
+        )}
       </HStack>
 
       <HStack>
