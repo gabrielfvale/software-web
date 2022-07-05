@@ -11,6 +11,7 @@ const CommentSection = ({
   showReply = true,
   onChangePage = () => {},
   onSendComment = () => {},
+  onDelete = () => {},
 }) => {
   const [description, setDescription] = useState();
 
@@ -26,7 +27,7 @@ const CommentSection = ({
           }}
         />
       )}
-      <CommentList data={commentList?.results} />
+      <CommentList data={commentList?.results} onDelete={onDelete} />
       <Pagination
         page={page}
         total_pages={commentList?.total_pages || 1}

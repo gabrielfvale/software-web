@@ -1,8 +1,12 @@
 import moment from 'moment';
-import { VStack, Box, Text, HStack } from '@chakra-ui/react';
+import { useUser } from 'providers/UserProvider';
+import { VStack, Box, Text, HStack, IconButton } from '@chakra-ui/react';
+import { FaTrash } from 'react-icons/fa';
 import Link from 'components/Link';
 
-const CommentList = ({ data = [] }) => {
+const CommentList = ({ data = [], onDelete = () => {} }) => {
+  const { user } = useUser();
+
   return (
     <VStack width="100%" gap={1} marginTop="1rem">
       {data?.map(comment => {
@@ -10,32 +14,45 @@ const CommentList = ({ data = [] }) => {
         const edited = !moment(comment.created_at).isSame(comment.updated_at);
         return (
           <Box
-            width="100%"
+            key={comment.comment_id}
+            w="100%"
             bg="m180.beige"
             padding="1rem"
             borderRadius="0.4rem"
-            key={comment.comment_id}
           >
             <Box>
-              <HStack alignItems="center">
-                <Text as="span" fontSize="xs">
-                  Commented by{' '}
-                  <Link
-                    href={`/profile/${comment.username}`}
-                    fontSize="xs"
-                    fontWeight="bold"
-                  >
-                    {comment.username}
-                  </Link>
-                  {edited ? (
-                    <Text as="span" fontStyle="italic">
-                      (edited)
-                    </Text>
-                  ) : (
-                    ''
-                  )}{' '}
-                  at {date}
-                </Text>
+              <HStack justifyContent="space-between">
+                <HStack alignItems="center">
+                  <Text as="span" fontSize="xs">
+                    Commented by{' '}
+                    <Link
+                      href={`/profile/${comment.username}`}
+                      fontSize="xs"
+                      fontWeight="bold"
+                    >
+                      {comment.username}
+                    </Link>
+                    {edited ? (
+                      <Text as="span" fontStyle="italic">
+                        (edited)
+                      </Text>
+                    ) : (
+                      ''
+                    )}{' '}
+                    at {date}
+                  </Text>
+                </HStack>
+                {user?.username === comment.username && (
+                  <HStack>
+                    <IconButton
+                      icon={<FaTrash />}
+                      size="xs"
+                      variant="ghost"
+                      alignSelf="flex-end"
+                      onClick={() => onDelete(comment.comment_id)}
+                    />
+                  </HStack>
+                )}
               </HStack>
 
               <Text as="span" fontSize="xs">

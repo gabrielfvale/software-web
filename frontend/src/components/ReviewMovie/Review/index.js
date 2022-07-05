@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import moment from 'moment';
 import api from 'services/api';
 
-import { Box, Text, HStack } from '@chakra-ui/react';
+import { Box, Text, HStack, useToast } from '@chakra-ui/react';
 
 import Stars from 'components/Stars';
 import Link from 'components/Link';
@@ -22,6 +22,8 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
     comments: default_comments,
     liked_by_me,
   } = review;
+
+  const toast = useToast();
 
   const [liked, setLiked] = useState(liked_by_me);
 
@@ -54,6 +56,24 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
       description,
     });
     setComments(prev => prev + 1);
+  };
+
+  const onDeleteComment = async comment_id => {
+    let description = 'Comment deleted';
+    let status = 'success';
+    try {
+      await api.delete(`/review/comment?comment_id=${comment_id}`);
+      setComments(prev => prev - 1);
+    } catch (e) {
+      description = e.response.data.error;
+      status = 'error';
+    }
+    toast({
+      description,
+      status,
+      duration: 2000,
+      isClosable: true,
+    });
   };
 
   const onLike = async () => {
@@ -110,6 +130,7 @@ const Review = ({ review = {}, user = -1, ...rest }) => {
           showReply={user !== -1}
           onChangePage={setPage}
           onSendComment={onSendComment}
+          onDelete={onDeleteComment}
         />
       )}
     </Box>

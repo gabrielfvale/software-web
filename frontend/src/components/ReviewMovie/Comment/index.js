@@ -1,19 +1,12 @@
 import { Textarea, Button, VStack, Text, HStack } from '@chakra-ui/react';
 
 const Comment = ({
-  username = '',
   description = '',
   onChange = () => {},
   onSend = () => {},
 }) => {
   return (
     <VStack width="100%" alignItems="flex-start">
-      {/* <Text as="span" fontSize="xs">
-        Commenting as{' '}
-        <Text as="span" fontSize="xs" fontWeight="bold">
-          {username}
-        </Text>
-      </Text> */}
       <Textarea
         bg="white"
         resize="none"
