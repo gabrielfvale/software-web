@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useUser } from 'providers/UserProvider';
 
 import {
   Box,
@@ -29,7 +28,6 @@ const ReviewBox = ({
   onUpdate = () => {},
   onDelete = () => {},
 }) => {
-  const { user } = useUser();
   const [score, setScore] = useState(0);
   const [description, setDescription] = useState('');
 
@@ -139,7 +137,7 @@ const ReviewBox = ({
             <Button size="sm" alignSelf="flex-end" onClick={onClick}>
               {reviewedByMe ? 'Update' : 'Send'}
             </Button>
-            {(reviewedByMe || user?.admin) && (
+            {reviewedByMe && (
               <IconButton
                 icon={<FaTrash />}
                 size="sm"
