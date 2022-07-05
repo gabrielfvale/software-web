@@ -52,12 +52,14 @@ const CreateListModal = ({ isOpen, onClose, onSubmit }) => {
                 />
                 <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={formik.errors.name}>
+              <FormControl>
                 <Checkbox
                   size="md"
                   colorScheme="m180.pink"
                   checked={formik.values.is_public}
-                  onChange={formik.handleChange}
+                  onChange={e => {
+                    formik.setFieldValue('is_public', e.target.checked);
+                  }}
                 >
                   Public
                 </Checkbox>

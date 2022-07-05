@@ -160,7 +160,9 @@ const Create = () => {
                 id="is_public"
                 name="is_public"
                 checked={formik.values.is_public}
-                onChange={formik.handleChange}
+                onChange={e => {
+                  formik.setFieldValue('is_public', e.target.checked);
+                }}
               >
                 Public
               </Checkbox>

@@ -398,7 +398,11 @@ async function addSpecial(req, res) {
 
 async function update(req, res) {
   try {
-    const { list_id, name, description, movies } = req.body;
+    const { list_id, name, description, movies, list_type } = req.body;
+
+    if (list_type !== "public" && list_type !== "private") {
+      return res.status(400).json({ error: "Invalid list type" });
+    }
 
     const { rows } = await pool.query(
       `SELECT list_id FROM lists
@@ -414,9 +418,9 @@ async function update(req, res) {
     // Updates list
     await pool.query(
       `UPDATE lists
-      SET name=$1, description=$2, updated_at=$3
-      WHERE list_id=$4`,
-      [name, description, new Date(), list_id]
+      SET list_type=$1, name=$2, description=$3, updated_at=$4
+      WHERE list_id=$5`,
+      [list_type, name, description, new Date(), list_id]
     );
 
     // Delete previous movies

@@ -90,6 +90,8 @@ const ListById = () => {
   };
 
   const isSameUser = Number(user.user_id) === Number(list?.user_id);
+  const conventionalList =
+    list?.list_type !== 'watch' || list?.list_type !== 'favorites';
 
   if (error) {
     return <NotFound />;
@@ -122,7 +124,7 @@ const ListById = () => {
                 onClick={handleLike}
               />
             )}
-            {isSameUser && (
+            {conventionalList && isSameUser && (
               <Button
                 size="sm"
                 leftIcon={<AiFillEdit />}
@@ -131,7 +133,7 @@ const ListById = () => {
                 Edit
               </Button>
             )}
-            {(isSameUser || user?.admin) && (
+            {conventionalList && (isSameUser || user?.admin) && (
               <IconButton icon={<FaTrash />} size="sm" onClick={handleDelete} />
             )}
           </HStack>
