@@ -5,7 +5,7 @@ async function getPages(table, columns = [], values = [], per_page = 10) {
 
   const { rows: review_count } = await pool.query(
     `
-    SELECT COUNT(*) FROM ${table} WHERE ${formattedColumns.join("AND ")}
+    SELECT COUNT(*) FROM ${table} WHERE ${formattedColumns.join(" AND")}
     `,
     [...values]
   );

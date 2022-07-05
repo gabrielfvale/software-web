@@ -169,12 +169,15 @@ async function user(req, res) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const { total_results, total_pages } = await getPages(
-      "lists",
-      ["user_id"],
-      [rows[0].user_id],
-      per_page
+    const { rows: review_count } = await pool.query(
+      `
+      SELECT COUNT(*) FROM lists WHERE user_id=$1 AND list_type NOT IN ('watch', 'favorites')
+      `,
+      [rows[0].user_id]
     );
+
+    const total_results = Number(review_count[0].count);
+    const total_pages = Math.ceil(total_results / per_page) || 1;
 
     // If the user is logged in, display all lists.
     // If not, display only public lists.
