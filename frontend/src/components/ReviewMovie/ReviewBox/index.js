@@ -79,6 +79,11 @@ const ReviewBox = ({
     setShowCommentList(true);
   };
 
+  const onDeleteComment = async comment_id => {
+    await api.delete(`/review/comment/${comment_id}`);
+    setComments(prev => prev - 1);
+  };
+
   const renderContent = () => {
     if (!authenticated) {
       return (
@@ -149,10 +154,11 @@ const ReviewBox = ({
         <CommentSection
           page={page}
           commentList={commentList}
-          onChangePage={setPage}
-          onSendComment={onSendComment}
           showList={showCommentList}
           showReply={showReply}
+          onChangePage={setPage}
+          onSendComment={onSendComment}
+          onDelete={onDeleteComment}
         />
       </VStack>
     );
