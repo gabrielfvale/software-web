@@ -69,3 +69,5 @@ CREATE TABLE IF NOT EXISTS movies_list(
     CONSTRAINT pk_list_movie PRIMARY KEY(list_id, movie_api_id),
     CONSTRAINT fk_list_movie FOREIGN KEY(list_id) REFERENCES lists(list_id) ON DELETE CASCADE
 )
+
+INSERT INTO users ("admin", "bio", "country", "email", "first_name", "last_name", "password", "token", "user_id", "username") values (true, NULL, NULL, 'admin@admin.com', 'Admin', 'User', '$2b$10$Zf91S48IryHudiYGa8F4/.3rRkmAledpFvvo9GZC73WomuirB7y1i', NULL, 6, 'admin')
