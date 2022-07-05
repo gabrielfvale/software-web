@@ -36,7 +36,7 @@ const AccountSchema = Yup.object().shape({
     .max(50, 'Too long')
     .required('Required'),
   email: Yup.string().email('Invalid email').required('Required'),
-  bio: Yup.string().nullable(),
+  bio: Yup.string().max(280, 'Too long').nullable(),
 });
 
 const Settings = () => {
@@ -88,14 +88,12 @@ const Settings = () => {
           first_name,
           last_name,
           email,
-          bio,
+          bio: bio || '',
         },
         false
       );
     }
-  }, [data, formik, username]);
-
-  console.log({ authenticated, user });
+  }, [data]);
 
   if (!authenticated || user.username !== username) {
     return <Navigate to={`/profile/${username}`} />;
@@ -169,6 +167,7 @@ const Settings = () => {
                 id="bio"
                 name="bio"
                 resize="none"
+                maxLength="280"
                 onChange={formik.handleChange}
                 value={formik.values.bio}
               />

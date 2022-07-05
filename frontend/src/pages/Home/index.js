@@ -24,6 +24,12 @@ const Home = () => {
   const { data: popularReviews } = useFetchData('/review/popular');
 
   useEffect(() => {
+    if (popularReviews) {
+      console.log(popularReviews);
+    }
+  }, [popularReviews]);
+
+  useEffect(() => {
     if (data?.results) {
       const randIndex = Math.floor(Math.random() * data.results.length);
       setBackdrop(data.results[randIndex].backdrop_path);
