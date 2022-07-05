@@ -108,8 +108,8 @@ const Profile = () => {
               count={3}
               onPrev={() => onCarouselChange(listPage - 1)}
               onNext={() => onCarouselChange(listPage + 1)}
-              showPrev={listPage !== 1}
-              showNext={listPage !== totalPages}
+              prevDisabled={listPage === 1}
+              nextDisabled={listPage === totalPages}
               itemRenderer={() =>
                 lists.results?.map(
                   ({ list_id, name, posters, likes }, index) => (

@@ -5,11 +5,13 @@ const Carousel = ({
   count = 3,
   gap = 3,
   itemRenderer = () => {},
-  showPrev = true,
-  showNext = true,
+  prevDisabled = false,
+  nextDisabled = false,
   onPrev = () => {},
   onNext = () => {},
+  overflow = true,
 }) => {
+  const controlPos = overflow ? -8 : 0;
   return (
     <Flex
       w="full"
@@ -17,29 +19,29 @@ const Carousel = ({
       alignItems="center"
       pos="relative"
     >
-      {showPrev && (
-        <IconButton
-          icon={<FaChevronLeft />}
-          size="sm"
-          pos="absolute"
-          left="-1rem"
-          zIndex={99}
-          onClick={onPrev}
-        />
-      )}
+      <IconButton
+        icon={<FaChevronLeft />}
+        size="sm"
+        variant="ghost"
+        pos="absolute"
+        left={controlPos}
+        zIndex={99}
+        disabled={prevDisabled}
+        onClick={onPrev}
+      />
       <Grid flex={1} templateColumns={`repeat(${count}, 1fr)`} gap={gap}>
         {itemRenderer()}
       </Grid>
-      {showNext && (
-        <IconButton
-          icon={<FaChevronRight />}
-          size="sm"
-          pos="absolute"
-          right="-1rem"
-          onClick={onNext}
-          zIndex={99}
-        />
-      )}
+      <IconButton
+        icon={<FaChevronRight />}
+        size="sm"
+        variant="ghost"
+        pos="absolute"
+        right={controlPos}
+        zIndex={99}
+        disabled={nextDisabled}
+        onClick={onNext}
+      />
     </Flex>
   );
 };
