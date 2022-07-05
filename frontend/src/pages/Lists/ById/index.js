@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from 'providers/UserProvider';
 import useFetchData from 'hooks/fetchData';
+import { useDocumentTitle } from 'hooks/documentTitle';
 
 import api from 'services/api';
 import { getWord } from 'util/plural';
@@ -29,6 +30,7 @@ const ListById = () => {
   const { data, error } = useFetchData(`/list/${list_id}`);
   const { user, authenticated } = useUser();
   const toast = useToast();
+  const setTitle = useDocumentTitle();
 
   const [list, setList] = useState(null);
   const [likes, setLikes] = useState(0);
@@ -39,6 +41,12 @@ const ListById = () => {
     const { data } = await api.get(`/movie/many/${movies}`);
     setList({ ...listData, details: [...data] });
   };
+
+  useEffect(() => {
+    if (data) {
+      setTitle(data.name);
+    }
+  }, [data, setTitle]);
 
   useEffect(() => {
     if (data) {

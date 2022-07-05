@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useFetchData from 'hooks/fetchData';
+import { useDocumentTitle } from 'hooks/documentTitle';
 
 import { getMoviePosters } from 'util/posters';
 
@@ -17,6 +18,7 @@ import NotFound from 'pages/NotFound';
 
 const Profile = () => {
   const { username } = useParams();
+  const setTitle = useDocumentTitle();
 
   const [listPage, setListPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -33,6 +35,10 @@ const Profile = () => {
   const { data: userReviews } = useFetchData(
     `/review/user/${username}/?per_page=5&page=${reviewPage}`
   );
+
+  useEffect(() => {
+    setTitle(`${username}'s profile`);
+  }, [username, setTitle]);
 
   const fetchListPosters = async userLists => {
     // Get posters for regular lists

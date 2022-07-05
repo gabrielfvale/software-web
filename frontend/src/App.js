@@ -7,9 +7,19 @@ import theme from './styles/theme';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Router, { publicRoutes } from './routes';
+import { useEffect } from 'react';
+import { useDocumentTitle } from 'hooks/documentTitle';
 
 function App() {
   const location = useLocation();
+  const setTitle = useDocumentTitle();
+
+  useEffect(() => {
+    if (['/', '/lists', '/films'].includes(location.pathname)) {
+      setTitle('Filmit');
+    }
+  }, [setTitle, location]);
+
   return (
     <ChakraProvider theme={theme}>
       <UserProvider>
