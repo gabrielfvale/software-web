@@ -35,7 +35,10 @@ async function get(req, res) {
         (SELECT username FROM users WHERE users.user_id = reviews.user_id) AS username,
         (SELECT COUNT(*) FROM comments WHERE comments.review_id = reviews.review_id) AS comments,
         (SELECT COUNT(*) FROM like_review WHERE like_review.review_id = reviews.review_id) AS likes,
-        (SELECT EXISTS(SELECT 1 FROM like_review WHERE like_review.user_id=$1 )) AS liked_by_me
+        (SELECT EXISTS(
+          SELECT 1 FROM like_review WHERE like_review.review_id = reviews.review_id
+          AND like_review.user_id=$1)
+          ) AS liked_by_me
         FROM reviews WHERE movie_api_id=$2
         ORDER BY reviews.created_at DESC
         `,
@@ -141,9 +144,8 @@ async function popular(req, res) {
                 FROM reviews LEFT JOIN like_review ON reviews.review_id = like_review.review_id
                 LEFT JOIN comments ON comments.review_id = reviews.review_id
                 GROUP BY reviews.review_id
-                HAVING COUNT(like_review.review_id) > 0
-                ORDER BY likes,comments  DESC) as popular_reviews
-          INNER JOIN users ON users.user_id = popular_reviews.user_id
+                HAVING COUNT(like_review.review_id) > 0) as popular_reviews
+          INNER JOIN users ON users.user_id = popular_reviews.user_id ORDER BY likes DESC
         `,
         page,
         per_page
@@ -242,13 +244,13 @@ async function update(req, res) {
 
 async function deleteReview(req, res) {
   try {
-    const { user_id: requestingUser } = req.user;
-    const { user_id, movie_api_id } = req.body;
+    const { user_id } = req.user;
+    const { id } = req.params;
 
     // Find if review exists
     const { rows: reviewed } = await pool.query(
-      `SELECT review_id FROM reviews WHERE user_id=$1 AND movie_api_id=$2`,
-      [user_id, movie_api_id]
+      `SELECT user_id FROM reviews WHERE review_id=$1`,
+      [id]
     );
 
     if (reviewed.length === 0) {
@@ -259,18 +261,17 @@ async function deleteReview(req, res) {
       `
       SELECT * from users WHERE user_id=$1
       `,
-      [requestingUser]
+      [user_id]
     );
 
     // Delete review if user_id matches or requesting user is admin
     if (
       user.length !== 0 &&
-      (Number(user[0].user_id) === Number(user_id) || user[0].admin)
+      (Number(reviewed[0].user_id) === Number(user_id) || user[0].admin)
     ) {
-      await pool.query(
-        `DELETE FROM reviews WHERE user_id=$1 AND movie_api_id=$2`,
-        [user_id, movie_api_id]
-      );
+      await pool.query(`DELETE FROM reviews WHERE review_id=$1`, [id]);
+    } else {
+      return res.status(403).end();
     }
 
     res.status(200).end();
