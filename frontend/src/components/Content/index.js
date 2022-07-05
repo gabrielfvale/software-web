@@ -15,7 +15,7 @@ const Content = ({ children, ...rest }) => {
           paddingX: '15rem',
         },
         '@media only screen and (min-width: 1920px)': {
-          paddingX: '20rem',
+          paddingX: '40rem',
         },
       }}
       {...rest}

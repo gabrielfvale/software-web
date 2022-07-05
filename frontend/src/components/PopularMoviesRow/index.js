@@ -1,10 +1,17 @@
 import { Grid } from '@chakra-ui/react';
 import ClickablePoster from '../ClickablePoster';
 
-const PopularMoviesRow = ({ data = [], ...rest }) => {
-  const modifiedData = data?.slice(0, 6);
+const PopularMoviesRow = ({ data = [], maxColumns = 6, gap = 2, ...rest }) => {
+  const modifiedData = data?.slice(0, maxColumns);
   return (
-    <Grid templateColumns="repeat(6, 1fr)" gap={2} {...rest}>
+    <Grid
+      templateColumns={`repeat(${Math.min(
+        modifiedData.length,
+        maxColumns
+      )}, 1fr)`}
+      gap={gap}
+      {...rest}
+    >
       {modifiedData.map(({ id, title, poster_path }) => (
         <ClickablePoster
           key={id}

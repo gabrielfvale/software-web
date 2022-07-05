@@ -5,6 +5,7 @@ import { useDocumentTitle } from 'hooks/documentTitle';
 
 import { getMoviePosters } from 'util/posters';
 
+import { Grid, Skeleton } from '@chakra-ui/react';
 import ProfileHeader from './components/ProfileHeader';
 import ListCard from 'components/ListCard';
 import ReviewList from 'components/ReviewList';
@@ -147,6 +148,17 @@ const Profile = () => {
           ))}
         </>
       )}
+
+      {!userLists &&
+        [...Array(2)].map((_, i) => (
+          <Category key={i}>
+            <Grid templateColumns="repeat(6, 1fr)" gap={2}>
+              {[...Array(6)].map((_, index) => (
+                <Skeleton key={index} w="124px" h="186px" />
+              ))}
+            </Grid>
+          </Category>
+        ))}
 
       <Category title="Recent Reviews">
         <ReviewList data={reviews} />

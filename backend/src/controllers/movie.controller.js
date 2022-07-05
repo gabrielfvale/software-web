@@ -102,7 +102,7 @@ async function many(req, res) {
       });
     }
 
-    setCache(req.originalUrl, JSON.stringify(results));
+    setCache(req.originalUrl, JSON.stringify(results), 86400);
 
     return res.status(200).json(results);
   } catch (e) {
@@ -134,7 +134,7 @@ async function media(req, res) {
       });
     }
 
-    setCache(req.originalUrl, JSON.stringify(results));
+    setCache(req.originalUrl, JSON.stringify(results), 86400);
 
     return res.status(200).json(results);
   } catch (e) {

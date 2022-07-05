@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDisclosure, useToast } from '@chakra-ui/react';
+import { Box, Heading, useDisclosure, useToast } from '@chakra-ui/react';
 import { useDocumentTitle } from 'hooks/documentTitle';
 import useFetchData from 'hooks/fetchData';
 import { useUser } from 'providers/UserProvider';
@@ -14,9 +14,15 @@ import ReviewMovie from 'components/ReviewMovie';
 import ReviewBox from 'components/ReviewMovie/ReviewBox';
 import ScrollToTop from 'components/ScrollToTop';
 import CreateListModal from 'components/CreateListModal';
+import PopularMoviesRow from 'components/PopularMoviesRow';
+import Category from 'components/Category';
 
 const Movie = () => {
   const { movie_id } = useParams();
+  const { user, authenticated } = useUser();
+  const setTitle = useDocumentTitle();
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [isOnWatch, setIsOnWatch] = useState(false);
   const [isOnFavorites, setIsOnFavorites] = useState(false);
@@ -29,12 +35,10 @@ const Movie = () => {
   const [fetchingReviews, setFetchingReviews] = useState(false);
   const [reviews, setReviews] = useState([]);
 
-  const toast = useToast();
-  const setTitle = useDocumentTitle();
   const { data } = useFetchData(`/movie/${movie_id}`);
-  const { user, authenticated } = useUser();
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { data: recommendations } = useFetchData(
+    `/movie/${movie_id}/recommendations`
+  );
 
   useEffect(() => {
     if (data) {
@@ -185,6 +189,21 @@ const Movie = () => {
         onCreateList={onOpen}
         loading={!data}
       />
+      <Box
+        padding="2rem"
+        marginTop="1rem"
+        bg="m180.darkBeige"
+        borderRadius="0.4rem"
+      >
+        <Heading size="sm" fontWeight="semibold" textTransform="uppercase">
+          YOU MIGHT ALSO LIKE
+        </Heading>
+        <PopularMoviesRow
+          maxColumns={8}
+          gap={4}
+          data={recommendations?.results}
+        />
+      </Box>
       <VStack
         gap={10}
         flexDir="column"
